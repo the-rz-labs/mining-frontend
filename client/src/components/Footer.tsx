@@ -56,8 +56,7 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
             <div>
               <Logo />
               <p className="text-muted-foreground mt-4 leading-relaxed">
-                Professional cryptocurrency mining platform with advanced hardware and real-time analytics. 
-                Join thousands of miners maximizing their digital asset potential.
+                Our system is built on fairness and transparency. Here's what makes us different: No token deposits: We don't take your assets. You mine using your resources.
               </p>
             </div>
 
