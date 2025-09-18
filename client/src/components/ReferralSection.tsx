@@ -10,7 +10,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
   const referralSteps = [
     "Share your unique referral link",
     "Friends join and start mining",
-    "Both earn bonus rewards and increased hash rates"
+    "Earn bonus rewards and increased hash rates"
   ];
 
   const rankingBenefits = [
