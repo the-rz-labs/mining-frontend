@@ -63,7 +63,7 @@ export default function SignUp() {
     onSuccess: (responseData: any) => {
       toast({
         title: "Verification code sent!",
-        description: responseData.detail || "Check your email for the 6-digit verification code."
+        description: responseData.detail || "Check your email for the 5-digit verification code."
       });
       setStep(2);
     },
@@ -369,9 +369,9 @@ export default function SignUp() {
                           <div className="relative">
                             <Input
                               {...field}
-                              placeholder="000000"
+                              placeholder="00000"
                               className="h-14 bg-white/5 border-white/10 text-white placeholder:text-white/30 text-center font-mono text-2xl tracking-[0.5em] rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300"
-                              maxLength={6}
+                              maxLength={5}
                               data-testid="input-code"
                             />
                             <div className="absolute inset-y-0 right-3 flex items-center">
