@@ -19,21 +19,21 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
 
   const navigationSections = [
     {
-      title: "Company",
-      links: [
-        { name: "About Us", href: "#about" },
-        { name: "Contact", href: "#contact" },
-        { name: "Careers", href: "#careers" },
-        { name: "Press", href: "#press" }
-      ]
-    },
-    {
       title: "Platform",
       links: [
         { name: "Mining Plans", href: "#plans" },
         { name: "Live Stats", href: "#stats" },
         { name: "Token Charts", href: "#tokens" },
         { name: "Referral Program", href: "#referral" }
+      ]
+    },
+    {
+      title: "Company",
+      links: [
+        { name: "About Us", href: "#about" },
+        { name: "Contact", href: "#contact" },
+        { name: "Careers", href: "#careers" },
+        { name: "Press", href: "#press" }
       ]
     }
   ];
