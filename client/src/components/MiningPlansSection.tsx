@@ -149,6 +149,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
   // Combine all plans and identify top ROI
   const allPlans = [...mgcPlans, ...rzPlans];
   const topROI = Math.max(...allPlans.map(p => p.roiPercentage));
+  const topMGC = Math.max(...mgcPlans.map(p => p.roiPercentage));
 
   // Auto-scroll effect
   useEffect(() => {
@@ -284,6 +285,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
                 <MiningPlanCard
                   plan={plan}
                   highlightTop={plan.roiPercentage === topROI}
+                  highlightTopMGC={plan.token === "MGC" && plan.roiPercentage === topMGC}
                   onStartMining={(plan) => {
                     console.log(`Starting mining for ${plan.name}`);
                     onStartMining?.(plan);

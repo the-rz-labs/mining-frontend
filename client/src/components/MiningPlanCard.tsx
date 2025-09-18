@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Zap, DollarSign, Clock, TrendingUp, Trophy } from "lucide-react";
+import { Zap, DollarSign, Clock, Trophy } from "lucide-react";
 
 export interface MiningPlan {
   id: string;
@@ -19,10 +19,11 @@ export interface MiningPlan {
 interface MiningPlanCardProps {
   plan: MiningPlan;
   highlightTop?: boolean;
+  highlightTopMGC?: boolean;
   onStartMining?: (plan: MiningPlan) => void;
 }
 
-export default function MiningPlanCard({ plan, highlightTop = false, onStartMining }: MiningPlanCardProps) {
+export default function MiningPlanCard({ plan, highlightTop = false, highlightTopMGC = false, onStartMining }: MiningPlanCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const themeColors = {
@@ -51,6 +52,8 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
       className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 h-[580px] w-full ${theme.bg} ${theme.border} ${
         highlightTop 
           ? `ring-2 ring-mining-orange/60 shadow-2xl shadow-mining-orange/20 md:scale-[1.02]` 
+          : highlightTopMGC
+          ? `ring-2 ring-neon-purple/60 shadow-2xl shadow-neon-purple/20 md:scale-[1.01]`
           : isHovered ? `shadow-2xl ${theme.glow}` : 'shadow-lg'
       }`}
       data-testid={`mining-card-${plan.token.toLowerCase()}-${plan.id}`}
@@ -58,7 +61,7 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Top ROI / Popular Badge */}
-      {(highlightTop || plan.popular) && (
+      {(highlightTop || highlightTopMGC || plan.popular) && (
         <div className="absolute top-4 right-4 z-10 space-y-2">
           {highlightTop && (
             <Badge className="bg-gradient-to-r from-mining-orange to-neon-green text-white font-bold border-none shadow-lg animate-pulse">
@@ -66,7 +69,13 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
               TOP ROI
             </Badge>
           )}
-          {plan.popular && !highlightTop && (
+          {highlightTopMGC && !highlightTop && (
+            <Badge className="bg-gradient-to-r from-neon-purple to-purple-600 text-white font-bold border-none shadow-lg animate-pulse">
+              <Trophy className="w-4 h-4 mr-1" />
+              TOP MGC
+            </Badge>
+          )}
+          {plan.popular && !highlightTop && !highlightTopMGC && (
             <Badge className={`${theme.button} text-white font-semibold border-none`}>
               Most Popular
             </Badge>
@@ -98,9 +107,9 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
           <img
             src={plan.image}
             alt={`${plan.name} Mining Rig`}
-            className="w-full h-36 object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
           />
-          <div className={`absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+          <div className={`absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
         </div>
 
         {/* Stats */}
@@ -136,21 +145,6 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
           </div>
         </div>
 
-        {/* Features */}
-        <div className="mb-6 flex-grow">
-          <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center">
-            <TrendingUp className={`w-4 h-4 ${theme.primary} mr-2`} />
-            Key Features
-          </h4>
-          <ul className="space-y-2">
-            {plan.features.slice(0, 3).map((feature, index) => (
-              <li key={index} className="flex items-start space-x-2">
-                <div className={`w-1.5 h-1.5 rounded-full ${theme.button} mt-1.5 flex-shrink-0`}></div>
-                <span className="text-sm text-muted-foreground leading-snug">{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
 
         {/* CTA Button */}
         <div className="mt-auto">
