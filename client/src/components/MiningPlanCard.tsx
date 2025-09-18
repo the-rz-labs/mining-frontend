@@ -146,6 +146,15 @@ export default function MiningPlanCard({ plan, highlightTop = false, highlightTo
         </div>
 
 
+        {/* Staking Message for RZ tokens */}
+        {plan.token === "RZ" && (
+          <div className="mb-4 text-center">
+            <p className="text-sm text-neon-green font-medium">
+              Stake RZ tokens • Earn daily rewards
+            </p>
+          </div>
+        )}
+
         {/* CTA Button */}
         <div className="mt-auto">
           <Button
