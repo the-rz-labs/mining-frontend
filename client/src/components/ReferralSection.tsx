@@ -16,8 +16,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
   const rankingBenefits = [
     { feature: "Level Promotions", icon: Trophy, color: "text-neon-purple", description: "Advance through tiers on Ranking platform" },
     { feature: "Exclusive Mining Plans", icon: Crown, color: "text-mining-orange", description: "Access VIP packages via Ranking status" },
-    { feature: "Gaming Rewards", icon: Gamepad2, color: "text-neon-green", description: "Earn tokens through Ranking activities" },
-    { feature: "Elite Multipliers", icon: Rocket, color: "text-cyan-400", description: "Boost hash rates based on Ranking level" }
+    { feature: "Gaming Rewards", icon: Gamepad2, color: "text-neon-green", description: "Earn tokens through Ranking activities" }
   ];
 
   const boostRewards = [

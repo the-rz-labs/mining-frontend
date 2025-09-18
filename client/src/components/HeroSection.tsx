@@ -102,14 +102,14 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             <Button
               variant="outline"
               size="lg"
-              data-testid="button-learn-more"
+              data-testid="button-connect-rank-account"
               onClick={() => {
-                console.log("Learn More clicked");
+                console.log("Connect Rank Account clicked");
                 onLearnMore?.();
               }}
               className="border-neon-green text-neon-green hover:bg-neon-green/10 px-8 py-4 text-lg backdrop-blur-sm"
             >
-              Learn More
+              Connect Rank Account
             </Button>
           </div>
 
