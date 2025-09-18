@@ -13,16 +13,16 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
     "Both earn bonus rewards and increased hash rates"
   ];
 
-  const rankLevels = [
-    { level: "Bronze", icon: Shield, color: "text-amber-600", requirement: "0-10 Referrals" },
-    { level: "Silver", icon: Star, color: "text-gray-400", requirement: "11-25 Referrals" },
-    { level: "Gold", icon: Trophy, color: "text-yellow-500", requirement: "26-50 Referrals" },
-    { level: "Diamond", icon: Crown, color: "text-cyan-400", requirement: "51+ Referrals" }
+  const rankingBenefits = [
+    { feature: "Level Promotions", icon: Trophy, color: "text-neon-purple", description: "Advance through tiers on Ranking platform" },
+    { feature: "Exclusive Mining Plans", icon: Crown, color: "text-mining-orange", description: "Access VIP packages via Ranking status" },
+    { feature: "Gaming Rewards", icon: Gamepad2, color: "text-neon-green", description: "Earn tokens through Ranking activities" },
+    { feature: "Elite Multipliers", icon: Rocket, color: "text-cyan-400", description: "Boost hash rates based on Ranking level" }
   ];
 
   const boostRewards = [
     { value: "5%", label: "Referral Commission", icon: Gift, color: "text-neon-purple" },
-    { value: "+15%", label: "Rank Hash Boost", icon: Rocket, color: "text-neon-green" },
+    { value: "+15%", label: "Ranking Hash Boost", icon: Rocket, color: "text-neon-green" },
     { value: "∞", label: "Gaming Rewards", icon: Gamepad2, color: "text-mining-orange" }
   ];
 
@@ -42,7 +42,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
             </h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Unlock the full potential of our platform through referrals, rank progression, and gaming activities. 
+            Unlock the full potential of our platform through referrals, Ranking platform progression, and gaming activities. 
             Build your network, climb the ranks, and access exclusive mining plans with enhanced rewards.
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                   </h3>
                 </div>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Combine referrals, rank progression, and gaming activities to maximize your mining potential and unlock exclusive benefits.
+                  Combine referrals, Ranking platform progression, and gaming activities to maximize your mining potential and unlock exclusive benefits.
                 </p>
               </div>
 
@@ -97,28 +97,31 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                   </div>
                 </div>
 
-                {/* Right Column - Rank System */}
+                {/* Right Column - Ranking Platform Connection */}
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center space-x-2 mb-4">
-                      <Crown className="w-6 h-6 text-neon-purple" />
-                      <h4 className="text-2xl font-bold text-foreground">Rank Levels</h4>
+                      <Gamepad2 className="w-6 h-6 text-neon-green" />
+                      <h4 className="text-2xl font-bold text-foreground">Ranking Platform</h4>
                     </div>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Connect your account to unlock exclusive benefits
+                    </p>
                   </div>
                   
                   <div className="space-y-3">
-                    {rankLevels.map((rank, index) => (
+                    {rankingBenefits.map((benefit, index) => (
                       <div
                         key={index}
-                        className="flex items-center space-x-4 p-4 rounded-xl bg-card/40 border border-border/30 hover-elevate group/rank transition-all duration-300"
-                        data-testid={`rank-${rank.level.toLowerCase()}`}
+                        className="flex items-center space-x-4 p-4 rounded-xl bg-card/40 border border-border/30 hover-elevate group/benefit transition-all duration-300"
+                        data-testid={`ranking-${benefit.feature.toLowerCase().replace(/\s+/g, '-')}`}
                       >
                         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-card to-card/60 border border-border/50">
-                          <rank.icon className={`w-5 h-5 ${rank.color} group-hover/rank:scale-110 transition-transform duration-300`} />
+                          <benefit.icon className={`w-5 h-5 ${benefit.color} group-hover/benefit:scale-110 transition-transform duration-300`} />
                         </div>
                         <div className="flex-1">
-                          <div className={`font-bold ${rank.color}`}>{rank.level}</div>
-                          <div className="text-sm text-muted-foreground">{rank.requirement}</div>
+                          <div className={`font-bold ${benefit.color}`}>{benefit.feature}</div>
+                          <div className="text-sm text-muted-foreground">{benefit.description}</div>
                         </div>
                       </div>
                     ))}
@@ -126,31 +129,31 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                 </div>
               </div>
 
-              {/* Exclusive Features Section */}
-              <div className="bg-gradient-to-r from-neon-purple/5 via-mining-orange/5 to-neon-green/5 rounded-2xl p-8 border border-border/30 mb-12">
-                <h4 className="text-2xl font-bold text-foreground mb-8 text-center">
-                  Exclusive Access & Benefits
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="text-center group/feature p-4 rounded-xl hover-elevate transition-all duration-300" data-testid="feature-vip-plans">
-                    <Shield className="w-10 h-10 mx-auto text-neon-purple mb-3 group-hover/feature:scale-110 transition-transform duration-300" />
-                    <div className="font-bold text-foreground mb-2">VIP Mining Plans</div>
-                    <div className="text-sm text-muted-foreground">Access to premium mining packages</div>
+              {/* Connection Status & Benefits */}
+              <div className="bg-gradient-to-r from-neon-green/5 via-mining-orange/5 to-neon-purple/5 rounded-2xl p-8 border border-border/30 mb-12">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center space-x-3 mb-4">
+                    <div className="p-2 rounded-full bg-neon-green/10 border border-neon-green/20">
+                      <Gamepad2 className="w-6 h-6 text-neon-green" />
+                    </div>
+                    <h4 className="text-2xl font-bold text-foreground">
+                      Ranking Platform Benefits
+                    </h4>
                   </div>
-                  <div className="text-center group/feature p-4 rounded-xl hover-elevate transition-all duration-300" data-testid="feature-gaming">
-                    <Gamepad2 className="w-10 h-10 mx-auto text-mining-orange mb-3 group-hover/feature:scale-110 transition-transform duration-300" />
-                    <div className="font-bold text-foreground mb-2">Gaming Rewards</div>
-                    <div className="text-sm text-muted-foreground">Earn tokens through platform activities</div>
+                  <p className="text-muted-foreground mb-6">
+                    Link your mining account to Ranking platform and unlock these exclusive rewards
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="text-center group/feature p-6 rounded-xl bg-card/30 border border-border/30 hover-elevate transition-all duration-300" data-testid="feature-ranking-levels">
+                    <Trophy className="w-12 h-12 mx-auto text-neon-purple mb-4 group-hover/feature:scale-110 transition-transform duration-300" />
+                    <div className="font-bold text-foreground mb-2 text-lg">Level Promotions</div>
+                    <div className="text-sm text-muted-foreground">Advance through Ranking tiers to unlock higher mining multipliers and exclusive access</div>
                   </div>
-                  <div className="text-center group/feature p-4 rounded-xl hover-elevate transition-all duration-300" data-testid="feature-priority-support">
-                    <Star className="w-10 h-10 mx-auto text-neon-green mb-3 group-hover/feature:scale-110 transition-transform duration-300" />
-                    <div className="font-bold text-foreground mb-2">Priority Support</div>
-                    <div className="text-sm text-muted-foreground">24/7 dedicated assistance</div>
-                  </div>
-                  <div className="text-center group/feature p-4 rounded-xl hover-elevate transition-all duration-300" data-testid="feature-achievement-bonuses">
-                    <Trophy className="w-10 h-10 mx-auto text-yellow-500 mb-3 group-hover/feature:scale-110 transition-transform duration-300" />
-                    <div className="font-bold text-foreground mb-2">Achievement Bonuses</div>
-                    <div className="text-sm text-muted-foreground">Extra rewards for milestones</div>
+                  <div className="text-center group/feature p-6 rounded-xl bg-card/30 border border-border/30 hover-elevate transition-all duration-300" data-testid="feature-gaming-activities">
+                    <Gamepad2 className="w-12 h-12 mx-auto text-mining-orange mb-4 group-hover/feature:scale-110 transition-transform duration-300" />
+                    <div className="font-bold text-foreground mb-2 text-lg">Gaming Activities</div>
+                    <div className="text-sm text-muted-foreground">Complete challenges and activities on Ranking to earn bonus mining tokens and rewards</div>
                   </div>
                 </div>
               </div>
@@ -182,13 +185,13 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                 <Button
                   size="lg"
                   variant="outline"
-                  data-testid="button-view-ranks"
+                  data-testid="button-connect-ranking"
                   onClick={() => {
-                    console.log("View ranks clicked");
+                    console.log("Connect Ranking platform clicked");
                   }}
                 >
-                  <Crown className="w-5 h-5 mr-3" />
-                  View Rank System
+                  <Gamepad2 className="w-5 h-5 mr-3" />
+                  Connect Ranking Platform
                 </Button>
                 <Button
                   size="lg"
