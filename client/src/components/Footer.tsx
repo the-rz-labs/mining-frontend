@@ -50,7 +50,7 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
     <footer className="bg-gradient-to-t from-card/50 to-background border-t border-border" data-testid="footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
           {/* Company Info */}
           <div className="lg:col-span-1 space-y-6">
             <div>
