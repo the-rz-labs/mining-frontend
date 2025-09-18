@@ -18,10 +18,11 @@ export interface MiningPlan {
 
 interface MiningPlanCardProps {
   plan: MiningPlan;
+  highlightTop?: boolean;
   onStartMining?: (plan: MiningPlan) => void;
 }
 
-export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardProps) {
+export default function MiningPlanCard({ plan, highlightTop = false, onStartMining }: MiningPlanCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const themeColors = {
@@ -47,17 +48,28 @@ export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardPr
 
   return (
     <div
-      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 h-[580px] w-full ${theme.bg} ${theme.border} ${isHovered ? `shadow-2xl ${theme.glow}` : 'shadow-lg'}`}
+      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 h-[580px] w-full ${theme.bg} ${theme.border} ${
+        highlightTop 
+          ? `ring-2 ring-mining-orange/60 shadow-2xl shadow-mining-orange/20 md:scale-[1.02]` 
+          : isHovered ? `shadow-2xl ${theme.glow}` : 'shadow-lg'
+      }`}
       data-testid={`mining-card-${plan.token.toLowerCase()}-${plan.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Popular Badge */}
-      {plan.popular && (
-        <div className="absolute top-4 right-4 z-10">
-          <Badge className={`${theme.button} text-white font-semibold border-none`}>
-            Most Popular
-          </Badge>
+      {/* Top ROI / Popular Badge */}
+      {(highlightTop || plan.popular) && (
+        <div className="absolute top-4 right-4 z-10 space-y-2">
+          {highlightTop && (
+            <Badge className="bg-gradient-to-r from-mining-orange to-neon-green text-white font-bold border-none shadow-lg animate-pulse">
+              🏆 TOP ROI
+            </Badge>
+          )}
+          {plan.popular && !highlightTop && (
+            <Badge className={`${theme.button} text-white font-semibold border-none`}>
+              Most Popular
+            </Badge>
+          )}
         </div>
       )}
 

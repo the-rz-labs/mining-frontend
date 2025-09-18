@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Cpu, Zap } from "lucide-react";
@@ -13,16 +13,9 @@ interface MiningPlansSectionProps {
 }
 
 export default function MiningPlansSection({ onStartMining }: MiningPlansSectionProps) {
-  const [activeTab, setActiveTab] = useState<"MGC" | "RZ">("MGC");
-
-  // Auto-scroll effect between MGC and RZ plans
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTab(prev => prev === "MGC" ? "RZ" : "MGC");
-    }, 8000); // Switch every 8 seconds
-
-    return () => clearInterval(interval);
-  }, []);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // todo: remove mock functionality - replace with real mining plan data
   const mgcPlans: MiningPlan[] = [
@@ -143,16 +136,50 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
     }
   ];
 
-  const currentPlans = activeTab === "MGC" ? mgcPlans : rzPlans;
-  const tabColors = {
-    MGC: {
-      active: "bg-gradient-to-r from-neon-purple to-purple-600 text-white",
-      inactive: "text-neon-purple hover:bg-purple-900/20 border-neon-purple/30"
-    },
-    RZ: {
-      active: "bg-gradient-to-r from-neon-green to-emerald-600 text-white", 
-      inactive: "text-neon-green hover:bg-green-900/20 border-neon-green/30"
-    }
+  // Combine all plans and identify top ROI
+  const allPlans = [...mgcPlans, ...rzPlans];
+  const topROI = Math.max(...allPlans.map(p => p.roiPercentage));
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (isPaused || !scrollRef.current) return;
+
+    const interval = setInterval(() => {
+      const container = scrollRef.current;
+      if (!container) return;
+
+      const cardWidth = 380; // Approximate card width + gap
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      
+      if (container.scrollLeft >= maxScrollLeft) {
+        // Reset to beginning
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+        setCurrentIndex(0);
+      } else {
+        // Scroll to next card
+        container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        setCurrentIndex(prev => prev + 1);
+      }
+    }, 4000); // Auto-scroll every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
+  // Pause auto-scroll on hover
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
+
+  // Manual scroll functions
+  const scrollLeft = () => {
+    if (!scrollRef.current) return;
+    const cardWidth = 380;
+    scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    if (!scrollRef.current) return;
+    const cardWidth = 380;
+    scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
   };
 
   return (
@@ -173,55 +200,76 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
             Each plan includes cutting-edge hardware and 24/7 monitoring.
           </p>
 
-          {/* Tab Selector */}
-          <div className="flex justify-center space-x-4 mb-12">
-            {(["MGC", "RZ"] as const).map((tab) => (
-              <Button
-                key={tab}
-                variant={activeTab === tab ? "default" : "outline"}
-                size="lg"
-                data-testid={`tab-${tab.toLowerCase()}`}
-                onClick={() => {
-                  console.log(`Switched to ${tab} plans`);
-                  setActiveTab(tab);
-                }}
-                className={`px-8 py-4 text-lg font-semibold transition-all duration-500 transform hover:scale-105 ${
-                  activeTab === tab 
-                    ? tabColors[tab].active + " shadow-lg"
-                    : `${tabColors[tab].inactive} border-2`
-                }`}
-              >
-                <span className="flex items-center space-x-2">
-                  <span>{tab} Token Plans</span>
-                  <Badge variant="secondary" className="ml-2">
-                    {tab === "MGC" ? "5" : "5"} Plans
-                  </Badge>
-                </span>
-              </Button>
-            ))}
+          {/* Scroll Controls */}
+          <div className="flex justify-center items-center space-x-4 mb-8">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollLeft}
+              data-testid="scroll-left"
+              className="rounded-full border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <Badge variant="outline" className="text-neon-purple border-neon-purple/30">
+                MGC Plans
+              </Badge>
+              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-green"></div>
+              <Badge variant="outline" className="text-neon-green border-neon-green/30">
+                RZ Plans
+              </Badge>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollRight}
+              data-testid="scroll-right"
+              className="rounded-full border-neon-green/30 text-neon-green hover:bg-neon-green/10"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
           </div>
         </div>
 
-        {/* Mining Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-8 max-w-7xl mx-auto transition-all duration-700 ease-in-out">
-          {currentPlans.map((plan, index) => (
-            <div
-              key={plan.id}
-              className="transform transition-all duration-700 ease-in-out opacity-0 translate-y-4 animate-fade-in"
-              style={{ 
-                animationDelay: `${index * 150}ms`,
-                animationFillMode: 'forwards'
-              }}
-            >
-              <MiningPlanCard
-                plan={plan}
-                onStartMining={(plan) => {
-                  console.log(`Starting mining for ${plan.name}`);
-                  onStartMining?.(plan);
-                }}
-              />
-            </div>
-          ))}
+        {/* Mining Plans Carousel */}
+        <div className="relative max-w-7xl mx-auto">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+          
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+
+          {/* Scrollable container */}
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto scrollbar-hide gap-6 pb-4 px-4 snap-x snap-mandatory scroll-smooth"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-testid="plans-carousel"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {allPlans.map((plan, index) => (
+              <div
+                key={plan.id}
+                className="flex-shrink-0 snap-start min-w-[280px] sm:min-w-[320px] md:min-w-[360px] xl:min-w-[380px]"
+              >
+                <MiningPlanCard
+                  plan={plan}
+                  highlightTop={plan.roiPercentage === topROI}
+                  onStartMining={(plan) => {
+                    console.log(`Starting mining for ${plan.name}`);
+                    onStartMining?.(plan);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Call to Action */}
