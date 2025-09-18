@@ -156,20 +156,20 @@ export default function SignUp() {
       {/* Modern Background Effects */}
       <div className="fixed inset-0 z-0">
         {/* Animated gradient orbs */}
-        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl animate-pulse opacity-70"></div>
-        <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl animate-pulse opacity-60" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDelay: "4s" }}></div>
+        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-70"></div>
+        <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-breathing opacity-60" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
         
         {/* Subtle radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50"></div>
         
         {/* Floating particles */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-ping opacity-60"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-ping opacity-40" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-ping opacity-50" style={{ animationDelay: "3s" }}></div>
+        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60 hidden md:block"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block" style={{ animationDelay: "3s" }}></div>
       </div>
 
-      <Card className="w-full max-w-lg relative z-10 border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20">
+      <Card className="w-full max-w-lg relative z-10 border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20 animate-scale-in">
         <CardHeader className="text-center space-y-6 p-8">
           {/* Navigation */}
           <div className="flex items-center justify-between">
@@ -215,11 +215,11 @@ export default function SignUp() {
             ))}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 animate-slide-in-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent tracking-tight">
               Join Ranking
             </CardTitle>
-            <CardDescription className="text-white/70 text-lg">
+            <CardDescription className="text-white/70 text-lg animate-fade-in animate-stagger-1">
               {step === 1 && "Start your crypto mining journey"}
               {step === 2 && "Verify your email address"}
               {step === 3 && "Complete your account setup"}
@@ -247,11 +247,11 @@ export default function SignUp() {
           {/* Step 1: Email Input */}
           {step === 1 && (
             <div className="space-y-8">
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+              <div className="text-center space-y-3 animate-fade-in">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
                   <Mail className="w-8 h-8 text-neon-purple" />
                 </div>
-                <p className="text-white/60">Enter your email to get started</p>
+                <p className="text-white/60 animate-slide-in-left animate-stagger-1">Enter your email to get started</p>
               </div>
 
               <Form {...emailForm}>
@@ -307,11 +307,11 @@ export default function SignUp() {
           {/* Step 2: Verification Code */}
           {step === 2 && (
             <div className="space-y-8">
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-mining-orange/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+              <div className="text-center space-y-4 animate-fade-in">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-mining-orange/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
                   <Shield className="w-8 h-8 text-neon-green" />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">We sent a verification code to</p>
                   <p className="text-white font-medium">{email}</p>
                 </div>
@@ -384,11 +384,11 @@ export default function SignUp() {
           {/* Step 3: Complete Registration */}
           {step === 3 && (
             <div className="space-y-8">
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+              <div className="text-center space-y-4 animate-fade-in">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
                   <Users className="w-8 h-8 text-mining-orange" />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">Almost there!</p>
                   <p className="text-white font-medium">Complete your mining account</p>
                 </div>

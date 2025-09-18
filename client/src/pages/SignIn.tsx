@@ -58,20 +58,20 @@ export default function SignIn() {
       {/* Modern Background Effects */}
       <div className="fixed inset-0 z-0">
         {/* Animated gradient orbs */}
-        <div className="absolute -top-10 -left-10 w-96 h-96 bg-gradient-to-r from-neon-green/30 to-neon-purple/30 rounded-full blur-3xl animate-pulse opacity-70"></div>
-        <div className="absolute -bottom-10 -right-10 w-[500px] h-[500px] bg-gradient-to-r from-neon-purple/20 to-mining-orange/20 rounded-full blur-3xl animate-pulse opacity-60" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-gradient-to-r from-mining-orange/20 to-neon-green/20 rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDelay: "4s" }}></div>
+        <div className="absolute -top-10 -left-10 w-96 h-96 bg-gradient-to-r from-neon-green/30 to-neon-purple/30 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-70"></div>
+        <div className="absolute -bottom-10 -right-10 w-[500px] h-[500px] bg-gradient-to-r from-neon-purple/20 to-mining-orange/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-breathing opacity-60" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-gradient-to-r from-mining-orange/20 to-neon-green/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
         
         {/* Subtle radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.02] to-transparent opacity-50"></div>
         
         {/* Floating particles */}
-        <div className="absolute top-32 right-20 w-2 h-2 bg-neon-green rounded-full animate-ping opacity-60"></div>
-        <div className="absolute top-60 left-32 w-1 h-1 bg-neon-purple rounded-full animate-ping opacity-40" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute bottom-40 right-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-ping opacity-50" style={{ animationDelay: "3s" }}></div>
+        <div className="absolute top-32 right-20 w-2 h-2 bg-neon-green rounded-full animate-float opacity-60 hidden md:block"></div>
+        <div className="absolute top-60 left-32 w-1 h-1 bg-neon-purple rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-40 right-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block" style={{ animationDelay: "3s" }}></div>
       </div>
 
-      <Card className="w-full max-w-lg relative z-10 border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-green/10 hover:shadow-neon-green/20 transition-all duration-500 hover:border-white/20">
+      <Card className="w-full max-w-lg relative z-10 border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-green/10 hover:shadow-neon-green/20 transition-all duration-500 hover:border-white/20 animate-scale-in">
         <CardHeader className="text-center space-y-6 p-8">
           {/* Navigation */}
           <div className="flex items-center justify-end">
@@ -84,15 +84,15 @@ export default function SignIn() {
 
           {/* Header Section */}
           <div className="space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
               <Shield className="w-8 h-8 text-neon-green" />
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-3 animate-slide-in-left">
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-green via-white to-mining-orange bg-clip-text text-transparent tracking-tight">
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-white/70 text-lg">
+              <CardDescription className="text-white/70 text-lg animate-fade-in animate-stagger-1">
                 Sign in to your mining dashboard
               </CardDescription>
             </div>
@@ -106,7 +106,7 @@ export default function SignIn() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="animate-slide-in-left animate-stagger-2">
                     <FormLabel className="text-white/80 font-medium">Email Address</FormLabel>
                     <FormControl>
                       <div className="relative group">
