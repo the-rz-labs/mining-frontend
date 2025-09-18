@@ -163,19 +163,9 @@ export default function SignIn() {
                 )}
               />
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-3 cursor-pointer group">
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 checked:bg-neon-green checked:border-neon-green transition-all duration-300 hover:border-white/40"
-                      data-testid="checkbox-remember"
-                    />
-                  </div>
-                  <span className="text-white/60 group-hover:text-white/80 transition-colors duration-300">Remember me</span>
-                </label>
-                
-                <Link href="#" className="text-neon-green hover:text-neon-green/80 hover:underline transition-colors duration-300 text-sm font-medium">
+              {/* Forgot password link */}
+              <div className="text-center">
+                <Link href="/forgot-password" className="text-neon-purple hover:text-neon-purple/80 text-sm font-medium transition-colors duration-300 hover:underline">
                   Forgot password?
                 </Link>
               </div>
