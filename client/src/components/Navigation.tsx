@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { Link } from "wouter";
 import Logo from "./Logo";
 
 interface NavigationProps {
-  onSignIn?: () => void;
-  onSignUp?: () => void;
+  // No auth props needed - using navigation instead
 }
 
-export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
+export default function Navigation({ }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -54,27 +54,23 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              data-testid="button-sign-in"
-              onClick={() => {
-                console.log("Sign In clicked");
-                onSignIn?.();
-              }}
-              className="text-foreground hover:text-neon-purple"
-            >
-              Sign In
-            </Button>
-            <Button
-              data-testid="button-sign-up"
-              onClick={() => {
-                console.log("Sign Up clicked");
-                onSignUp?.();
-              }}
-              className="bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold hover:shadow-lg hover:shadow-neon-purple/25 transition-all duration-300"
-            >
-              Sign Up
-            </Button>
+            <Link href="/sign-in">
+              <Button
+                variant="ghost"
+                data-testid="button-sign-in"
+                className="text-foreground hover:text-neon-purple"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button
+                data-testid="button-sign-up"
+                className="bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold hover:shadow-lg hover:shadow-neon-purple/25 transition-all duration-300"
+              >
+                Sign Up
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -118,29 +114,25 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
               </a>
             ))}
             <div className="flex flex-col space-y-2 px-3 py-2">
-              <Button
-                variant="ghost"
-                data-testid="mobile-button-sign-in"
-                onClick={() => {
-                  console.log("Mobile Sign In clicked");
-                  onSignIn?.();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full justify-start text-foreground hover:text-neon-purple"
-              >
-                Sign In
-              </Button>
-              <Button
-                data-testid="mobile-button-sign-up"
-                onClick={() => {
-                  console.log("Mobile Sign Up clicked");
-                  onSignUp?.();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold"
-              >
-                Sign Up
-              </Button>
+              <Link href="/sign-in">
+                <Button
+                  variant="ghost"
+                  data-testid="mobile-button-sign-in"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full justify-start text-foreground hover:text-neon-purple"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button
+                  data-testid="mobile-button-sign-up"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold"
+                >
+                  Sign Up
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
