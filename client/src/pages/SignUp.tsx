@@ -43,13 +43,25 @@ export default function SignUp() {
 
   const sendCodeMutation = useMutation({
     mutationFn: async (data: SendCodeForm) => {
-      const response = await apiRequest("POST", "/api/auth/send-code", data);
+      const response = await fetch("https://coinmaining.game/backend/api/users/auth/email/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.email }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to send verification code");
+      }
+      
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (responseData: any) => {
       toast({
         title: "Verification code sent!",
-        description: "Check your email for the 6-digit verification code."
+        description: responseData.detail || "Check your email for the 6-digit verification code."
       });
       setStep(2);
     },
