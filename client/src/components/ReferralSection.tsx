@@ -66,10 +66,10 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                 </p>
               </div>
 
-              {/* Vertical Layout - Referral Program First */}
-              <div className="space-y-12 mb-16">
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                 
-                {/* Referral Program Section */}
+                {/* Left Column - Referral Program */}
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center space-x-2 mb-4">
@@ -78,7 +78,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                     </div>
                   </div>
                   
-                  <div className="space-y-4 max-w-2xl mx-auto">
+                  <div className="space-y-4">
                     {referralSteps.map((step, index) => (
                       <div
                         key={index}
@@ -96,7 +96,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                   </div>
                 </div>
 
-                {/* Ranking Platform Section */}
+                {/* Right Column - Ranking Platform Connection */}
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center space-x-2 mb-4">
@@ -108,7 +108,7 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                     </p>
                   </div>
                   
-                  <div className="space-y-3 max-w-2xl mx-auto">
+                  <div className="space-y-3">
                     {rankingBenefits.map((benefit, index) => (
                       <div
                         key={index}
