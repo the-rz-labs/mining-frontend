@@ -39,6 +39,7 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                   data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
                   className="text-foreground hover:text-neon-purple transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium hover-elevate"
                   onClick={(e) => {
+                    e.preventDefault();
                     const element = document.querySelector(item.href);
                     if (element) {
                       element.scrollIntoView({ behavior: 'smooth' });
@@ -105,6 +106,7 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                 data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
                 className="text-foreground hover:text-neon-purple block px-3 py-2 rounded-md text-base font-medium hover-elevate"
                 onClick={(e) => {
+                  e.preventDefault();
                   const element = document.querySelector(item.href);
                   if (element) {
                     element.scrollIntoView({ behavior: 'smooth' });
