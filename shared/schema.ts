@@ -50,7 +50,7 @@ export const sendCodeSchema = z.object({
 
 export const verifyCodeSchema = z.object({
   email: z.string().email("Invalid email address"),
-  code: z.string().length(6, "Code must be 6 digits"),
+  code: z.string().length(5, "Code must be 5 digits"),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
