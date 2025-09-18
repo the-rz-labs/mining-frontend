@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Shield, TrendingUp, Check, Cpu, Activity, DollarSign } from "lucide-react";
-import miningVideo from "@assets/mining-video.mp4";
+import { ArrowRight, Zap, Shield, TrendingUp, Check } from "lucide-react";
+import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
@@ -10,8 +10,6 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [earnings, setEarnings] = useState(1247.56);
-  const [hashRate, setHashRate] = useState(342.7);
 
   const features = [
     { icon: Zap, text: "High-Performance Mining", color: "text-neon-purple" },
@@ -20,90 +18,31 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
     { icon: Check, text: "No Token Deposits", color: "text-neon-green" }
   ];
 
-  // Simulate live mining earnings and hash rate
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setEarnings(prev => prev + Math.random() * 2);
-      setHashRate(prev => prev + (Math.random() - 0.5) * 10);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Stable particle positions to prevent jitter on re-renders
-  const particlePositions = useMemo(() => ({
-    hashParticles: Array.from({ length: 15 }, (_, i) => ({
-      id: `hash-${i}`,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      color: i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#10b981' : '#f97316',
-      delay: i * 0.3,
-      duration: 2 + Math.random() * 3
-    })),
-    miningNodes: Array.from({ length: 8 }, (_, i) => ({
-      id: `node-${i}`,
-      left: 20 + (i * 10),
-      top: 30 + (i * 8),
-      color: i % 2 === 0 ? '#8b5cf6' : '#10b981',
-      delay: i * 0.7
-    })),
-    dataStreams: Array.from({ length: 5 }, (_, i) => ({
-      id: `stream-${i}`,
-      width: 200 + Math.random() * 300,
-      left: Math.random() * 70,
-      top: 20 + i * 15,
-      duration: 3 + i,
-      delay: i * 0.5
-    }))
-  }), []);
-
   return (
     <section
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
       data-testid="hero-section"
     >
-      {/* Mining Video Background */}
+      {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-          data-testid="mining-background-video"
-        >
-          <source src={miningVideo} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        
-        {/* Video overlay for better text readability */}
-        <div className="absolute inset-0 bg-background/60"></div>
-        
-        {/* Dynamic gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/95"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/10 via-mining-orange/5 to-neon-green/10 animate-pulse"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-neon-purple/[0.03] to-transparent animate-pulse" style={{animationDelay: '1s'}}></div>
+        <img
+          src={heroImage}
+          alt="Futuristic Mining Facility"
+          className="w-full h-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 via-transparent to-neon-green/5"></div>
       </div>
 
-      {/* Enhanced Animated Grid and Circuit Patterns */}
+      {/* Animated Grid Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 animate-pulse" style={{
-          backgroundImage: `
-            linear-gradient(rgba(142, 70, 255, 0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(142, 70, 255, 0.2) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-          animation: 'gridMove 20s linear infinite'
-        }}></div>
-        
-        {/* Additional circuit-like patterns */}
         <div className="absolute inset-0" style={{
           backgroundImage: `
-            linear-gradient(45deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px),
-            linear-gradient(-45deg, rgba(249, 115, 22, 0.1) 1px, transparent 1px)
+            linear-gradient(rgba(142, 70, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(142, 70, 255, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '100px 100px',
-          animation: 'circuitFlow 30s linear infinite reverse'
+          backgroundSize: '50px 50px'
         }}></div>
       </div>
 
@@ -151,7 +90,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
               }}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="relative group bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105"
+              className="relative group bg-gradient-to-r from-neon-purple to-mining-orange text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:shadow-neon-purple/30 transition-all duration-500 transform hover:scale-105"
             >
               <span className="flex items-center space-x-2">
                 <span>Start Mining Now</span>
@@ -174,25 +113,19 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             </Button>
           </div>
 
-          {/* Live Mining Stats */}
+          {/* Stats Preview */}
           <div className="pt-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               {[
-                { value: "24/7", label: "Mining Uptime", color: "text-neon-purple", icon: Activity },
-                { value: "99.9%", label: "Success Rate", color: "text-neon-green", icon: Shield },
-                { value: `${hashRate.toFixed(1)} MH/s`, label: "Current Hash Rate", color: "text-mining-orange", icon: Cpu },
-                { value: `$${earnings.toFixed(2)}`, label: "Total Earned", color: "text-neon-green", icon: DollarSign }
+                { value: "24/7", label: "Mining Uptime", color: "text-neon-purple" },
+                { value: "99.9%", label: "Success Rate", color: "text-neon-green" },
+                { value: "10K+", label: "Active Miners", color: "text-mining-orange" }
               ].map((stat, index) => (
-                <div key={index} className="text-center bg-card/30 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover-elevate group" data-testid={`hero-stat-${index}`}>
-                  <div className="flex justify-center mb-3">
-                    <div className={`p-2 rounded-full bg-card/50 border border-border/50`}>
-                      <stat.icon className={`w-5 h-5 ${stat.color} group-hover:scale-110 transition-transform duration-300`} />
-                    </div>
-                  </div>
-                  <div className={`text-xl sm:text-2xl font-bold ${stat.color} font-mono transition-all duration-300`}>
+                <div key={index} className="text-center" data-testid={`hero-stat-${index}`}>
+                  <div className={`text-2xl sm:text-3xl font-bold ${stat.color} font-mono`}>
                     {stat.value}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -200,51 +133,18 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
         </div>
       </div>
 
-      {/* Advanced Mining Particle Effects */}
+      {/* Floating Particles Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Mining hash particles */}
-        {particlePositions.hashParticles.map((particle) => (
+        {[...Array(6)].map((_, i) => (
           <div
-            key={particle.id}
-            className="absolute w-1 h-1 rounded-full animate-pulse"
+            key={i}
+            className="absolute w-2 h-2 rounded-full animate-pulse"
             style={{
-              backgroundColor: particle.color,
-              left: `${particle.left}%`,
-              top: `${particle.top}%`,
-              animationDelay: `${particle.delay}s`,
-              animationDuration: `${particle.duration}s`,
-              boxShadow: `0 0 10px currentColor`
-            }}
-          ></div>
-        ))}
-        
-        {/* Larger mining nodes */}
-        {particlePositions.miningNodes.map((node) => (
-          <div
-            key={node.id}
-            className="absolute w-3 h-3 rounded-full animate-ping"
-            style={{
-              backgroundColor: node.color,
-              left: `${node.left}%`,
-              top: `${node.top}%`,
-              animationDelay: `${node.delay}s`,
-              animationDuration: '4s',
-              boxShadow: `0 0 20px currentColor`
-            }}
-          ></div>
-        ))}
-        
-        {/* Data stream lines */}
-        {particlePositions.dataStreams.map((stream) => (
-          <div
-            key={stream.id}
-            className="absolute h-0.5 bg-gradient-to-r from-transparent via-neon-green to-transparent opacity-60"
-            style={{
-              width: `${stream.width}px`,
-              left: `${stream.left}%`,
-              top: `${stream.top}%`,
-              animation: `dataStream ${stream.duration}s linear infinite`,
-              animationDelay: `${stream.delay}s`
+              backgroundColor: i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#10b981' : '#f97316',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
             }}
           ></div>
         ))}
