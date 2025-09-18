@@ -54,8 +54,8 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
               <span className="block text-foreground font-mono">
                 MINE AND EARN
               </span>
-              <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse">
-                With RZ Token
+              <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse tracking-wider">
+                With RZ Tokens
               </span>
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
