@@ -28,15 +28,6 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
       ]
     },
     {
-      title: "Resources",
-      links: [
-        { name: "Documentation", href: "#docs" },
-        { name: "API Reference", href: "#api" },
-        { name: "Security", href: "#security" },
-        { name: "Help Center", href: "#help" }
-      ]
-    },
-    {
       title: "Company",
       links: [
         { name: "About Us", href: "#about" },
@@ -54,11 +45,6 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
     { name: "Email", icon: Mail, href: "#email", color: "hover:text-mining-orange" }
   ];
 
-  const securityFeatures = [
-    { icon: Shield, text: "Bank-Grade Security" },
-    { icon: Zap, text: "99.9% Uptime" },
-    { icon: Globe, text: "Global Infrastructure" }
-  ];
 
   return (
     <footer className="bg-gradient-to-t from-card/50 to-background border-t border-border" data-testid="footer">
@@ -75,15 +61,6 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
               </p>
             </div>
 
-            {/* Security Features */}
-            <div className="space-y-3">
-              {securityFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3" data-testid={`security-feature-${index}`}>
-                  <feature.icon className="w-4 h-4 text-neon-green" />
-                  <span className="text-sm text-muted-foreground">{feature.text}</span>
-                </div>
-              ))}
-            </div>
 
             {/* Social Links */}
             <div className="flex space-x-4">
