@@ -182,7 +182,7 @@ export default function SignIn() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-neon-green to-mining-orange hover:from-neon-green/80 hover:to-mining-orange/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-green/20 hover:shadow-neon-green/40 transition-all duration-300 hover:scale-[1.02]"
+                className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
                 disabled={signInMutation.isPending}
                 data-testid="button-signin"
               >
