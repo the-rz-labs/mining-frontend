@@ -248,8 +248,8 @@ export default function SignUp() {
           {step === 1 && (
             <div className="space-y-8">
               <div className="text-center space-y-3 animate-fade-in">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
-                  <Mail className="w-8 h-8 text-neon-purple" />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Mail className="w-8 h-8 text-neon-purple animate-pulse-glow" />
                 </div>
                 <p className="text-white/60 animate-slide-in-left animate-stagger-1">Enter your email to get started</p>
               </div>
@@ -308,8 +308,8 @@ export default function SignUp() {
           {step === 2 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-mining-orange/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
-                  <Shield className="w-8 h-8 text-neon-green" />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-mining-orange/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Shield className="w-8 h-8 text-neon-green animate-pulse-glow" />
                 </div>
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">We sent a verification code to</p>
@@ -385,8 +385,8 @@ export default function SignUp() {
           {step === 3 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
-                  <Users className="w-8 h-8 text-mining-orange" />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Users className="w-8 h-8 text-mining-orange animate-pulse-glow" />
                 </div>
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">Almost there!</p>

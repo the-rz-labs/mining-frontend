@@ -84,8 +84,8 @@ export default function SignIn() {
 
           {/* Header Section */}
           <div className="space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10 animate-pulse-glow">
-              <Shield className="w-8 h-8 text-neon-green" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+              <Shield className="w-8 h-8 text-neon-green animate-pulse-glow" />
             </div>
             
             <div className="space-y-3 animate-slide-in-left">
