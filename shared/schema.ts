@@ -27,8 +27,12 @@ export const insertUserSchema = createInsertSchema(users).omit({
   referralCode: true,
 }).extend({
   password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
   email: z.string().email("Invalid email address"),
   referredByUserId: z.string().optional(), // This will contain the referrer's referralCode, not userId
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 export const insertEmailVerificationSchema = createInsertSchema(emailVerifications).omit({

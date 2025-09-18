@@ -136,6 +136,7 @@ export default function SignUp() {
       email: "", 
       username: "", 
       password: "",
+      confirmPassword: "",
       referredByUserId: referralCode
     }
   });
@@ -474,6 +475,31 @@ export default function SignUp() {
                               placeholder="Create a secure password"
                               className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
                               data-testid="input-password"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <KeyRound className="w-4 h-4 text-white/30" />
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={signUpForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white/80 font-medium">Confirm Password</FormLabel>
+                        <FormControl>
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              type="password"
+                              placeholder="Confirm your password"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-confirm-password"
                             />
                             <div className="absolute inset-y-0 right-3 flex items-center">
                               <KeyRound className="w-4 h-4 text-white/30" />
