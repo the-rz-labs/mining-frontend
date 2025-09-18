@@ -1,4 +1,4 @@
-import logoImage from "@assets/logo-ranking_1758189789896.jpg";
+import logoImage from "@assets/Logo.3c792b77_1758189998712.png";
 
 export default function Logo() {
   return (
