@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Shield, TrendingUp, Ban } from "lucide-react";
+import { ArrowRight, Zap, Shield, TrendingUp, CheckCircle } from "lucide-react";
 import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
 
 interface HeroSectionProps {
@@ -14,7 +14,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const features = [
     { icon: Zap, text: "High-Performance Mining", color: "text-neon-purple" },
     { icon: Shield, text: "Secure & Transparent", color: "text-neon-green" },
-    { icon: Ban, text: "No Token Deposits", color: "text-cyber-blue" },
+    { icon: CheckCircle, text: "No Token Deposits", color: "text-neon-green" },
     { icon: TrendingUp, text: "Maximum ROI", color: "text-mining-orange" }
   ];
 
@@ -51,12 +51,15 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
         <div className="space-y-8">
           {/* Main Headline */}
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold">
-              <span className="block text-foreground font-mono tracking-tight mb-2">
-                MINE & EARN
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight font-mono">
+              <span className="text-foreground">
+                MINE & EARN WITH 
               </span>
-              <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse tracking-widest text-3xl sm:text-4xl lg:text-5xl font-light">
-                WITH RZ TOKENS
+              <span className="bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse font-black text-4xl sm:text-6xl lg:text-8xl">
+                RZ
+              </span>
+              <span className="text-foreground">
+                 TOKENS
               </span>
             </h1>
             <div className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed space-y-4">
