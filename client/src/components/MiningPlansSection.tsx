@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Cpu, Zap } from "lucide-react";
@@ -14,6 +14,15 @@ interface MiningPlansSectionProps {
 
 export default function MiningPlansSection({ onStartMining }: MiningPlansSectionProps) {
   const [activeTab, setActiveTab] = useState<"MGC" | "RZ">("MGC");
+
+  // Auto-scroll effect between MGC and RZ plans
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTab(prev => prev === "MGC" ? "RZ" : "MGC");
+    }, 8000); // Switch every 8 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   // todo: remove mock functionality - replace with real mining plan data
   const mgcPlans: MiningPlan[] = [
@@ -194,7 +203,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
         </div>
 
         {/* Mining Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-none mx-auto">
           {currentPlans.map((plan, index) => (
             <div
               key={plan.id}

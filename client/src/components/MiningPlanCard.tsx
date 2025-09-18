@@ -47,7 +47,7 @@ export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardPr
 
   return (
     <div
-      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 ${theme.bg} ${theme.border} ${isHovered ? `shadow-2xl ${theme.glow}` : 'shadow-lg'}`}
+      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 h-[580px] w-full ${theme.bg} ${theme.border} ${isHovered ? `shadow-2xl ${theme.glow}` : 'shadow-lg'}`}
       data-testid={`mining-card-${plan.token.toLowerCase()}-${plan.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -64,7 +64,7 @@ export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardPr
       {/* Glow Effect Background */}
       <div className={`absolute -inset-1 ${theme.button} rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl`}></div>
 
-      <div className="relative bg-card/80 backdrop-blur-sm p-6">
+      <div className="relative bg-card/80 backdrop-blur-sm p-6 h-full flex flex-col">
         {/* Header */}
         <div className="text-center mb-6">
           <h3 className={`text-2xl font-bold ${theme.primary} mb-2 font-mono`}>
@@ -85,7 +85,7 @@ export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardPr
           <img
             src={plan.image}
             alt={`${plan.name} Mining Rig`}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-36 object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className={`absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
         </div>
@@ -124,32 +124,34 @@ export default function MiningPlanCard({ plan, onStartMining }: MiningPlanCardPr
         </div>
 
         {/* Features */}
-        <div className="mb-6">
+        <div className="mb-6 flex-grow">
           <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center">
             <TrendingUp className={`w-4 h-4 ${theme.primary} mr-2`} />
             Key Features
           </h4>
           <ul className="space-y-2">
-            {plan.features.map((feature, index) => (
-              <li key={index} className="flex items-center space-x-2">
-                <div className={`w-1.5 h-1.5 rounded-full ${theme.button}`}></div>
-                <span className="text-sm text-muted-foreground">{feature}</span>
+            {plan.features.slice(0, 3).map((feature, index) => (
+              <li key={index} className="flex items-start space-x-2">
+                <div className={`w-1.5 h-1.5 rounded-full ${theme.button} mt-1.5 flex-shrink-0`}></div>
+                <span className="text-sm text-muted-foreground leading-snug">{feature}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* CTA Button */}
-        <Button
-          className={`w-full ${theme.button} text-white font-semibold py-3 hover:shadow-lg hover:${theme.glow} transition-all duration-300`}
-          data-testid={`button-start-mining-${plan.token.toLowerCase()}-${plan.id}`}
-          onClick={() => {
-            console.log(`Starting mining for ${plan.name} (${plan.token})`);
-            onStartMining?.(plan);
-          }}
-        >
-          Start Mining {plan.token}
-        </Button>
+        <div className="mt-auto">
+          <Button
+            className={`w-full ${theme.button} text-white font-semibold py-3 hover:shadow-lg hover:${theme.glow} transition-all duration-300`}
+            data-testid={`button-start-mining-${plan.token.toLowerCase()}-${plan.id}`}
+            onClick={() => {
+              console.log(`Starting mining for ${plan.name} (${plan.token})`);
+              onStartMining?.(plan);
+            }}
+          >
+            Start Mining {plan.token}
+          </Button>
+        </div>
       </div>
     </div>
   );
