@@ -152,42 +152,74 @@ export default function SignUp() {
   }, [step, email, referralCode, codeForm, signUpForm]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      {/* Background Effects */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Modern Background Effects */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-neon-purple/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-neon-green/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-mining-orange/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl animate-pulse opacity-70"></div>
+        <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl animate-pulse opacity-60" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDelay: "4s" }}></div>
+        
+        {/* Subtle radial gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50"></div>
+        
+        {/* Floating particles */}
+        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-ping opacity-60"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-ping opacity-40" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-ping opacity-50" style={{ animationDelay: "3s" }}></div>
       </div>
 
-      <Card className="w-full max-w-md relative z-10 border-2 border-neon-purple/20 bg-card/95 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
+      <Card className="w-full max-w-lg relative z-10 border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20">
+        <CardHeader className="text-center space-y-6 p-8">
+          {/* Navigation */}
           <div className="flex items-center justify-between">
             {step > 1 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleBackStep}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 hover:scale-110"
                 data-testid="button-back"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 mr-1" />
                 Back
               </Button>
             )}
             <div className="flex-1" />
             <Link href="/sign-in">
-              <Button variant="ghost" size="sm" data-testid="link-signin">
+              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 hover:scale-110" data-testid="link-signin">
                 Sign In
               </Button>
             </Link>
           </div>
 
-          <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-neon-green bg-clip-text text-transparent">
+          {/* Progress Steps */}
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            {[1, 2, 3].map((stepNumber) => (
+              <div key={stepNumber} className="flex items-center">
+                <div 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
+                    step >= stepNumber 
+                      ? 'bg-gradient-to-r from-neon-purple to-neon-green text-white shadow-lg shadow-neon-purple/50' 
+                      : 'bg-white/10 text-white/40 border border-white/20'
+                  }`}
+                >
+                  {step > stepNumber ? '✓' : stepNumber}
+                </div>
+                {stepNumber < 3 && (
+                  <div className={`w-8 h-0.5 mx-2 transition-all duration-500 ${
+                    step > stepNumber ? 'bg-gradient-to-r from-neon-purple to-neon-green' : 'bg-white/20'
+                  }`}></div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent tracking-tight">
               Join Ranking
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription className="text-white/70 text-lg">
               {step === 1 && "Start your crypto mining journey"}
               {step === 2 && "Verify your email address"}
               {step === 3 && "Complete your account setup"}
@@ -211,115 +243,133 @@ export default function SignUp() {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="p-8 space-y-8">
           {/* Step 1: Email Input */}
           {step === 1 && (
-            <Form {...emailForm}>
-              <form onSubmit={emailForm.handleSubmit(onSendCode)} className="space-y-4">
-                <FormField
-                  control={emailForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-neon-purple" />
-                        Email Address
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="email"
-                          placeholder="your.email@example.com"
-                          className="border-2 border-muted focus:border-neon-purple/50 transition-colors"
-                          data-testid="input-email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold"
-                  disabled={sendCodeMutation.isPending}
-                  data-testid="button-send-code"
-                >
-                  {sendCodeMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Sending Code...
-                    </>
-                  ) : (
-                    <>
-                      Send Verification Code
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-          )}
-
-          {/* Step 2: Verification Code */}
-          {step === 2 && (
-            <div className="space-y-4">
-              <div className="text-center space-y-2">
-                <Shield className="w-8 h-8 text-neon-green mx-auto" />
-                <p className="text-sm text-muted-foreground">
-                  We sent a 6-digit code to <strong className="text-foreground">{email}</strong>
-                </p>
+            <div className="space-y-8">
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Mail className="w-8 h-8 text-neon-purple" />
+                </div>
+                <p className="text-white/60">Enter your email to get started</p>
               </div>
 
-              <Form {...codeForm}>
-                <form onSubmit={codeForm.handleSubmit(onVerifyCode)} className="space-y-4">
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onSendCode)} className="space-y-6">
                   <FormField
-                    control={codeForm.control}
-                    name="code"
+                    control={emailForm.control}
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <KeyRound className="w-4 h-4 text-neon-green" />
-                          Verification Code
-                        </FormLabel>
+                        <FormLabel className="text-white/80 font-medium">Email Address</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Enter 6-digit code"
-                            className="border-2 border-muted focus:border-neon-green/50 transition-colors text-center font-mono text-lg tracking-wider"
-                            maxLength={6}
-                            data-testid="input-code"
-                          />
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              type="email"
+                              placeholder="your.email@example.com"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-purple/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-email"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <Mail className="w-4 h-4 text-white/30" />
+                            </div>
+                          </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-400" />
                       </FormItem>
                     )}
                   />
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-neon-green to-mining-orange hover:from-neon-green/80 hover:to-mining-orange/80 text-white font-semibold"
-                    disabled={verifyCodeMutation.isPending}
-                    data-testid="button-verify-code"
+                    className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
+                    disabled={sendCodeMutation.isPending}
+                    data-testid="button-send-code"
                   >
-                    {verifyCodeMutation.isPending ? (
+                    {sendCodeMutation.isPending ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        Verifying...
+                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                        Sending Code...
                       </>
                     ) : (
                       <>
-                        Verify Email
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        Send Verification Code
+                        <ArrowRight className="w-5 h-5 ml-2" />
                       </>
                     )}
                   </Button>
                 </form>
               </Form>
+            </div>
+          )}
+
+          {/* Step 2: Verification Code */}
+          {step === 2 && (
+            <div className="space-y-8">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-mining-orange/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Shield className="w-8 h-8 text-neon-green" />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-white/60">We sent a verification code to</p>
+                  <p className="text-white font-medium">{email}</p>
+                </div>
+              </div>
+
+              <Form {...codeForm}>
+                <form onSubmit={codeForm.handleSubmit(onVerifyCode)} className="space-y-6">
+                  <FormField
+                    control={codeForm.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white/80 font-medium">Verification Code</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              placeholder="000000"
+                              className="h-14 bg-white/5 border-white/10 text-white placeholder:text-white/30 text-center font-mono text-2xl tracking-[0.5em] rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300"
+                              maxLength={6}
+                              data-testid="input-code"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <KeyRound className="w-5 h-5 text-white/30" />
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-gradient-to-r from-neon-green to-mining-orange hover:from-neon-green/80 hover:to-mining-orange/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-green/20 hover:shadow-neon-green/40 transition-all duration-300 hover:scale-[1.02]"
+                    disabled={verifyCodeMutation.isPending}
+                    data-testid="button-verify-code"
+                  >
+                    {verifyCodeMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        Verify Email
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </>
+                    )}
+                  </Button>
+
+                </form>
+              </Form>
 
               <Button
+                type="button"
                 variant="ghost"
-                className="w-full text-muted-foreground hover:text-neon-purple"
+                className="w-full text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
                 onClick={() => {
                   setStep(1);
                   sendCodeMutation.reset();
@@ -333,33 +383,39 @@ export default function SignUp() {
 
           {/* Step 3: Complete Registration */}
           {step === 3 && (
-            <div className="space-y-4">
-              <div className="text-center space-y-2">
-                <div className="w-8 h-8 rounded-full bg-neon-green/20 flex items-center justify-center mx-auto">
-                  <Users className="w-4 h-4 text-neon-green" />
+            <div className="space-y-8">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Users className="w-8 h-8 text-mining-orange" />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Almost done! Create your mining account
-                </p>
+                <div className="space-y-2">
+                  <p className="text-white/60">Almost there!</p>
+                  <p className="text-white font-medium">Complete your mining account</p>
+                </div>
               </div>
 
               <Form {...signUpForm}>
-                <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4">
+                <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-6">
                   <FormField
                     control={signUpForm.control}
                     name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel className="text-white/80 font-medium">Username</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Choose a username"
-                            className="border-2 border-muted focus:border-mining-orange/50 transition-colors"
-                            data-testid="input-username"
-                          />
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              placeholder="Choose a unique username"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-username"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <Users className="w-4 h-4 text-white/30" />
+                            </div>
+                          </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -369,17 +425,22 @@ export default function SignUp() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-white/80 font-medium">Password</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="password"
-                            placeholder="Create a secure password"
-                            className="border-2 border-muted focus:border-mining-orange/50 transition-colors"
-                            data-testid="input-password"
-                          />
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              type="password"
+                              placeholder="Create a secure password"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-password"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <KeyRound className="w-4 h-4 text-white/30" />
+                            </div>
+                          </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -389,26 +450,28 @@ export default function SignUp() {
                     name="referredByUserId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-mining-orange" />
-                          Referral Code (Optional)
-                        </FormLabel>
+                        <FormLabel className="text-white/80 font-medium">Referral Code (Optional)</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Enter referral code"
-                            className="border-2 border-muted focus:border-mining-orange/50 transition-colors"
-                            data-testid="input-referral"
-                          />
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              placeholder="Enter referral code"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-referral"
+                            />
+                            <div className="absolute inset-y-0 right-3 flex items-center">
+                              <Users className="w-4 h-4 text-white/30" />
+                            </div>
+                          </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-400" />
                       </FormItem>
                     )}
                   />
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-mining-orange to-neon-purple hover:from-mining-orange/80 hover:to-neon-purple/80 text-white font-semibold"
+                    className="w-full h-12 bg-gradient-to-r from-mining-orange to-neon-purple hover:from-mining-orange/80 hover:to-neon-purple/80 text-white font-semibold rounded-xl shadow-lg shadow-mining-orange/20 hover:shadow-mining-orange/40 transition-all duration-300 hover:scale-[1.02]"
                     disabled={signUpMutation.isPending}
                     data-testid="button-create-account"
                   >
