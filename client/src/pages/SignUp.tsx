@@ -108,7 +108,7 @@ export default function SignUp() {
     onSuccess: (data: any) => {
       toast({
         title: "Account created successfully!",
-        description: `Welcome to Ranking, ${data.user.username}!`
+        description: `Welcome to Mining, ${data.user.username}!`
       });
       navigate("/"); // Navigate to home or dashboard
     },
@@ -217,7 +217,7 @@ export default function SignUp() {
 
           <div className="space-y-3 animate-slide-in-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent tracking-tight">
-              Join Ranking
+              Join Mining
             </CardTitle>
             <CardDescription className="text-white/70 text-lg animate-fade-in animate-stagger-1">
               {step === 1 && "Start your crypto mining journey"}
@@ -346,7 +346,7 @@ export default function SignUp() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-neon-green to-mining-orange hover:from-neon-green/80 hover:to-mining-orange/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-green/20 hover:shadow-neon-green/40 transition-all duration-300 hover:scale-[1.02]"
+                    className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
                     disabled={verifyCodeMutation.isPending}
                     data-testid="button-verify-code"
                   >
