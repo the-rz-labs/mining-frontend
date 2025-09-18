@@ -185,9 +185,9 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
                   console.log(`Switched to ${tab} plans`);
                   setActiveTab(tab);
                 }}
-                className={`px-8 py-4 text-lg font-semibold transition-all duration-300 ${
+                className={`px-8 py-4 text-lg font-semibold transition-all duration-500 transform hover:scale-105 ${
                   activeTab === tab 
-                    ? tabColors[tab].active
+                    ? tabColors[tab].active + " shadow-lg"
                     : `${tabColors[tab].inactive} border-2`
                 }`}
               >
@@ -203,12 +203,15 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
         </div>
 
         {/* Mining Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-none mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-8 max-w-7xl mx-auto transition-all duration-700 ease-in-out">
           {currentPlans.map((plan, index) => (
             <div
               key={plan.id}
-              className="transform transition-all duration-500"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="transform transition-all duration-700 ease-in-out opacity-0 translate-y-4 animate-fade-in"
+              style={{ 
+                animationDelay: `${index * 150}ms`,
+                animationFillMode: 'forwards'
+              }}
             >
               <MiningPlanCard
                 plan={plan}
