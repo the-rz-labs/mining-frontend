@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Shield, TrendingUp, Check, Cpu, Activity, DollarSign } from "lucide-react";
-import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
-import miningRigImage from "@assets/stock_images/cryptocurrency_minin_edbec455.jpg";
+import miningVideo from "@assets/mining-video.mp4";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
@@ -63,23 +62,22 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
       data-testid="hero-section"
     >
-      {/* Multi-layered Background with Mining Rig */}
+      {/* Mining Video Background */}
       <div className="absolute inset-0 z-0">
-        {/* Primary mining facility background */}
-        <img
-          src={heroImage}
-          alt="Futuristic Mining Facility"
-          className="w-full h-full object-cover opacity-30"
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          data-testid="mining-background-video"
+        >
+          <source src={miningVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
         
-        {/* Secondary mining rig overlay */}
-        <div className="absolute inset-0">
-          <img
-            src={miningRigImage}
-            alt="Active Mining Rig"
-            className="w-full h-full object-cover opacity-20 mix-blend-overlay"
-          />
-        </div>
+        {/* Video overlay for better text readability */}
+        <div className="absolute inset-0 bg-background/60"></div>
         
         {/* Dynamic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/95"></div>
