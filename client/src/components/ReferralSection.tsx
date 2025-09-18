@@ -1,12 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, ArrowRight, Trophy, Star, Crown, Gamepad2, Shield, Rocket } from "lucide-react";
+import { Users, TrendingUp, ArrowRight, Gift, Trophy, Star, Crown, Gamepad2, Shield, Rocket } from "lucide-react";
 
 interface ReferralSectionProps {
   onLearnMore?: () => void;
 }
 
 export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
+  const referralSteps = [
+    "Share your unique referral link",
+    "Friends join and start mining",
+    "Both earn bonus rewards and increased hash rates"
+  ];
+
   const rankingBenefits = [
     { feature: "Level Promotions", icon: Trophy, color: "text-neon-purple", description: "Advance through tiers on Ranking platform" },
     { feature: "Exclusive Mining Plans", icon: Crown, color: "text-mining-orange", description: "Access VIP packages via Ranking status" },
@@ -14,9 +20,9 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
   ];
 
   const boostRewards = [
+    { value: "5%", label: "Referral Commission", icon: Gift, color: "text-neon-purple" },
     { value: "+15%", label: "Ranking Hash Boost", icon: Rocket, color: "text-neon-green" },
-    { value: "∞", label: "Gaming Rewards", icon: Gamepad2, color: "text-mining-orange" },
-    { value: "VIP", label: "Exclusive Access", icon: Crown, color: "text-neon-purple" }
+    { value: "∞", label: "Gaming Rewards", icon: Gamepad2, color: "text-mining-orange" }
   ];
 
   return (
@@ -35,8 +41,8 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
             </h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Unlock the full potential of our platform through Ranking platform progression and gaming activities. 
-            Connect your account, climb the ranks, and access exclusive mining plans with enhanced rewards.
+            Unlock the full potential of our platform through referrals, Ranking platform progression, and gaming activities. 
+            Build your network, climb the ranks, and access exclusive mining plans with enhanced rewards.
           </p>
         </div>
 
@@ -56,36 +62,65 @@ export default function ReferralSection({ onLearnMore }: ReferralSectionProps) {
                   </h3>
                 </div>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Connect to Ranking platform and engage in gaming activities to maximize your mining potential and unlock exclusive benefits.
+                  Combine referrals, Ranking platform progression, and gaming activities to maximize your mining potential and unlock exclusive benefits.
                 </p>
               </div>
 
-              {/* Ranking Platform Connection - Centered */}
-              <div className="max-w-2xl mx-auto mb-16">
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                
+                {/* Left Column - Referral Program */}
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <div className="inline-flex items-center space-x-2 mb-4">
+                      <Users className="w-6 h-6 text-mining-orange" />
+                      <h4 className="text-2xl font-bold text-foreground">Referral Program</h4>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {referralSteps.map((step, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-4 p-4 rounded-xl bg-card/40 border border-border/30 hover-elevate group/step transition-all duration-300"
+                        data-testid={`step-${index + 1}`}
+                      >
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-mining-orange text-background font-bold text-sm group-hover/step:scale-110 transition-transform duration-300">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <span className="text-foreground font-medium">{step}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right Column - Ranking Platform Connection */}
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center space-x-2 mb-4">
                       <Gamepad2 className="w-6 h-6 text-neon-green" />
-                      <h4 className="text-3xl font-bold text-foreground">Ranking Platform</h4>
+                      <h4 className="text-2xl font-bold text-foreground">Ranking Platform</h4>
                     </div>
-                    <p className="text-lg text-muted-foreground mb-6">
+                    <p className="text-sm text-muted-foreground mb-6">
                       Connect your account to unlock exclusive benefits
                     </p>
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {rankingBenefits.map((benefit, index) => (
                       <div
                         key={index}
-                        className="flex items-center space-x-6 p-6 rounded-xl bg-card/40 border border-border/30 hover-elevate group/benefit transition-all duration-300"
+                        className="flex items-center space-x-4 p-4 rounded-xl bg-card/40 border border-border/30 hover-elevate group/benefit transition-all duration-300"
                         data-testid={`ranking-${benefit.feature.toLowerCase().replace(/\s+/g, '-')}`}
                       >
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-card to-card/60 border border-border/50">
-                          <benefit.icon className={`w-6 h-6 ${benefit.color} group-hover/benefit:scale-110 transition-transform duration-300`} />
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-card to-card/60 border border-border/50">
+                          <benefit.icon className={`w-5 h-5 ${benefit.color} group-hover/benefit:scale-110 transition-transform duration-300`} />
                         </div>
                         <div className="flex-1">
-                          <div className={`font-bold text-lg ${benefit.color}`}>{benefit.feature}</div>
-                          <div className="text-muted-foreground">{benefit.description}</div>
+                          <div className={`font-bold ${benefit.color}`}>{benefit.feature}</div>
+                          <div className="text-sm text-muted-foreground">{benefit.description}</div>
                         </div>
                       </div>
                     ))}

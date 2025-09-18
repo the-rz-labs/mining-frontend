@@ -16,7 +16,7 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
     { name: "Mining Plans", href: "#plans" },
     { name: "Live Stats", href: "#stats" },
     { name: "Tokens", href: "#tokens" },
-    { name: "Boost Rewards", href: "#referral" },
+    { name: "Referrals", href: "#referral" },
     { name: "Contact", href: "#contact" },
   ];
 
