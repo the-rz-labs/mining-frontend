@@ -296,29 +296,6 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-neon-purple/10 via-mining-orange/10 to-neon-green/10 rounded-xl p-8 border border-neon-purple/20">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Need a Custom Solution?
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Our enterprise team can design custom mining solutions for large-scale operations. 
-              Get dedicated hardware, priority support, and tailored configurations.
-            </p>
-            <Button
-              size="lg"
-              data-testid="button-custom-solution"
-              onClick={() => {
-                console.log("Custom solution inquiry clicked");
-              }}
-              className="bg-gradient-to-r from-mining-orange to-neon-green text-white font-semibold px-8 py-4 hover:shadow-lg hover:shadow-mining-orange/25 transition-all duration-300"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Contact Enterprise Sales
-            </Button>
-          </div>
-        </div>
       </div>
     </section>
   );
