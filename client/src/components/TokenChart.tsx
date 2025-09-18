@@ -138,11 +138,6 @@ export default function TokenChart({ token }: TokenChartProps) {
             <p className="text-xs text-muted-foreground">
               {token === "MGC" ? "Mining Gaming Coin" : "Ranking Zone Token"}
             </p>
-            {token === "RZ" && (
-              <p className="text-xs text-neon-green font-medium mt-1">
-                Stake RZ tokens • Earn daily rewards
-              </p>
-            )}
           </div>
         </div>
         <Badge 
