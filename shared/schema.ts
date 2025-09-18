@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,6 +18,7 @@ export const emailVerifications = pgTable("email_verifications", {
   codeHash: text("code_hash").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   attempts: integer("attempts").default(0).notNull(),
+  verified: boolean("verified").default(false).notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -35,6 +36,7 @@ export const insertEmailVerificationSchema = createInsertSchema(emailVerificatio
   codeHash: true,
   expiresAt: true,
   attempts: true,
+  verified: true,
 });
 
 export const signInSchema = z.object({

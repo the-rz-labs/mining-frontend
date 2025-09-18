@@ -42,7 +42,10 @@ export default function SignUp() {
   });
 
   const sendCodeMutation = useMutation({
-    mutationFn: (data: SendCodeForm) => apiRequest("POST", "/api/auth/send-code", data),
+    mutationFn: async (data: SendCodeForm) => {
+      const response = await apiRequest("POST", "/api/auth/send-code", data);
+      return response.json();
+    },
     onSuccess: () => {
       toast({
         title: "Verification code sent!",
@@ -66,7 +69,10 @@ export default function SignUp() {
   });
 
   const verifyCodeMutation = useMutation({
-    mutationFn: (data: VerifyCodeForm) => apiRequest("POST", "/api/auth/verify-code", data),
+    mutationFn: async (data: VerifyCodeForm) => {
+      const response = await apiRequest("POST", "/api/auth/verify-code", data);
+      return response.json();
+    },
     onSuccess: () => {
       toast({
         title: "Email verified!",
@@ -95,7 +101,10 @@ export default function SignUp() {
   });
 
   const signUpMutation = useMutation({
-    mutationFn: (data: SignUpForm) => apiRequest("POST", "/api/auth/sign-up", data),
+    mutationFn: async (data: SignUpForm) => {
+      const response = await apiRequest("POST", "/api/auth/sign-up", data);
+      return response.json();
+    },
     onSuccess: (data: any) => {
       toast({
         title: "Account created successfully!",

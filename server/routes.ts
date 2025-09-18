@@ -9,6 +9,42 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 
+// Simple in-memory rate limiter
+class RateLimiter {
+  private attempts: Map<string, { count: number; windowStart: number }> = new Map();
+  
+  isRateLimited(key: string, maxAttempts: number, windowMs: number): boolean {
+    const now = Date.now();
+    const record = this.attempts.get(key);
+    
+    if (!record || now - record.windowStart > windowMs) {
+      this.attempts.set(key, { count: 1, windowStart: now });
+      return false;
+    }
+    
+    if (record.count >= maxAttempts) {
+      return true;
+    }
+    
+    record.count++;
+    return false;
+  }
+  
+  cleanup() {
+    const now = Date.now();
+    for (const [key, record] of this.attempts.entries()) {
+      if (now - record.windowStart > 3600000) { // 1 hour cleanup
+        this.attempts.delete(key);
+      }
+    }
+  }
+}
+
+const rateLimiter = new RateLimiter();
+
+// Cleanup rate limiter every hour
+setInterval(() => rateLimiter.cleanup(), 3600000);
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes - prefix all routes with /api
   
@@ -16,6 +52,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/send-code", async (req, res) => {
     try {
       const { email } = sendCodeSchema.parse(req.body);
+      
+      // Rate limiting: 3 requests per email per 10 minutes
+      const emailKey = `send-code:${email}`;
+      const ipKey = `send-code-ip:${req.ip}`;
+      
+      if (rateLimiter.isRateLimited(emailKey, 3, 10 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many verification requests. Please wait before requesting a new code." });
+      }
+      
+      if (rateLimiter.isRateLimited(ipKey, 10, 10 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many requests from this IP. Please wait." });
+      }
       
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
@@ -44,6 +92,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, code } = verifyCodeSchema.parse(req.body);
       
+      // Rate limiting: 5 verification attempts per email per 10 minutes
+      const emailKey = `verify-code:${email}`;
+      const ipKey = `verify-code-ip:${req.ip}`;
+      
+      if (rateLimiter.isRateLimited(emailKey, 5, 10 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many verification attempts. Please wait before trying again." });
+      }
+      
+      if (rateLimiter.isRateLimited(ipKey, 15, 10 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many requests from this IP. Please wait." });
+      }
+      
       const verification = await storage.getEmailVerification(email);
       if (!verification) {
         return res.status(400).json({ error: "No verification found for this email" });
@@ -67,6 +127,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid verification code" });
       }
       
+      // Mark email as verified
+      await storage.markEmailVerified(email);
+      
       res.json({ message: "Email verified successfully" });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -84,8 +147,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Verify that email was verified
       const verification = await storage.getEmailVerification(userData.email);
-      if (!verification) {
-        return res.status(400).json({ error: "Email not verified" });
+      if (!verification || !verification.verified) {
+        return res.status(400).json({ error: "Email verification required" });
       }
       
       // Check if user already exists
@@ -125,13 +188,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, password } = signInSchema.parse(req.body);
       
+      // Rate limiting: 5 sign-in attempts per email per 15 minutes
+      const emailKey = `sign-in:${email}`;
+      const ipKey = `sign-in-ip:${req.ip}`;
+      
+      if (rateLimiter.isRateLimited(emailKey, 5, 15 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many sign-in attempts. Please wait before trying again." });
+      }
+      
+      if (rateLimiter.isRateLimited(ipKey, 20, 15 * 60 * 1000)) {
+        return res.status(429).json({ error: "Too many requests from this IP. Please wait." });
+      }
+      
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(400).json({ error: "Invalid email or password" });
       }
       
-      // Verify password (in production, use proper hashing comparison)
-      if (user.passwordHash !== password) {
+      // Verify password using proper hashing
+      const isValidPassword = await storage.verifyPassword(password, user.passwordHash);
+      if (!isValidPassword) {
         return res.status(400).json({ error: "Invalid email or password" });
       }
       

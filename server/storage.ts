@@ -1,5 +1,8 @@
 import { type User, type InsertUser, type EmailVerification, type InsertEmailVerification } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { randomUUID, scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
 
 // modify the interface with any CRUD methods
 // you might need
@@ -11,11 +14,13 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  verifyPassword(password: string, hashedPassword: string): Promise<boolean>;
   
   // Email verification operations
   createEmailVerification(verification: InsertEmailVerification): Promise<EmailVerification>;
   getEmailVerification(email: string): Promise<EmailVerification | undefined>;
   updateEmailVerificationAttempts(email: string, attempts: number): Promise<void>;
+  markEmailVerified(email: string): Promise<void>;
   deleteEmailVerification(email: string): Promise<void>;
 }
 
@@ -56,8 +61,10 @@ export class MemStorage implements IStorage {
     // Generate a unique referral code (base36 from timestamp + random)
     const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    // Hash the password (for now just store as is, should be hashed in production)
-    const passwordHash = insertUser.password;
+    // Hash the password with salt using scrypt
+    const salt = randomBytes(32);
+    const hashedPassword = (await scryptAsync(insertUser.password, salt, 64)) as Buffer;
+    const passwordHash = `${salt.toString('hex')}:${hashedPassword.toString('hex')}`;
     
     // Find referrer if referralCode is provided
     let referredByUserId: string | null = null;
@@ -81,6 +88,21 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+    try {
+      const [saltHex, hashHex] = hashedPassword.split(':');
+      if (!saltHex || !hashHex) return false;
+      
+      const salt = Buffer.from(saltHex, 'hex');
+      const hash = Buffer.from(hashHex, 'hex');
+      
+      const hashedInput = (await scryptAsync(password, salt, 64)) as Buffer;
+      return timingSafeEqual(hash, hashedInput);
+    } catch {
+      return false;
+    }
+  }
+
   // Email verification operations
   async createEmailVerification(insertVerification: InsertEmailVerification): Promise<EmailVerification> {
     const id = randomUUID();
@@ -99,7 +121,8 @@ export class MemStorage implements IStorage {
       email: insertVerification.email.toLowerCase(),
       codeHash,
       expiresAt,
-      attempts: 0
+      attempts: 0,
+      verified: false
     };
     
     this.emailVerifications.set(insertVerification.email.toLowerCase(), verification);
@@ -114,6 +137,14 @@ export class MemStorage implements IStorage {
     const verification = this.emailVerifications.get(email.toLowerCase());
     if (verification) {
       verification.attempts = attempts;
+      this.emailVerifications.set(email.toLowerCase(), verification);
+    }
+  }
+
+  async markEmailVerified(email: string): Promise<void> {
+    const verification = this.emailVerifications.get(email.toLowerCase());
+    if (verification) {
+      verification.verified = true;
       this.emailVerifications.set(email.toLowerCase(), verification);
     }
   }
