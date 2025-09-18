@@ -39,8 +39,10 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                   data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
                   className="text-foreground hover:text-neon-purple transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium hover-elevate"
                   onClick={(e) => {
-                    e.preventDefault();
-                    console.log(`Navigating to ${item.name}`);
+                    const element = document.querySelector(item.href);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
                   }}
                 >
                   {item.name}
@@ -103,8 +105,10 @@ export default function Navigation({ onSignIn, onSignUp }: NavigationProps) {
                 data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
                 className="text-foreground hover:text-neon-purple block px-3 py-2 rounded-md text-base font-medium hover-elevate"
                 onClick={(e) => {
-                  e.preventDefault();
-                  console.log(`Mobile nav: ${item.name}`);
+                  const element = document.querySelector(item.href);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
                   setMobileMenuOpen(false);
                 }}
               >
