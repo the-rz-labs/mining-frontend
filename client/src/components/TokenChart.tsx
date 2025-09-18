@@ -1,40 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, BarChart3, Calendar, DollarSign } from "lucide-react";
 
-type TimeRange = "1H" | "1D" | "1W" | "1M" | "1Y";
+type TimeRange = "1W" | "1M" | "1Y";
 type TokenType = "MGC" | "RZ";
 
 interface TokenChartProps {
   token: TokenType;
 }
 
-export default function TokenChart({ token }: TokenChartProps) {
-  const [selectedRange, setSelectedRange] = useState<TimeRange>("1D");
-  
-  // todo: remove mock functionality - replace with real chart data
-  const mockData = {
-    MGC: {
-      currentPrice: 0.847,
-      change24h: 12.34,
-      volume: "2.4M",
-      marketCap: "45.2M",
-      high24h: 0.892,
-      low24h: 0.765
-    },
-    RZ: {
-      currentPrice: 1.234,
-      change24h: -3.21,
-      volume: "5.8M", 
-      marketCap: "78.9M",
-      high24h: 1.287,
-      low24h: 1.198
-    }
-  };
+// CoinGecko API endpoints
+const COINGECKO_ENDPOINTS = {
+  MGC: 'https://api.coingecko.com/api/v3/coins/meta-games-coin/market_chart?vs_currency=usd',
+  RZ: 'https://api.coingecko.com/api/v3/coins/rzcoin/market_chart?vs_currency=usd'
+};
 
-  const timeRanges: TimeRange[] = ["1H", "1D", "1W", "1M", "1Y"];
+const TIME_RANGE_DAYS = {
+  '1W': 7,
+  '1M': 30,
+  '1Y': 365
+};
+
+export default function TokenChart({ token }: TokenChartProps) {
+  const [selectedRange, setSelectedRange] = useState<TimeRange>("1W");
+  
+  // Fetch real data from CoinGecko API
+  const { data: chartData, isLoading, error } = useQuery({
+    queryKey: ['token-chart', token, selectedRange],
+    queryFn: async () => {
+      const days = TIME_RANGE_DAYS[selectedRange];
+      const response = await fetch(`${COINGECKO_ENDPOINTS[token]}&days=${days}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch token data');
+      }
+      const data = await response.json();
+      
+      // Process the data
+      const prices = data.prices || [];
+      const volumes = data.total_volumes || [];
+      
+      if (prices.length === 0) {
+        throw new Error('No price data available');
+      }
+      
+      const currentPrice = prices[prices.length - 1]?.[1] || 0;
+      const previousPrice = prices[0]?.[1] || currentPrice;
+      const change24h = ((currentPrice - previousPrice) / previousPrice) * 100;
+      
+      // Calculate high and low
+      const pricesOnly = prices.map((p: [number, number]) => p[1]);
+      const high = Math.max(...pricesOnly);
+      const low = Math.min(...pricesOnly);
+      
+      // Calculate total volume
+      const totalVolume = volumes.reduce((acc: number, vol: [number, number]) => acc + (vol[1] || 0), 0);
+      
+      return {
+        currentPrice,
+        change24h,
+        volume: (totalVolume / 1000000).toFixed(1) + 'M',
+        high24h: high,
+        low24h: low,
+        chartPoints: prices.map((price: [number, number], index: number) => ({
+          timestamp: price[0],
+          price: price[1]
+        }))
+      };
+    },
+    staleTime: 60000, // 1 minute
+    refetchInterval: 300000 // 5 minutes
+  });
+
+  const timeRanges: TimeRange[] = ["1W", "1M", "1Y"];
   
   const tokenColors = {
     MGC: {
@@ -52,30 +92,35 @@ export default function TokenChart({ token }: TokenChartProps) {
   };
 
   const colors = tokenColors[token];
-  const data = mockData[token];
+  const data = chartData || { currentPrice: 0, change24h: 0, volume: '0M', high24h: 0, low24h: 0, chartPoints: [] };
   const isPositive = data.change24h > 0;
 
-  // todo: remove mock functionality - generate mock chart points
-  const generateMockChartPoints = () => {
-    const points = [];
-    const basePrice = data.currentPrice;
-    const volatility = basePrice * 0.1;
-    
-    for (let i = 0; i < 50; i++) {
-      const variation = (Math.random() - 0.5) * volatility;
-      const price = basePrice + variation;
-      points.push({
-        x: i * 8, // 8px spacing
-        y: 60 + (variation / volatility) * 30 // Center around 60px with ±30px range
-      });
+  // Process chart points for SVG
+  const processChartPoints = () => {
+    if (!data.chartPoints || data.chartPoints.length === 0) {
+      return { pathData: '', points: [] };
     }
-    return points;
+    
+    const prices = data.chartPoints.map((p: {timestamp: number, price: number}) => p.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice || 1;
+    
+    const points = data.chartPoints.map((point: {timestamp: number, price: number}, index: number) => {
+      const x = (index / (data.chartPoints.length - 1)) * 380; // Scale to 380px width
+      const normalizedPrice = (point.price - minPrice) / priceRange;
+      const y = 100 - (normalizedPrice * 80); // Invert Y axis, use 80px range with 10px margins
+      return { x, y };
+    });
+    
+    const pathData = points.map((point: {x: number, y: number}, index: number) => 
+      `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+    ).join(' ');
+    
+    return { pathData, points };
   };
-
-  const chartPoints = generateMockChartPoints();
-  const pathData = chartPoints.map((point, index) => 
-    `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
-  ).join(' ');
+  
+  const { pathData, points } = processChartPoints();
 
   return (
     <Card 
@@ -124,47 +169,63 @@ export default function TokenChart({ token }: TokenChartProps) {
 
       {/* Chart */}
       <div className="mb-6">
-        <div className={`rounded-lg ${colors.bg} border ${colors.border} p-4 relative overflow-hidden`}>
-          {/* Background Grid */}
-          <div className="absolute inset-0 opacity-20">
-            <svg width="100%" height="120" className="absolute inset-0">
-              <defs>
-                <pattern id={`grid-${token}`} width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path
-                    d="M 20 0 L 0 0 0 20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    className={colors.primary}
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill={`url(#grid-${token})`} />
-            </svg>
-          </div>
+        <div className={`rounded-lg ${colors.bg} border ${colors.border} p-4 relative overflow-hidden h-32`}>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-current opacity-50"></div>
+              <span className="ml-2 text-sm text-muted-foreground">Loading chart...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+              Failed to load chart data
+            </div>
+          ) : pathData ? (
+            <>
+              {/* Background Grid */}
+              <div className="absolute inset-0 opacity-20">
+                <svg width="100%" height="120" className="absolute inset-0">
+                  <defs>
+                    <pattern id={`grid-${token}`} width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path
+                        d="M 20 0 L 0 0 0 20"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="0.5"
+                        className={colors.primary}
+                      />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill={`url(#grid-${token})`} />
+                </svg>
+              </div>
 
-          {/* Chart Line */}
-          <svg width="400" height="120" className="relative z-10">
-            <path
-              d={pathData}
-              fill="none"
-              stroke={token === "MGC" ? "#8b5cf6" : "#10b981"}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Gradient Fill */}
-            <defs>
-              <linearGradient id={`gradient-${token}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={token === "MGC" ? "#8b5cf6" : "#10b981"} stopOpacity="0.3" />
-                <stop offset="100%" stopColor={token === "MGC" ? "#8b5cf6" : "#10b981"} stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path
-              d={`${pathData} L 400 120 L 0 120 Z`}
-              fill={`url(#gradient-${token})`}
-            />
-          </svg>
+              {/* Chart Line */}
+              <svg width="100%" height="120" className="relative z-10" viewBox="0 0 380 120">
+                <defs>
+                  <linearGradient id={`gradient-${token}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor={token === "MGC" ? "#8b5cf6" : "#10b981"} stopOpacity="0.3" />
+                    <stop offset="100%" stopColor={token === "MGC" ? "#8b5cf6" : "#10b981"} stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d={pathData}
+                  fill="none"
+                  stroke={token === "MGC" ? "#8b5cf6" : "#10b981"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={`${pathData} L 380 120 L 0 120 Z`}
+                  fill={`url(#gradient-${token})`}
+                />
+              </svg>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+              No chart data available
+            </div>
+          )}
         </div>
       </div>
 
@@ -199,9 +260,11 @@ export default function TokenChart({ token }: TokenChartProps) {
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
             <DollarSign className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Market Cap</span>
+            <span className="text-sm text-muted-foreground">Range High</span>
           </div>
-          <span className="text-lg font-semibold text-foreground">{data.marketCap}</span>
+          <span className="text-lg font-semibold text-foreground">
+            {isLoading ? '...' : `$${data.high24h?.toFixed(4) || '0.0000'}`}
+          </span>
         </div>
       </div>
     </Card>
