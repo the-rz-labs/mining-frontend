@@ -52,15 +52,15 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
               <span className="block text-foreground font-mono">
-                MINE AND
+                MINE AND EARN
               </span>
               <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse">
-                EARN
+                RZ
               </span>
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Mine and earn with the RZ ecosystem. Join thousands of miners earning passive income 
-              with our professional-grade mining platform and cutting-edge technology.
+              Our system is built on fairness and transparency. Here's what makes us different:
+              No token deposits: We don't take your assets. You mine using your resources.
             </p>
           </div>
 
