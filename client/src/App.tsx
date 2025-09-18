@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import SignUp from "@/pages/SignUp";
 import SignIn from "@/pages/SignIn";
+import ForgotPassword from "@/pages/ForgotPassword";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/sign-up" component={SignUp} />
       <Route path="/sign-in" component={SignIn} />
+      <Route path="/forgot-password" component={ForgotPassword} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
