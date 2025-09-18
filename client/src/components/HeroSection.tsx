@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Shield, TrendingUp } from "lucide-react";
+import { ArrowRight, Zap, Shield, TrendingUp, Check } from "lucide-react";
 import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
 
 interface HeroSectionProps {
@@ -14,7 +14,8 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const features = [
     { icon: Zap, text: "High-Performance Mining", color: "text-neon-purple" },
     { icon: Shield, text: "Secure & Transparent", color: "text-neon-green" },
-    { icon: TrendingUp, text: "Maximum ROI", color: "text-mining-orange" }
+    { icon: TrendingUp, text: "Maximum ROI", color: "text-mining-orange" },
+    { icon: Check, text: "No Token Deposits", color: "text-neon-green" }
   ];
 
   return (
