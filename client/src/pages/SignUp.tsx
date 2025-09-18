@@ -23,6 +23,8 @@ export default function SignUp() {
   const [step, setStep] = useState<Step>(1);
   const [email, setEmail] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
@@ -82,15 +84,41 @@ export default function SignUp() {
 
   const verifyCodeMutation = useMutation({
     mutationFn: async (data: VerifyCodeForm) => {
-      const response = await apiRequest("POST", "/api/auth/verify-code", data);
+      const response = await fetch("https://coinmaining.game/backend/api/users/auth/verify-code/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          email: data.email, 
+          otp_code: data.code 
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Invalid or expired code");
+      }
+      
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (responseData: any) => {
+      // Store the tokens
+      setAccessToken(responseData.access_token);
+      setRefreshToken(responseData.refresh_token);
+      
       toast({
         title: "Email verified!",
-        description: "Now create your account details."
+        description: responseData.message || "Now create your account details."
       });
-      setStep(3);
+      
+      // Move to step 3 if username is needed
+      if (responseData.need_username) {
+        setStep(3);
+      } else {
+        // If no username needed, redirect to dashboard
+        navigate("/");
+      }
     },
     onError: (error: any) => {
       toast({
