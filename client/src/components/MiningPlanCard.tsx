@@ -49,7 +49,7 @@ export default function MiningPlanCard({ plan, highlightTop = false, highlightTo
 
   return (
     <div
-      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-105 h-[580px] w-full ${theme.bg} ${theme.border} ${
+      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-[1.02] h-[580px] w-full ${theme.bg} ${theme.border} ${
         highlightTop 
           ? `ring-2 ring-mining-orange/60 shadow-2xl shadow-mining-orange/20 md:scale-[1.02]` 
           : highlightTopMGC

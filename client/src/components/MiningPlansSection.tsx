@@ -267,7 +267,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
           {/* Scrollable container */}
           <div
             ref={scrollRef}
-            className="flex overflow-x-auto scrollbar-hide gap-6 pb-4 px-4 snap-x snap-mandatory scroll-smooth"
+            className="flex overflow-x-auto scrollbar-hide gap-6 py-6 px-4 snap-x snap-mandatory scroll-smooth"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             data-testid="plans-carousel"
