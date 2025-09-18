@@ -52,7 +52,7 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             <div>
               <Logo />
               <p className="text-muted-foreground mt-4 leading-relaxed">
