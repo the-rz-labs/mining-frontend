@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Shield, TrendingUp } from "lucide-react";
+import { ArrowRight, Zap, Shield, TrendingUp, Ban } from "lucide-react";
 import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
 
 interface HeroSectionProps {
@@ -14,6 +14,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const features = [
     { icon: Zap, text: "High-Performance Mining", color: "text-neon-purple" },
     { icon: Shield, text: "Secure & Transparent", color: "text-neon-green" },
+    { icon: Ban, text: "No Token Deposits", color: "text-cyber-blue" },
     { icon: TrendingUp, text: "Maximum ROI", color: "text-mining-orange" }
   ];
 
@@ -50,18 +51,23 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
         <div className="space-y-8">
           {/* Main Headline */}
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-              <span className="block text-foreground font-mono">
-                MINE AND EARN
+            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold">
+              <span className="block text-foreground font-mono tracking-tight mb-2">
+                MINE & EARN
               </span>
-              <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse tracking-wider">
-                With RZ Tokens
+              <span className="block bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse tracking-widest text-3xl sm:text-4xl lg:text-5xl font-light">
+                WITH RZ TOKENS
               </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Our system is built on fairness and transparency. Here's what makes us different:
-              No token deposits: We don't take your assets. You mine using your resources.
-            </p>
+            <div className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed space-y-4">
+              <p className="font-medium text-foreground">
+                Our system is built on fairness and transparency.
+              </p>
+              <p className="text-base sm:text-lg">
+                Here's what makes us different: <strong>No token deposits.</strong><br/>
+                We don't take your assets. You mine using your resources.
+              </p>
+            </div>
           </div>
 
           {/* Feature Pills */}
@@ -108,7 +114,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
               }}
               className="border-neon-green text-neon-green hover:bg-neon-green/10 px-8 py-4 text-lg backdrop-blur-sm"
             >
-              Learn More
+              Connect Rank Account
             </Button>
           </div>
 
