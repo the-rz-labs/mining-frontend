@@ -17,6 +17,16 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Get dynamic card width for responsive scrolling
+  const getCardWidth = () => {
+    if (!scrollRef.current) return 400;
+    const firstCard = scrollRef.current.querySelector('[data-plan-index="0"]') as HTMLElement;
+    if (!firstCard) return 400;
+    const rect = firstCard.getBoundingClientRect();
+    const gap = 24; // 6 in Tailwind = 24px gap
+    return rect.width + gap;
+  };
+
   // todo: remove mock functionality - replace with real mining plan data
   const mgcPlans: MiningPlan[] = [
     {
@@ -148,18 +158,14 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       const container = scrollRef.current;
       if (!container) return;
 
-      const cardWidth = 400; // Card width + gap
+      const cardWidth = getCardWidth();
       const totalPlans = allPlans.length;
       const maxScrollLeft = container.scrollWidth - container.clientWidth;
       
-      if (container.scrollLeft >= maxScrollLeft - 10) {
-        // Near the end, reset to beginning smoothly
-        setTimeout(() => {
-          if (container) {
-            container.scrollTo({ left: 0, behavior: 'smooth' });
-            setCurrentIndex(0);
-          }
-        }, 500); // Small delay for smooth transition
+      if (container.scrollLeft >= maxScrollLeft - 50) {
+        // At the end, reset to beginning immediately 
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+        setCurrentIndex(0);
       } else {
         // Scroll to next card
         container.scrollBy({ left: cardWidth, behavior: 'smooth' });
@@ -177,17 +183,17 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
   // Manual scroll functions
   const scrollLeft = () => {
     if (!scrollRef.current) return;
-    const cardWidth = 400;
+    const cardWidth = getCardWidth();
     scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
   };
 
   const scrollRight = () => {
     if (!scrollRef.current) return;
-    const cardWidth = 400;
+    const cardWidth = getCardWidth();
     const container = scrollRef.current;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
     
-    if (container.scrollLeft >= maxScrollLeft - 10) {
+    if (container.scrollLeft >= maxScrollLeft - 50) {
       // At the end, cycle back to beginning
       container.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
@@ -220,6 +226,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
               size="icon"
               onClick={scrollLeft}
               data-testid="scroll-left"
+              aria-label="Scroll left through mining plans"
               className="rounded-full border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -240,6 +247,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
               size="icon"
               onClick={scrollRight}
               data-testid="scroll-right"
+              aria-label="Scroll right through mining plans"
               className="rounded-full border-neon-green/30 text-neon-green hover:bg-neon-green/10"
             >
               <ChevronRight className="w-5 h-5" />

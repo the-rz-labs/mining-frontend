@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Zap, DollarSign, Clock, TrendingUp } from "lucide-react";
+import { Zap, DollarSign, Clock, TrendingUp, Trophy } from "lucide-react";
 
 export interface MiningPlan {
   id: string;
@@ -62,7 +62,8 @@ export default function MiningPlanCard({ plan, highlightTop = false, onStartMini
         <div className="absolute top-4 right-4 z-10 space-y-2">
           {highlightTop && (
             <Badge className="bg-gradient-to-r from-mining-orange to-neon-green text-white font-bold border-none shadow-lg animate-pulse">
-              🏆 TOP ROI
+              <Trophy className="w-4 h-4 mr-1" />
+              TOP ROI
             </Badge>
           )}
           {plan.popular && !highlightTop && (
