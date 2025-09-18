@@ -29,10 +29,7 @@ export default function SignIn() {
   });
 
   const signInMutation = useMutation({
-    mutationFn: (data: SignInForm) => apiRequest("/api/auth/sign-in", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+    mutationFn: (data: SignInForm) => apiRequest("POST", "/api/auth/sign-in", data),
     onSuccess: (data: any) => {
       toast({
         title: "Welcome back!",
