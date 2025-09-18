@@ -1,22 +1,34 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type User, type InsertUser, type EmailVerification, type InsertEmailVerification } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
 // you might need
 
 export interface IStorage {
+  // User operations
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Email verification operations
+  createEmailVerification(verification: InsertEmailVerification): Promise<EmailVerification>;
+  getEmailVerification(email: string): Promise<EmailVerification | undefined>;
+  updateEmailVerificationAttempts(email: string, attempts: number): Promise<void>;
+  deleteEmailVerification(email: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
+  private emailVerifications: Map<string, EmailVerification>;
 
   constructor() {
     this.users = new Map();
+    this.emailVerifications = new Map();
   }
 
+  // User operations
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
@@ -27,11 +39,87 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email.toLowerCase(),
+    );
+  }
+
+  async getUserByReferralCode(referralCode: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.referralCode === referralCode,
+    );
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
+    // Generate a unique referral code (base36 from timestamp + random)
+    const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    
+    // Hash the password (for now just store as is, should be hashed in production)
+    const passwordHash = insertUser.password;
+    
+    // Find referrer if referralCode is provided
+    let referredByUserId: string | null = null;
+    if (insertUser.referredByUserId) {
+      const referrer = await this.getUserByReferralCode(insertUser.referredByUserId);
+      if (referrer) {
+        referredByUserId = referrer.id;
+      }
+    }
+    
+    const user: User = { 
+      id,
+      email: insertUser.email.toLowerCase(),
+      username: insertUser.username,
+      passwordHash,
+      referralCode,
+      referredByUserId
+    };
+    
     this.users.set(id, user);
     return user;
+  }
+
+  // Email verification operations
+  async createEmailVerification(insertVerification: InsertEmailVerification): Promise<EmailVerification> {
+    const id = randomUUID();
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutes
+    
+    // Generate 6-digit code and hash it (for now just store as is)
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const codeHash = code; // Should be hashed in production
+    
+    // Log the code for development (replace with email sending later)
+    console.log(`📧 Verification code for ${insertVerification.email}: ${code}`);
+    
+    const verification: EmailVerification = {
+      id,
+      email: insertVerification.email.toLowerCase(),
+      codeHash,
+      expiresAt,
+      attempts: 0
+    };
+    
+    this.emailVerifications.set(insertVerification.email.toLowerCase(), verification);
+    return verification;
+  }
+
+  async getEmailVerification(email: string): Promise<EmailVerification | undefined> {
+    return this.emailVerifications.get(email.toLowerCase());
+  }
+
+  async updateEmailVerificationAttempts(email: string, attempts: number): Promise<void> {
+    const verification = this.emailVerifications.get(email.toLowerCase());
+    if (verification) {
+      verification.attempts = attempts;
+      this.emailVerifications.set(email.toLowerCase(), verification);
+    }
+  }
+
+  async deleteEmailVerification(email: string): Promise<void> {
+    this.emailVerifications.delete(email.toLowerCase());
   }
 }
 
