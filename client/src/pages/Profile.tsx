@@ -90,7 +90,7 @@ const achievementBadges = {
     label: "Community Builder", 
     description: "Invite 5 friends to start mining", 
     icon: User, 
-    color: "from-green-500 to-emerald-500",
+    color: "from-mining-orange to-orange-500",
     unlocked: true,
     rarity: "uncommon",
     requirement: "5 referrals"
@@ -162,7 +162,7 @@ const achievementBadges = {
     label: "Weekend Warrior", 
     description: "Double rewards every weekend", 
     icon: Sword, 
-    color: "from-green-600 to-teal-600",
+    color: "from-neon-purple to-purple-600",
     unlocked: false,
     rarity: "uncommon",
     requirement: "4 weekend bonuses"
@@ -398,7 +398,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
 }) {
   const rarityColors = {
     common: 'from-gray-500 to-gray-600',
-    uncommon: 'from-green-500 to-emerald-600',
+    uncommon: 'from-mining-orange to-orange-600',
     rare: 'from-blue-500 to-purple-600',
     epic: 'from-purple-600 to-pink-600',
     legendary: 'from-yellow-500 to-orange-600'
@@ -406,7 +406,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
 
   const rarityBorder = {
     common: 'border-gray-500/50',
-    uncommon: 'border-green-500/50',
+    uncommon: 'border-mining-orange/50',
     rare: 'border-blue-500/50',
     epic: 'border-purple-500/50',
     legendary: 'border-yellow-500/50'
@@ -429,7 +429,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
           <>
             <div className="absolute top-2 left-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
             <div className="absolute top-4 right-3 w-1 h-1 bg-yellow-400 rounded-full animate-bounce"></div>
-            <div className="absolute bottom-3 left-3 w-1 h-1 bg-neon-green rounded-full animate-pulse"></div>
+            <div className="absolute bottom-3 left-3 w-1 h-1 bg-neon-purple rounded-full animate-pulse"></div>
           </>
         )}
         
@@ -437,7 +437,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
         <div className={`relative w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${badge.color} ${isUnlocked ? 'opacity-100 shadow-lg' : 'opacity-40'} flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
           <badge.icon className="w-8 h-8 text-white" />
           {isUnlocked ? (
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-neon-green rounded-full flex items-center justify-center">
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-neon-purple rounded-full flex items-center justify-center">
               <Unlock className="w-3 h-3 text-black" />
             </div>
           ) : (
@@ -518,7 +518,7 @@ function AchievementsShowcase() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300">
           <CardContent className="p-6 text-center space-y-2">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-green to-emerald-600 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-purple to-purple-600 rounded-full flex items-center justify-center">
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <p className="text-2xl font-bold text-white">{unlockedAchievements.length}</p>
@@ -550,7 +550,7 @@ function AchievementsShowcase() {
       {/* Main Achievement Gallery */}
       <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20 relative overflow-hidden">
         {/* Background effects */}
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-neon-purple/5 via-transparent to-neon-green/5"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-neon-purple/5 via-transparent to-mining-orange/5"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-mining-orange/10 to-transparent opacity-60 blur-3xl"></div>
         
         <CardHeader className="relative">
@@ -598,14 +598,14 @@ function AchievementsShowcase() {
                 <span className="text-white font-bold text-lg">Overall Progress</span>
               </div>
               <div className="text-right">
-                <span className="text-neon-green font-bold text-xl">{progressPercentage.toFixed(0)}%</span>
+                <span className="text-neon-purple font-bold text-xl">{progressPercentage.toFixed(0)}%</span>
                 <p className="text-white/60 text-sm">{unlockedAchievements.length} of {totalAchievements}</p>
               </div>
             </div>
             
             <div className="relative h-6 bg-white/10 rounded-full overflow-hidden mb-4">
               <div 
-                className="absolute inset-y-0 left-0 bg-gradient-to-r from-neon-green via-emerald-500 to-neon-green rounded-full transition-all duration-1000 shadow-lg shadow-neon-green/50 flex items-center justify-end pr-2"
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-neon-purple via-purple-500 to-neon-purple rounded-full transition-all duration-1000 shadow-lg shadow-neon-purple/50 flex items-center justify-end pr-2"
                 style={{ width: `${Math.max(progressPercentage, 15)}%` }}
               >
                 <Sparkles className="w-4 h-4 text-white animate-pulse" />
@@ -631,18 +631,18 @@ function AchievementsShowcase() {
           </div>
 
           {/* Achievement Summary */}
-          <Card className="border border-neon-green/30 bg-gradient-to-r from-neon-green/10 to-emerald-600/10 backdrop-blur-lg">
+          <Card className="border border-neon-purple/30 bg-gradient-to-r from-neon-purple/10 to-purple-600/10 backdrop-blur-lg">
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-neon-green/20 rounded-full">
-                  <Trophy className="w-5 h-5 text-neon-green" />
+                <div className="p-2 bg-neon-purple/20 rounded-full">
+                  <Trophy className="w-5 h-5 text-neon-purple" />
                 </div>
                 <div>
                   <h4 className="font-bold text-white">Achievement Collection</h4>
                   <p className="text-white/70 text-sm">You've earned {unlockedAchievements.length} achievements in your mining journey!</p>
                 </div>
                 <div className="ml-auto">
-                  <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50">
+                  <Badge className="bg-neon-purple/20 text-neon-purple border-neon-purple/50">
                     Earned
                   </Badge>
                 </div>
@@ -661,7 +661,7 @@ export default function Profile() {
       {/* Animated background particles */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60"></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-neon-green rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-40 right-20 w-1 h-1 bg-neon-purple rounded-full animate-ping opacity-40"></div>
         <div className="absolute bottom-40 left-20 w-1 h-1 bg-mining-orange rounded-full animate-pulse opacity-50"></div>
         <div className="absolute top-60 right-40 w-2 h-2 bg-yellow-400 rounded-full animate-bounce opacity-30"></div>
       </div>
@@ -669,7 +669,7 @@ export default function Profile() {
       {/* Gaming Header */}
       <div className="relative space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-neon-green to-mining-orange bg-clip-text text-transparent animate-gradient">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-mining-orange bg-clip-text text-transparent animate-gradient">
             Miner's Hub
           </h1>
           <p className="text-white/70 text-xl">
@@ -714,8 +714,8 @@ export default function Profile() {
       {/* Gaming Footer */}
       <div className="mt-12 p-6 bg-gradient-to-r from-white/5 to-white/10 border border-white/10 rounded-xl text-center backdrop-blur-lg">
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <Rocket className="w-8 h-8 text-neon-green" />
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-neon-green bg-clip-text text-transparent">
+          <Rocket className="w-8 h-8 text-neon-purple" />
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent">
             Keep Mining, Keep Winning!
           </h3>
           <Gem className="w-8 h-8 text-mining-orange" />
@@ -728,7 +728,7 @@ export default function Profile() {
             <Star className="w-4 h-4 mr-2" />
             Epic Rewards
           </Badge>
-          <Badge className="bg-gradient-to-r from-neon-green to-emerald-500 text-white border-none px-4 py-2 text-lg">
+          <Badge className="bg-gradient-to-r from-mining-orange to-orange-500 text-white border-none px-4 py-2 text-lg">
             <Diamond className="w-4 h-4 mr-2" />
             Rare Achievements
           </Badge>
