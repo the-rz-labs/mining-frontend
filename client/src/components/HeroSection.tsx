@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Shield, TrendingUp, Check } from "lucide-react";
 import heroImage from "@assets/generated_images/Futuristic_mining_facility_background_bae26e88.png";
@@ -10,6 +11,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [, navigate] = useLocation();
 
   const features = [
     { icon: Zap, text: "High-Performance Mining", color: "text-neon-purple" },
@@ -85,8 +87,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
               size="lg"
               data-testid="button-start-mining"
               onClick={() => {
-                console.log("Start Mining clicked");
-                onStartMining?.();
+                navigate("/sign-up");
               }}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
