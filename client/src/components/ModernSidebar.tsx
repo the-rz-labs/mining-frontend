@@ -1,6 +1,7 @@
 import { Home, User, HelpCircle, MessageSquare, Users, Gift, Trophy } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 
 // Navigation items matching modern dashboard layout
 const navigationItems = [
@@ -52,8 +53,13 @@ export function ModernSidebar() {
   const [location] = useLocation();
 
   return (
-    <div className="w-64 h-screen bg-black/60 backdrop-blur-xl border-r border-white/10 flex flex-col">
-      {/* Sidebar content */}
+    <div className="w-72 h-screen bg-white/5 backdrop-blur-xl border-r border-white/10 flex flex-col shadow-2xl shadow-neon-purple/10 relative z-10">
+      {/* Logo Section */}
+      <div className="p-6 border-b border-white/10 bg-white/[0.02]">
+        <Logo />
+      </div>
+      
+      {/* Navigation Section */}
       <div className="flex-1 py-6">
         <nav className="space-y-2 px-4">
           {navigationItems.map((item) => {
@@ -63,7 +69,7 @@ export function ModernSidebar() {
               <Link key={item.title} href={item.href} data-testid={item.testId}>
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start space-x-3 h-11 text-left font-medium transition-all duration-200 hover-elevate ${
+                  className={`w-full justify-start space-x-3 h-12 text-left font-medium transition-all duration-300 hover-elevate ${
                     isActive 
                       ? 'bg-gradient-to-r from-neon-purple/20 to-neon-purple/10 text-neon-purple border border-neon-purple/30' 
                       : 'text-white/70 hover:text-white hover:bg-white/5'
