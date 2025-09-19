@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { MinerAnimation } from "@/components/MinerAnimation";
 import { 
   Zap, 
   Pause, 
@@ -17,8 +18,8 @@ import {
 } from "lucide-react";
 
 // Import generated miner images
-import mgcMinerRig from "@assets/generated_images/Animated_MGC_mining_rig_spinning_ee2a4161.png";
-import rzMinerRig from "@assets/generated_images/Animated_RZ_mining_rig_spinning_55cdfdbe.png";
+import mgcMinerRig from "@assets/generated_images/Animated_MGC_mining_rig_working_4f4350df.png";
+import rzMinerRig from "@assets/generated_images/Animated_RZ_mining_rig_working_b16b79a8.png";
 
 interface MinerData {
   id: string;
@@ -216,42 +217,39 @@ export function ActiveMiners() {
               <CardContent className="relative space-y-4">
                 {/* Miner Visual */}
                 <div className="relative flex justify-center">
-                  <div className={`relative rounded-lg overflow-hidden ${
-                    miner.status === 'active' ? 'animate-pulse-glow' : 'opacity-60'
-                  }`}>
-                    <img 
-                      src={getMinerImage(miner.token, miner.status)}
-                      alt={`${miner.token} Mining Rig`}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    
-                    {/* Status overlay */}
-                    {miner.status === 'active' && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg">
-                        <div className="absolute bottom-2 left-2 right-2">
-                          <div className="flex items-center justify-between text-white text-sm">
-                            <span className="flex items-center">
-                              <Power className="w-4 h-4 mr-1 text-green-400" />
-                              MINING
-                            </span>
-                            <span className="flex items-center">
-                              <Cpu className="w-4 h-4 mr-1" />
-                              {miner.temperature}°C
-                            </span>
+                  <MinerAnimation
+                    token={miner.token}
+                    isActive={miner.status === 'active'}
+                    earnings={miner.tokensEarned}
+                  >
+                    <div className={`relative rounded-lg overflow-hidden ${
+                      miner.status === 'active' ? 'animate-pulse-glow' : 'opacity-60'
+                    }`}>
+                      <img 
+                        src={getMinerImage(miner.token, miner.status)}
+                        alt={`${miner.token} Mining Rig`}
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      
+                      {/* Status overlay */}
+                      {miner.status === 'active' && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg">
+                          <div className="absolute bottom-2 left-2 right-2">
+                            <div className="flex items-center justify-between text-white text-sm">
+                              <span className="flex items-center">
+                                <Power className="w-4 h-4 mr-1 text-green-400" />
+                                MINING
+                              </span>
+                              <span className="flex items-center">
+                                <Cpu className="w-4 h-4 mr-1" />
+                                {miner.temperature}°C
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-
-                    {/* Animated particles for active miners */}
-                    {miner.status === 'active' && (
-                      <>
-                        <div className="absolute top-2 right-2 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
-                        <div className="absolute top-4 right-6 w-1 h-1 bg-blue-400 rounded-full animate-bounce"></div>
-                        <div className="absolute bottom-8 left-4 w-1 h-1 bg-purple-400 rounded-full animate-pulse"></div>
-                      </>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  </MinerAnimation>
                 </div>
 
                 {/* Mining Stats */}
