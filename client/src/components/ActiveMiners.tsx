@@ -17,9 +17,8 @@ import {
 } from "lucide-react";
 
 // Import generated miner images
-import mgcMinerRig from "@assets/generated_images/Animated_MGC_mining_rig_11d839e2.png";
-import mgcMinerTower from "@assets/generated_images/Animated_MGC_mining_tower_da78740f.png";
-import mgcMinerCompact from "@assets/generated_images/Animated_compact_MGC_miner_88c3f33b.png";
+import mgcMinerRig from "@assets/generated_images/Animated_MGC_mining_rig_spinning_ee2a4161.png";
+import rzMinerRig from "@assets/generated_images/Animated_RZ_mining_rig_spinning_55cdfdbe.png";
 
 interface MinerData {
   id: string;
@@ -68,10 +67,53 @@ export function ActiveMiners() {
   const [miners, setMiners] = useState<MinerData[]>(mockMinersData);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Real-time simulation for active miners
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
+      
+      setMiners(prev => prev.map(miner => {
+        if (miner.status === 'active') {
+          // Simulate real-time updates
+          const hashRateVariation = (Math.random() - 0.5) * 5; // ±2.5 variation
+          const newHashRate = Math.max(0, miner.hashRate + hashRateVariation);
+          const progressIncrement = Math.random() * 0.5; // 0-0.5% per second
+          const newProgress = Math.min(100, miner.progress + progressIncrement);
+          const tokensIncrement = (newHashRate / 100) * 0.01; // Based on hash rate
+          const newTokensEarned = miner.tokensEarned + tokensIncrement;
+          
+          // Calculate remaining time based on progress
+          const progressPerMinute = 1; // Assume 1% per minute at normal rate
+          const remainingProgress = 100 - newProgress;
+          const remainingMinutes = Math.ceil(remainingProgress / progressPerMinute);
+          const hours = Math.floor(remainingMinutes / 60);
+          const minutes = remainingMinutes % 60;
+          const newTimeRemaining = `${hours}h ${minutes}m`;
+          
+          // Temperature fluctuation based on activity
+          const tempVariation = (Math.random() - 0.5) * 2;
+          const newTemperature = Math.max(25, Math.min(85, miner.temperature + tempVariation));
+          
+          // Efficiency based on temperature (optimal around 65-75°C)
+          const optimalTemp = 70;
+          const tempDiff = Math.abs(newTemperature - optimalTemp);
+          const baseEfficiency = 95;
+          const newEfficiency = Math.max(85, baseEfficiency - (tempDiff * 0.5));
+          
+          return {
+            ...miner,
+            hashRate: Math.round(newHashRate * 10) / 10,
+            progress: Math.round(newProgress * 10) / 10,
+            tokensEarned: Math.round(newTokensEarned * 100) / 100,
+            timeRemaining: newTimeRemaining,
+            temperature: Math.round(newTemperature),
+            efficiency: Math.round(newEfficiency * 10) / 10
+          };
+        }
+        return miner;
+      }));
     }, 1000);
+    
     return () => clearInterval(timer);
   }, []);
 
@@ -87,10 +129,9 @@ export function ActiveMiners() {
 
   const getMinerImage = (token: 'MGC' | 'RZ', status: string) => {
     if (token === 'MGC') {
-      return mgcMinerRig; // Use the main animated rig image
+      return mgcMinerRig;
     }
-    // For RZ, we'll use a placeholder for now
-    return mgcMinerCompact; // Placeholder until RZ images are available
+    return rzMinerRig;
   };
 
   const activeMiners = miners.filter(m => m.status === 'active');
