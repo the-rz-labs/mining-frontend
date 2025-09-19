@@ -93,6 +93,18 @@ export default function SignUp() {
 
   const verifyCodeMutation = useMutation({
     mutationFn: async (data: VerifyCodeForm) => {
+      // In development mode, accept test verification codes
+      const isDevelopment = import.meta.env.NODE_ENV === 'development' || import.meta.env.DEV;
+      if (isDevelopment && (data.code === "12345" || data.code === "00000")) {
+        // Mock successful verification for testing
+        return {
+          access_token: "mock_access_token",
+          refresh_token: "mock_refresh_token",
+          need_username: true,
+          message: "Email verified successfully (test mode)"
+        };
+      }
+
       const response = await fetch("https://coinmaining.game/backend/api/users/auth/verify-code/", {
         method: "POST",
         headers: {
@@ -152,6 +164,21 @@ export default function SignUp() {
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpForm) => {
+      // In development mode, mock successful signup for testing
+      const isDevelopment = import.meta.env.NODE_ENV === 'development' || import.meta.env.DEV;
+      if (isDevelopment && data.username === "testuser123") {
+        // Mock successful signup for testing
+        return {
+          user: {
+            id: "test-user-id",
+            username: data.username,
+            email: data.email,
+            avatar: data.avatar
+          },
+          message: "Account created successfully (test mode)"
+        };
+      }
+
       const response = await apiRequest("POST", "/api/auth/sign-up", data);
       return response.json();
     },
