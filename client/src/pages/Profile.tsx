@@ -36,19 +36,17 @@ import { useToast } from "@/hooks/use-toast";
 import type { User as UserType, UserBadge } from "@shared/schema";
 import { useLocation } from "wouter";
 
-// Gaming profile data
-const mockGamerProfile = {
+// Mining profile data
+const mockMinerProfile = {
   id: "1",
   username: "CryptoMiner_Pro",
   email: "admin@gmail.com",
-  level: 42,
-  experience: 15750,
-  experienceToNext: 18000,
   miningStreak: 15,
   totalMined: 2847.5,
   referralCount: 7,
-  rank: "Diamond Miner",
-  prestigeLevel: 3
+  totalEarnings: 1420.75,
+  miningTime: "240h 15m",
+  rank: "Diamond Miner"
 };
 
 // Giveaway system data
@@ -88,71 +86,115 @@ const activeGiveaways = [
   }
 ];
 
-// Achievement badges with gaming theme
+// Achievement badges focused on mining goals
 const achievementBadges = {
   first_mine: { 
-    label: "First Steps", 
-    description: "Started your mining journey", 
+    label: "Mining Pioneer", 
+    description: "Complete your first mining session", 
     icon: Zap, 
     color: "from-blue-500 to-cyan-500",
     unlocked: true,
-    rarity: "common"
+    rarity: "common",
+    requirement: "Mine for 1 hour"
   },
   mining_streak_7: { 
-    label: "Dedicated Miner", 
-    description: "7-day mining streak", 
+    label: "Consistent Miner", 
+    description: "Mine for 7 consecutive days", 
     icon: Flame, 
     color: "from-orange-500 to-red-500",
     unlocked: true,
-    rarity: "uncommon"
+    rarity: "uncommon",
+    requirement: "7-day streak"
   },
   mining_streak_30: { 
     label: "Mining Legend", 
-    description: "30-day mining streak", 
+    description: "Achieve 30-day mining streak", 
     icon: Medal, 
     color: "from-purple-500 to-pink-500",
     unlocked: false,
-    rarity: "rare"
+    rarity: "rare",
+    requirement: "30-day streak"
   },
   referral_master: { 
-    label: "Network Builder", 
-    description: "Referred 5+ miners", 
+    label: "Community Builder", 
+    description: "Invite 5 friends to start mining", 
     icon: User, 
     color: "from-green-500 to-emerald-500",
     unlocked: true,
-    rarity: "uncommon"
+    rarity: "uncommon",
+    requirement: "5 referrals"
   },
   treasure_hunter: { 
     label: "Treasure Hunter", 
-    description: "Found 10 treasure chests", 
+    description: "Claim 25 daily bonuses", 
     icon: Gem, 
     color: "from-yellow-500 to-orange-500",
     unlocked: false,
-    rarity: "epic"
+    rarity: "epic",
+    requirement: "25 daily claims"
   },
-  mining_elite: { 
-    label: "Elite Miner", 
-    description: "Reached level 50", 
-    icon: Crown, 
+  mining_marathon: { 
+    label: "Mining Marathon", 
+    description: "Mine continuously for 24 hours", 
+    icon: Timer, 
     color: "from-purple-600 to-indigo-600",
     unlocked: false,
-    rarity: "legendary"
+    rarity: "epic",
+    requirement: "24h continuous"
   },
   speed_demon: { 
-    label: "Speed Demon", 
-    description: "Fastest mining time record", 
+    label: "Lightning Miner", 
+    description: "Achieve highest mining efficiency", 
     icon: Rocket, 
     color: "from-cyan-500 to-blue-500",
     unlocked: false,
-    rarity: "rare"
+    rarity: "rare",
+    requirement: "95%+ efficiency"
   },
   diamond_hands: { 
     label: "Diamond Hands", 
-    description: "Hold tokens for 100+ days", 
+    description: "Hold mined tokens for 100+ days", 
     icon: Diamond, 
     color: "from-cyan-400 to-blue-600",
     unlocked: false,
-    rarity: "legendary"
+    rarity: "legendary",
+    requirement: "Hold 100 days"
+  },
+  big_earner: { 
+    label: "Big Earner", 
+    description: "Earn 1000+ tokens from mining", 
+    icon: Coins, 
+    color: "from-yellow-600 to-amber-600",
+    unlocked: false,
+    rarity: "rare",
+    requirement: "1000+ tokens"
+  },
+  social_butterfly: { 
+    label: "Social Butterfly", 
+    description: "Get 20 miners from referrals", 
+    icon: Crown, 
+    color: "from-pink-500 to-rose-500",
+    unlocked: false,
+    rarity: "epic",
+    requirement: "20 referrals"
+  },
+  ultimate_miner: { 
+    label: "Ultimate Miner", 
+    description: "Master all mining techniques", 
+    icon: Star, 
+    color: "from-gradient-to-r from-yellow-400 via-orange-500 to-red-500",
+    unlocked: false,
+    rarity: "legendary",
+    requirement: "Complete all challenges"
+  },
+  weekend_warrior: { 
+    label: "Weekend Warrior", 
+    description: "Double rewards every weekend", 
+    icon: Sword, 
+    color: "from-green-600 to-teal-600",
+    unlocked: false,
+    rarity: "uncommon",
+    requirement: "4 weekend bonuses"
   }
 };
 
@@ -169,7 +211,7 @@ function formatTimeRemaining(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 
-function GamerProfileHeader() {
+function MinerProfileHeader() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   
@@ -181,8 +223,7 @@ function GamerProfileHeader() {
     navigate("/sign-in");
   };
 
-  const profile = mockGamerProfile;
-  const experiencePercentage = (profile.experience / profile.experienceToNext) * 100;
+  const profile = mockMinerProfile;
 
   return (
     <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/20 hover:shadow-neon-purple/30 transition-all duration-500 hover:border-white/20 relative overflow-hidden">
@@ -200,9 +241,9 @@ function GamerProfileHeader() {
                   {profile.username.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {/* Level badge */}
-              <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-mining-orange to-yellow-500 text-black text-sm font-bold px-3 py-1 rounded-full border-2 border-white/20 shadow-lg">
-                LVL {profile.level}
+              {/* Mining status badge */}
+              <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-neon-green to-emerald-500 text-white text-sm font-bold px-3 py-1 rounded-full border-2 border-white/20 shadow-lg animate-pulse">
+                MINING
               </div>
             </div>
             
@@ -223,18 +264,15 @@ function GamerProfileHeader() {
                 </div>
               </div>
               
-              {/* XP Progress Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/70">Experience</span>
-                  <span className="text-neon-green font-medium">{profile.experience} / {profile.experienceToNext} XP</span>
+              {/* Mining Progress Indicators */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-gradient-to-r from-neon-purple/20 to-purple-600/20 rounded-lg border border-purple-500/30">
+                  <p className="text-xl font-bold text-neon-purple">{profile.totalEarnings}</p>
+                  <p className="text-white/70 text-sm">Total Earnings (MGC)</p>
                 </div>
-                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-neon-green to-emerald-500 rounded-full transition-all duration-1000 shadow-lg shadow-neon-green/30"
-                    style={{ width: `${experiencePercentage}%` }}
-                  ></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50 animate-pulse"></div>
+                <div className="text-center p-3 bg-gradient-to-r from-mining-orange/20 to-orange-600/20 rounded-lg border border-orange-500/30">
+                  <p className="text-xl font-bold text-mining-orange">{profile.miningTime}</p>
+                  <p className="text-white/70 text-sm">Mining Time</p>
                 </div>
               </div>
             </div>
@@ -256,27 +294,27 @@ function GamerProfileHeader() {
           </div>
         </div>
         
-        {/* Gaming Stats Grid */}
+        {/* Mining Stats Grid */}
         <div className="grid grid-cols-4 gap-4 text-center">
-          <div className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/10">
-            <TrendingUp className="w-6 h-6 text-neon-green mx-auto" />
-            <p className="text-2xl font-bold text-white" data-testid="text-level">{profile.level}</p>
-            <p className="text-white/60 text-sm">Level</p>
-          </div>
-          <div className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/10">
-            <Coins className="w-6 h-6 text-mining-orange mx-auto" />
+          <div className="space-y-2 p-4 bg-gradient-to-b from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-neon-green/30 transition-all duration-300 hover:scale-105">
+            <Coins className="w-8 h-8 text-mining-orange mx-auto" />
             <p className="text-2xl font-bold text-white">{profile.totalMined.toFixed(1)}</p>
             <p className="text-white/60 text-sm">Total Mined</p>
           </div>
-          <div className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/10">
-            <User className="w-6 h-6 text-neon-purple mx-auto" />
+          <div className="space-y-2 p-4 bg-gradient-to-b from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-neon-purple/30 transition-all duration-300 hover:scale-105">
+            <User className="w-8 h-8 text-neon-purple mx-auto" />
             <p className="text-2xl font-bold text-white" data-testid="text-referral-count">{profile.referralCount}</p>
             <p className="text-white/60 text-sm">Referrals</p>
           </div>
-          <div className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/10">
-            <Star className="w-6 h-6 text-yellow-500 mx-auto" />
-            <p className="text-2xl font-bold text-white">{profile.prestigeLevel}</p>
-            <p className="text-white/60 text-sm">Prestige</p>
+          <div className="space-y-2 p-4 bg-gradient-to-b from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-neon-green/30 transition-all duration-300 hover:scale-105">
+            <Flame className="w-8 h-8 text-neon-green mx-auto" />
+            <p className="text-2xl font-bold text-white">{profile.miningStreak}</p>
+            <p className="text-white/60 text-sm">Day Streak</p>
+          </div>
+          <div className="space-y-2 p-4 bg-gradient-to-b from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-yellow-500/30 transition-all duration-300 hover:scale-105">
+            <Trophy className="w-8 h-8 text-yellow-500 mx-auto" />
+            <p className="text-2xl font-bold text-white">3</p>
+            <p className="text-white/60 text-sm">Achievements</p>
           </div>
         </div>
       </CardHeader>
@@ -438,10 +476,10 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
   return (
     <div className={`relative group ${isUnlocked ? 'animate-pulse-glow' : ''}`} data-testid={`badge-${badgeKey}`}>
       <div className={`
-        relative overflow-hidden rounded-xl border-2 transition-all duration-500 hover:scale-110 hover:rotate-3 p-4 text-center space-y-3
+        relative overflow-hidden rounded-xl border-2 transition-all duration-500 hover:scale-110 hover:rotate-3 p-5 text-center space-y-3
         ${isUnlocked 
           ? `${rarityBorder[badge.rarity as keyof typeof rarityBorder]} bg-gradient-to-br from-white/15 to-white/5 shadow-xl backdrop-blur-lg` 
-          : 'border-white/10 bg-white/5 grayscale opacity-50'
+          : 'border-white/10 bg-white/5 grayscale opacity-60 hover:opacity-80'
         }
       `}>
         {/* Rarity background effect */}
@@ -459,9 +497,13 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
         {/* Badge icon */}
         <div className={`relative w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${badge.color} ${isUnlocked ? 'opacity-100 shadow-lg' : 'opacity-40'} flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
           <badge.icon className="w-8 h-8 text-white" />
-          {isUnlocked && (
+          {isUnlocked ? (
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-neon-green rounded-full flex items-center justify-center">
               <Unlock className="w-3 h-3 text-black" />
+            </div>
+          ) : (
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center">
+              <Lock className="w-3 h-3 text-white" />
             </div>
           )}
         </div>
@@ -474,6 +516,16 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
           <p className={`text-xs ${isUnlocked ? 'text-white/80' : 'text-white/40'}`}>
             {badge.description}
           </p>
+          
+          {/* Show requirement for locked badges */}
+          {!isUnlocked && (
+            <div className="p-2 bg-white/5 rounded-lg border border-white/10 mt-2">
+              <p className="text-xs text-mining-orange font-medium">
+                Goal: {badge.requirement}
+              </p>
+            </div>
+          )}
+          
           <Badge className={`bg-gradient-to-r ${rarityColors[badge.rarity as keyof typeof rarityColors]} text-white border-none text-xs font-bold px-2 py-1`}>
             {badge.rarity.toUpperCase()}
           </Badge>
@@ -571,32 +623,32 @@ export default function Profile() {
       <div className="relative space-y-4">
         <div className="text-center space-y-2">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-neon-green to-mining-orange bg-clip-text text-transparent animate-gradient">
-            Gaming Profile
+            Miner's Hub
           </h1>
           <p className="text-white/70 text-xl">
-            Level up your mining journey and claim epic rewards!
+            Unlock achievements, claim rewards, and become a mining legend!
           </p>
         </div>
         
         {/* Gaming Stats Bar */}
         <div className="flex items-center justify-center space-x-8 text-center">
           <div className="flex items-center space-x-2">
-            <Gamepad2 className="w-6 h-6 text-neon-purple" />
-            <span className="text-white/80 font-medium">Mining Game</span>
+            <Zap className="w-6 h-6 text-neon-purple" />
+            <span className="text-white/80 font-medium">Mining Active</span>
           </div>
           <div className="flex items-center space-x-2">
             <Sparkles className="w-6 h-6 text-yellow-400" />
-            <span className="text-white/80 font-medium">Rewards Active</span>
+            <span className="text-white/80 font-medium">Rewards Available</span>
           </div>
           <div className="flex items-center space-x-2">
             <Trophy className="w-6 h-6 text-mining-orange" />
-            <span className="text-white/80 font-medium">Achievements Unlocked</span>
+            <span className="text-white/80 font-medium">Achievements Earned</span>
           </div>
         </div>
       </div>
 
-      {/* Gamer Profile Header */}
-      <GamerProfileHeader />
+      {/* Miner Profile Header */}
+      <MinerProfileHeader />
       
       {/* Active Giveaways Section - Main Focus */}
       <div className="space-y-4">
@@ -634,7 +686,7 @@ export default function Profile() {
           <Gem className="w-8 h-8 text-mining-orange" />
         </div>
         <p className="text-white/70 text-lg">
-          The more you mine, the more rewards you unlock. Level up your game and become a mining legend!
+          The more you mine, the more rewards you unlock. Complete challenges and become a mining legend!
         </p>
         <div className="flex items-center justify-center space-x-6 mt-6">
           <Badge className="bg-gradient-to-r from-neon-purple to-pink-500 text-white border-none px-4 py-2 text-lg">
