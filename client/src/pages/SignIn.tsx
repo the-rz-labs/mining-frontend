@@ -30,6 +30,11 @@ export default function SignIn() {
 
   const signInMutation = useMutation({
     mutationFn: async (data: SignInForm) => {
+      // Hardcoded admin login for testing
+      if (data.email === "admin@gmail.com" && data.password === "admin") {
+        return { user: { email: "admin@gmail.com", username: "admin" } };
+      }
+      
       const response = await apiRequest("POST", "/api/auth/sign-in", data);
       return response.json();
     },
