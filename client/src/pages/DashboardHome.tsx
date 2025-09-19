@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActiveMiners } from "@/components/ActiveMiners";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -301,6 +302,9 @@ export default function DashboardHome() {
               </CardContent>
             </Card>
           </div>
+          
+          {/* Active Miners Section */}
+          <ActiveMiners />
           
           {/* Chart */}
           <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
