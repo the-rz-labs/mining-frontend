@@ -657,14 +657,40 @@ function AchievementsShowcase() {
 
 export default function Profile() {
   return (
-    <div className="p-6 space-y-8 max-w-7xl mx-auto relative">
-      {/* Animated background particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60"></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-neon-green rounded-full animate-ping opacity-40"></div>
-        <div className="absolute bottom-40 left-20 w-1 h-1 bg-mining-orange rounded-full animate-pulse opacity-50"></div>
-        <div className="absolute top-60 right-40 w-2 h-2 bg-yellow-400 rounded-full animate-bounce opacity-30"></div>
+    <div className="p-6 space-y-8 max-w-7xl mx-auto relative overflow-hidden">
+      {/* Enhanced Background Effects - Multiple layers */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Large animated gradient orbs - similar to sign-in page */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-r from-neon-purple/40 to-neon-green/40 rounded-full blur-3xl animate-float opacity-60"></div>
+        <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-r from-mining-orange/30 to-neon-purple/30 rounded-full blur-3xl animate-breathing opacity-50" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-gradient-to-r from-neon-green/35 to-mining-orange/35 rounded-full blur-3xl animate-float opacity-45" style={{ animationDelay: "4s" }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-gradient-to-r from-yellow-400/25 to-neon-green/25 rounded-full blur-3xl animate-breathing opacity-40" style={{ animationDelay: "6s" }}></div>
+        
+        {/* Radial gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-radial from-neon-purple/5 via-transparent to-transparent opacity-70"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.015] to-transparent opacity-60"></div>
+        
+        {/* Enhanced floating particles - more variety */}
+        <div className="absolute top-20 left-10 w-3 h-3 bg-neon-purple rounded-full animate-float opacity-70 shadow-lg shadow-neon-purple/50"></div>
+        <div className="absolute top-40 right-20 w-1.5 h-1.5 bg-neon-green rounded-full animate-ping opacity-50"></div>
+        <div className="absolute bottom-40 left-20 w-2 h-2 bg-mining-orange rounded-full animate-pulse opacity-60 shadow-sm shadow-mining-orange/40"></div>
+        <div className="absolute top-60 right-40 w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce opacity-40"></div>
+        <div className="absolute top-80 left-1/3 w-1 h-1 bg-cyan-400 rounded-full animate-float opacity-30" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-60 right-1/3 w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse opacity-35" style={{ animationDelay: "3s" }}></div>
+        <div className="absolute top-1/2 left-10 w-2 h-2 bg-emerald-400 rounded-full animate-ping opacity-25" style={{ animationDelay: "5s" }}></div>
+        
+        {/* Subtle grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.008]" style={{
+          backgroundImage: `
+            linear-gradient(rgba(142, 70, 255, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(142, 70, 255, 0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '80px 80px'
+        }}></div>
       </div>
+      
+      {/* Content container with higher z-index */}
+      <div className="relative z-10">
 
       {/* Gaming Header */}
       <div className="relative space-y-4">
@@ -738,6 +764,7 @@ export default function Profile() {
           </Badge>
         </div>
       </div>
+      </div> {/* Close content container */}
     </div>
   );
 }
