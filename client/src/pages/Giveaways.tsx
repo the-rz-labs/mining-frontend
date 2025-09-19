@@ -55,7 +55,7 @@ const activeGiveaways = [
     timeLeft: 432000000, // 120 hours
     type: "weekly",
     icon: Trophy,
-    gradient: "from-neon-green to-emerald-500",
+    gradient: "from-neon-purple to-purple-500",
     claimed: true,
     participants: 89,
     maxParticipants: 100
@@ -172,7 +172,7 @@ function GiveawayCard({ giveaway }: { giveaway: typeof activeGiveaways[0] }) {
             <Clock className="w-4 h-4 text-mining-orange" />
             <span className="text-white/80">Time Remaining</span>
           </div>
-          <span className={`font-mono font-bold ${timeLeft <= 3600000 ? 'text-red-400' : 'text-neon-green'}`}>
+          <span className={`font-mono font-bold ${timeLeft <= 3600000 ? 'text-red-400' : 'text-neon-purple'}`}>
             {formatTimeRemaining(timeLeft)}
           </span>
         </div>
@@ -214,7 +214,7 @@ function PastGiveawayCard({ giveaway }: { giveaway: typeof pastGiveaways[0] }) {
           <div className="flex-1">
             <h4 className="text-white font-bold">{giveaway.title}</h4>
             <p className="text-white/60 text-sm">{giveaway.description}</p>
-            <p className="text-neon-green text-sm font-medium mt-1">
+            <p className="text-neon-purple text-sm font-medium mt-1">
               Winner: {giveaway.winner}
             </p>
           </div>
@@ -238,13 +238,13 @@ export default function Giveaways() {
       {/* Animated background particles */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60"></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-neon-green rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-40 right-20 w-1 h-1 bg-neon-purple rounded-full animate-ping opacity-40"></div>
         <div className="absolute bottom-40 left-20 w-1 h-1 bg-mining-orange rounded-full animate-pulse opacity-50"></div>
       </div>
 
       {/* Header */}
       <div className="relative text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-neon-green to-mining-orange bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-mining-orange bg-clip-text text-transparent">
           🎁 Active Giveaways & Rewards
         </h1>
         <p className="text-white/70 text-xl">
@@ -254,7 +254,7 @@ export default function Giveaways() {
         {/* Quick Stats */}
         <div className="flex items-center justify-center space-x-8 mt-6">
           <div className="text-center">
-            <p className="text-2xl font-bold text-neon-green">{activeCount}</p>
+            <p className="text-2xl font-bold text-neon-purple">{activeCount}</p>
             <p className="text-white/60 text-sm">Active Events</p>
           </div>
           <div className="text-center">
@@ -273,7 +273,7 @@ export default function Giveaways() {
         <div className="flex items-center space-x-3">
           <Sparkles className="w-6 h-6 text-yellow-400" />
           <h2 className="text-2xl font-bold text-white">Featured Events</h2>
-          <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50">
+          <Badge className="bg-neon-purple/20 text-neon-purple border-neon-purple/50">
             {activeCount} Active
           </Badge>
         </div>
@@ -303,7 +303,7 @@ export default function Giveaways() {
       <div className="mt-12 p-8 bg-gradient-to-r from-white/5 to-white/10 border border-white/10 rounded-2xl text-center backdrop-blur-lg">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <Trophy className="w-10 h-10 text-mining-orange" />
-          <h3 className="text-3xl font-bold bg-gradient-to-r from-neon-purple to-neon-green bg-clip-text text-transparent">
+          <h3 className="text-3xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent">
             More Events Coming Soon!
           </h3>
           <Star className="w-10 h-10 text-yellow-400" />
@@ -316,7 +316,7 @@ export default function Giveaways() {
             <Gift className="w-5 h-5 mr-2" />
             Weekly Events
           </Badge>
-          <Badge className="bg-gradient-to-r from-neon-green to-emerald-500 text-white border-none px-6 py-3 text-lg">
+          <Badge className="bg-gradient-to-r from-mining-orange to-orange-500 text-white border-none px-6 py-3 text-lg">
             <Crown className="w-5 h-5 mr-2" />
             VIP Rewards
           </Badge>

@@ -200,18 +200,18 @@ function MinerProfileHeader() {
       {/* Enhanced Profile Header Card */}
       <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/20 hover:shadow-neon-purple/30 transition-all duration-500 hover:border-white/20 relative overflow-hidden">
         {/* Animated background effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-transparent to-neon-green/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-transparent to-mining-orange/10"></div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-neon-purple/20 to-transparent opacity-50 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-neon-green/15 to-transparent opacity-30 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-mining-orange/15 to-transparent opacity-30 blur-2xl"></div>
         
         <CardHeader className="relative space-y-6 pb-4">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-6 lg:space-y-0">
             {/* Left Section - Avatar and Basic Info */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="relative group">
-                <Avatar className="w-24 h-24 border-4 border-gradient-to-r from-neon-purple to-neon-green shadow-lg shadow-neon-purple/30 transition-all duration-300 group-hover:scale-105">
+                <Avatar className="w-24 h-24 border-4 border-gradient-to-r from-neon-purple to-mining-orange shadow-lg shadow-neon-purple/30 transition-all duration-300 group-hover:scale-105">
                   <AvatarImage src={selectedAvatar || ""} alt="Profile" />
-                  <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-2xl font-bold">
+                  <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-mining-orange/30 text-white text-2xl font-bold">
                     {profile.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -226,7 +226,7 @@ function MinerProfileHeader() {
                   <Camera className="w-4 h-4 text-white" />
                 </Button>
                 {/* Mining status badge */}
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-neon-green to-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full border border-white/20 shadow-lg animate-pulse">
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-neon-purple to-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full border border-white/20 shadow-lg animate-pulse">
                   <div className="flex items-center space-x-1">
                     <Activity className="w-3 h-3" />
                     <span>MINING</span>
@@ -237,7 +237,7 @@ function MinerProfileHeader() {
               <div className="space-y-3 text-center sm:text-left">
                 <div>
                   <div className="flex items-center justify-center sm:justify-start space-x-2">
-                    <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-neon-green to-mining-orange bg-clip-text text-transparent" data-testid="text-username">
+                    <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-mining-orange bg-clip-text text-transparent" data-testid="text-username">
                       {profile.username}
                     </h2>
                     <Button size="icon" variant="ghost" className="w-6 h-6 text-white/60 hover:text-white hover:bg-white/10">
@@ -252,7 +252,7 @@ function MinerProfileHeader() {
                     <Crown className="w-4 h-4 mr-1" />
                     {profile.rank}
                   </Badge>
-                  <Badge className="bg-gradient-to-r from-neon-green to-emerald-600 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
+                  <Badge className="bg-gradient-to-r from-mining-orange to-orange-600 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
                     <Flame className="w-4 h-4 mr-1" />
                     {profile.miningStreak} day streak
                   </Badge>
@@ -307,9 +307,9 @@ function MinerProfileHeader() {
           </CardContent>
         </Card>
 
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-neon-green/30 hover:scale-105 transition-all duration-300 group">
+        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-mining-orange/30 hover:scale-105 transition-all duration-300 group">
           <CardContent className="p-6 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-green to-emerald-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <Flame className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -336,7 +336,7 @@ function MinerProfileHeader() {
       <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-xl">
         <CardHeader>
           <CardTitle className="flex items-center space-x-3 text-white">
-            <div className="p-2 rounded-full bg-gradient-to-r from-neon-green to-emerald-500">
+            <div className="p-2 rounded-full bg-gradient-to-r from-neon-purple to-purple-500">
               <Wallet className="w-5 h-5 text-white" />
             </div>
             <span>Earnings Overview</span>
@@ -347,10 +347,10 @@ function MinerProfileHeader() {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-white/70">Total Earnings</span>
-                <span className="text-2xl font-bold text-neon-green">{profile.totalEarnings} MGC</span>
+                <span className="text-2xl font-bold text-neon-purple">{profile.totalEarnings} MGC</span>
               </div>
               <div className="w-full bg-white/10 rounded-full h-2">
-                <div className="bg-gradient-to-r from-neon-green to-emerald-500 h-2 rounded-full" style={{width: '68%'}}></div>
+                <div className="bg-gradient-to-r from-neon-purple to-purple-500 h-2 rounded-full" style={{width: '68%'}}></div>
               </div>
             </div>
             <div className="space-y-2">

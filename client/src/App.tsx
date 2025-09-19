@@ -72,20 +72,20 @@ function Router() {
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 relative overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 relative overflow-hidden">
       {/* Modern Background Effects matching sign-in page */}
       <div className="fixed inset-0 z-0">
         {/* Animated gradient orbs */}
-        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl animate-float opacity-70"></div>
+        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-mining-orange/30 rounded-full blur-3xl animate-float opacity-70"></div>
         <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl animate-breathing opacity-60" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-purple/20 to-mining-orange/20 rounded-full blur-3xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
         
         {/* Subtle radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50"></div>
         
         {/* Floating particles */}
         <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60 hidden md:block"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-purple rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
         <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block" style={{ animationDelay: "3s" }}></div>
       </div>
       

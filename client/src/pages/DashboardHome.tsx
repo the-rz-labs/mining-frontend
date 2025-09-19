@@ -86,17 +86,17 @@ function StatCard({ title, value, change, icon: Icon, suffix = "" }: {
             {change !== undefined && (
               <div className="flex items-center space-x-1">
                 {change > 0 ? (
-                  <TrendingUp className="w-4 h-4 text-neon-green" />
+                  <TrendingUp className="w-4 h-4 text-neon-purple" />
                 ) : (
                   <TrendingDown className="w-4 h-4 text-red-500" />
                 )}
-                <span className={`text-sm font-medium ${change > 0 ? 'text-neon-green' : 'text-red-500'}`}>
+                <span className={`text-sm font-medium ${change > 0 ? 'text-neon-purple' : 'text-red-500'}`}>
                   {change > 0 ? '+' : ''}{change}%
                 </span>
               </div>
             )}
           </div>
-          <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-lg flex items-center justify-center border border-white/10">
+          <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-mining-orange/20 rounded-lg flex items-center justify-center border border-white/10">
             <Icon className="w-6 h-6 text-neon-purple" />
           </div>
         </div>
@@ -112,7 +112,7 @@ function StatusCard({ title, status, icon: Icon, color }: {
   color: "green" | "orange" | "red";
 }) {
   const colorClasses = {
-    green: "text-neon-green bg-neon-green/20 border-neon-green/50",
+    green: "text-neon-purple bg-neon-purple/20 border-neon-purple/50",
     orange: "text-mining-orange bg-mining-orange/20 border-mining-orange/50",
     red: "text-red-500 bg-red-500/20 border-red-500/50"
   };
@@ -122,7 +122,7 @@ function StatusCard({ title, status, icon: Icon, color }: {
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Icon className={`w-5 h-5 ${color === 'green' ? 'text-neon-green' : color === 'orange' ? 'text-mining-orange' : 'text-red-500'}`} />
+            <Icon className={`w-5 h-5 ${color === 'green' ? 'text-neon-purple' : color === 'orange' ? 'text-mining-orange' : 'text-red-500'}`} />
             <span className="text-white/80 font-medium">{title}</span>
           </div>
           <Badge className={`${colorClasses[color]} border`}>
@@ -141,13 +141,13 @@ function WelcomeSection() {
       <CardContent className="p-6">
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <Avatar className="w-16 h-16 border-2 border-neon-green/50">
+            <Avatar className="w-16 h-16 border-2 border-neon-purple/50">
               <AvatarImage src="" alt="Profile" />
-              <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-xl font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-mining-orange/30 text-white text-xl font-bold">
                 CM
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-neon-green rounded-full border-2 border-black"></div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-neon-purple rounded-full border-2 border-black"></div>
           </div>
           <div>
             <p className="text-white/60 text-sm">WELCOME</p>
@@ -218,7 +218,7 @@ export default function DashboardHome() {
                     <p className="text-lg font-bold text-white">{miningStats.transactions.value}</p>
                     <p className="text-xs text-white/40">Last month: +{miningStats.transactions.change}</p>
                   </div>
-                  <div className="text-neon-green">
+                  <div className="text-neon-purple">
                     <ArrowUpRight className="w-4 h-4" />
                     <span className="text-xs">25%</span>
                   </div>
@@ -281,11 +281,11 @@ export default function DashboardHome() {
             
             <Card className="border border-white/10 bg-white/5 backdrop-blur-xl">
               <CardContent className="p-4 text-center">
-                <Cpu className="w-8 h-8 text-neon-green mx-auto mb-2" />
+                <Cpu className="w-8 h-8 text-neon-purple mx-auto mb-2" />
                 <p className="text-white/60 text-xs uppercase">ACTIVITY</p>
                 <p className="text-xl font-bold text-white">507 hours</p>
                 <div className="w-full bg-white/10 rounded-full h-2 mt-2">
-                  <div className="bg-neon-green h-2 rounded-full" style={{width: '75%'}}></div>
+                  <div className="bg-neon-purple h-2 rounded-full" style={{width: '75%'}}></div>
                 </div>
               </CardContent>
             </Card>
@@ -306,7 +306,7 @@ export default function DashboardHome() {
           <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2 text-white">
-                <Activity className="w-5 h-5 text-neon-green" />
+                <Activity className="w-5 h-5 text-neon-purple" />
                 <span>Mining Performance</span>
               </CardTitle>
               <CardDescription className="text-white/60">
@@ -319,8 +319,8 @@ export default function DashboardHome() {
                   <AreaChart data={hashRateData}>
                     <defs>
                       <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="time" axisLine={false} tickLine={false} className="text-white/60" />
@@ -336,7 +336,7 @@ export default function DashboardHome() {
                     <Area
                       type="monotone"
                       dataKey="hashRate"
-                      stroke="#10B981"
+                      stroke="#8B5CF6"
                       fillOpacity={1}
                       fill="url(#areaGradient)"
                       strokeWidth={2}
@@ -369,11 +369,11 @@ export default function DashboardHome() {
               </CardContent>
             </Card>
 
-            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-neon-green/50 transition-all duration-300">
+            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-mining-orange/50 transition-all duration-300">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center justify-between text-white">
                   <span className="flex items-center space-x-2">
-                    <div className="w-6 h-6 bg-gradient-to-r from-neon-green to-green-600 rounded-full"></div>
+                    <div className="w-6 h-6 bg-gradient-to-r from-mining-orange to-orange-600 rounded-full"></div>
                     <span>RZ Balance</span>
                   </span>
                 </CardTitle>
