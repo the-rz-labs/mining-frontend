@@ -43,6 +43,12 @@ import type { User as UserType, UserBadge } from "@shared/schema";
 import { useLocation } from "wouter";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
 
+// Import custom referral badge images
+import referral5Image from "@assets/5rb_1758305317536.jpg";
+import referral10Image from "@assets/10rb_1758305322560.jpg";
+import referral20Image from "@assets/20rb_1758305326625.jpg";
+import referral50Image from "@assets/50rb_1758305331049.jpg";
+
 // Mining profile data
 const mockMinerProfile = {
   id: "1",
@@ -93,7 +99,18 @@ const achievementBadges = {
     color: "from-mining-orange to-orange-500",
     unlocked: true,
     rarity: "uncommon",
-    requirement: "5 referrals"
+    requirement: "5 referrals",
+    customImage: referral5Image
+  },
+  referral_recruiter: { 
+    label: "Network Recruiter", 
+    description: "Build your network with 10 referrals", 
+    icon: User, 
+    color: "from-orange-500 to-red-500",
+    unlocked: false,
+    rarity: "rare",
+    requirement: "10 referrals",
+    customImage: referral10Image
   },
   treasure_hunter: { 
     label: "Treasure Hunter", 
@@ -147,7 +164,18 @@ const achievementBadges = {
     color: "from-pink-500 to-rose-500",
     unlocked: false,
     rarity: "epic",
-    requirement: "20 referrals"
+    requirement: "20 referrals",
+    customImage: referral20Image
+  },
+  referral_legend: { 
+    label: "Referral Legend", 
+    description: "Master networker with 50 referrals", 
+    icon: Crown, 
+    color: "from-yellow-400 to-orange-500",
+    unlocked: false,
+    rarity: "legendary",
+    requirement: "50 referrals",
+    customImage: referral50Image
   },
   ultimate_miner: { 
     label: "Ultimate Miner", 
@@ -433,15 +461,24 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
           </>
         )}
         
-        {/* Badge icon */}
-        <div className={`relative w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${badge.color} ${isUnlocked ? 'opacity-100 shadow-lg' : 'opacity-40'} flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
-          <badge.icon className="w-8 h-8 text-white" />
+        {/* Badge icon or custom image */}
+        <div className={`relative w-16 h-16 mx-auto rounded-full ${(badge as any).customImage ? 'overflow-hidden' : `bg-gradient-to-br ${badge.color}`} ${isUnlocked ? 'opacity-100 shadow-lg' : 'opacity-40'} flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
+          {(badge as any).customImage ? (
+            <img 
+              src={(badge as any).customImage} 
+              alt={badge.label} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <badge.icon className="w-8 h-8 text-white" />
+          )}
+          {/* Status icon */}
           {isUnlocked ? (
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-neon-purple rounded-full flex items-center justify-center">
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-neon-purple rounded-full flex items-center justify-center z-10">
               <Unlock className="w-3 h-3 text-black" />
             </div>
           ) : (
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center">
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center z-10">
               <Lock className="w-3 h-3 text-white" />
             </div>
           )}
@@ -479,8 +516,22 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
   );
 }
 
-function AchievementsShowcase() {
-  const unlockedAchievements = ['first_mine', 'mining_streak_7', 'referral_master'];
+function AchievementsShowcase({ userReferralCount }: { userReferralCount: number }) {
+  // Dynamic unlock logic based on user's referral count
+  const getReferralUnlocks = (referralCount: number) => {
+    const unlocks = [];
+    if (referralCount >= 5) unlocks.push('referral_master');
+    if (referralCount >= 10) unlocks.push('referral_recruiter');
+    if (referralCount >= 20) unlocks.push('social_butterfly');
+    if (referralCount >= 50) unlocks.push('referral_legend');
+    return unlocks;
+  };
+  
+  const unlockedAchievements = [
+    'first_mine', 
+    'mining_streak_7', 
+    ...getReferralUnlocks(userReferralCount)
+  ];
   const totalAchievements = Object.keys(achievementBadges).length;
   const progressPercentage = (unlockedAchievements.length / totalAchievements) * 100;
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -498,7 +549,7 @@ function AchievementsShowcase() {
     
     const categoryMap: { [key: string]: string[] } = {
       mining: ['first_mine', 'mining_marathon', 'speed_demon', 'big_earner', 'ultimate_miner'],
-      social: ['referral_master', 'social_butterfly'],
+      social: ['referral_master', 'referral_recruiter', 'social_butterfly', 'referral_legend'],
       time: ['mining_streak_7', 'mining_streak_30', 'weekend_warrior', 'diamond_hands'],
       special: ['treasure_hunter']
     };
@@ -708,7 +759,7 @@ export default function Profile() {
             Celebrating your mining accomplishments and milestones
           </p>
         </div>
-        <AchievementsShowcase />
+        <AchievementsShowcase userReferralCount={mockMinerProfile.referralCount} />
       </div>
 
       {/* Gaming Footer */}
