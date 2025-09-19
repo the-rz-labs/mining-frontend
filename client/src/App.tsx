@@ -4,8 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { TopNavigation } from "@/components/TopNavigation";
 import Home from "@/pages/Home";
 import SignUp from "@/pages/SignUp";
 import SignIn from "@/pages/SignIn";
@@ -26,7 +25,7 @@ function Router() {
       <Route path="/sign-in" component={SignIn} />
       <Route path="/forgot-password" component={ForgotPassword} />
       
-      {/* App routes with sidebar layout */}
+      {/* App routes with top navigation layout */}
       <Route path="/app/profile">
         <AppLayout>
           <Profile />
@@ -65,29 +64,13 @@ function Router() {
 }
 
 function AppLayout({ children }: { children: React.ReactNode }) {
-  // Custom sidebar width for crypto mining platform
-  const sidebarStyle = {
-    "--sidebar-width": "18rem",
-    "--sidebar-width-icon": "4rem",
-  };
-
   return (
-    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
-      <div className="flex h-screen w-full bg-black">
-        <AppSidebar />
-        <div className="flex flex-col flex-1">
-          <header className="flex items-center justify-between p-4 border-b border-white/10 bg-black/40 backdrop-blur-xl">
-            <SidebarTrigger data-testid="button-sidebar-toggle" className="text-white hover:text-neon-purple" />
-            <div className="text-sm text-white/60">
-              Welcome to Ranking Mining Platform
-            </div>
-          </header>
-          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-black via-purple-900/20 to-black">
-            {children}
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen bg-black">
+      <TopNavigation />
+      <main className="bg-gradient-to-br from-black via-purple-900/20 to-black min-h-[calc(100vh-4rem)]">
+        {children}
+      </main>
+    </div>
   );
 }
 
