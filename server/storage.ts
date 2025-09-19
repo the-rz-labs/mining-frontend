@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type EmailVerification, type InsertEmailVerification } from "@shared/schema";
+import { type User, type InsertUser, type EmailVerification, type InsertEmailVerification, type UserBadge, type InsertUserBadge, type UpdateProfileRequest, type ConnectWalletRequest, type ConnectRankRequest } from "@shared/schema";
 import { randomUUID, scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
@@ -15,6 +15,18 @@ export interface IStorage {
   getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   verifyPassword(password: string, hashedPassword: string): Promise<boolean>;
+  updateUserProfile(userId: string, updates: Partial<UpdateProfileRequest>): Promise<User | undefined>;
+  connectWallet(userId: string, address: string): Promise<User | undefined>;
+  disconnectWallet(userId: string): Promise<User | undefined>;
+  connectRank(userId: string, rankId: string): Promise<User | undefined>;
+  disconnectRank(userId: string): Promise<User | undefined>;
+  startMining(userId: string): Promise<User | undefined>;
+  stopMining(userId: string): Promise<User | undefined>;
+  
+  // Badge operations
+  getUserBadges(userId: string): Promise<UserBadge[]>;
+  awardBadge(userId: string, type: UserBadge['type']): Promise<UserBadge>;
+  recomputeBadges(userId: string): Promise<UserBadge[]>;
   
   // Email verification operations
   createEmailVerification(verification: InsertEmailVerification): Promise<EmailVerification>;
@@ -27,10 +39,12 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private emailVerifications: Map<string, EmailVerification>;
+  private userBadges: Map<string, UserBadge[]>;
 
   constructor() {
     this.users = new Map();
     this.emailVerifications = new Map();
+    this.userBadges = new Map();
   }
 
   // User operations
@@ -81,10 +95,26 @@ export class MemStorage implements IStorage {
       username: insertUser.username,
       passwordHash,
       referralCode,
-      referredByUserId
+      referredByUserId,
+      walletAddress: null,
+      rankAccountId: null,
+      referralCount: 0,
+      miningStartedAt: null
     };
     
     this.users.set(id, user);
+    
+    // Increment referrer's referral count and recompute badges
+    if (referredByUserId) {
+      const referrer = this.users.get(referredByUserId);
+      if (referrer) {
+        referrer.referralCount++;
+        this.users.set(referredByUserId, referrer);
+        // Recompute badges for referrer
+        await this.recomputeBadges(referredByUserId);
+      }
+    }
+    
     return user;
   }
 
@@ -151,6 +181,140 @@ export class MemStorage implements IStorage {
 
   async deleteEmailVerification(email: string): Promise<void> {
     this.emailVerifications.delete(email.toLowerCase());
+  }
+
+  // Profile operations
+  async updateUserProfile(userId: string, updates: Partial<UpdateProfileRequest>): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, ...updates };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async connectWallet(userId: string, address: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, walletAddress: address };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async disconnectWallet(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, walletAddress: null };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async connectRank(userId: string, rankId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, rankAccountId: rankId };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async disconnectRank(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, rankAccountId: null };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  // Badge operations
+  async getUserBadges(userId: string): Promise<UserBadge[]> {
+    return this.userBadges.get(userId) || [];
+  }
+
+  async awardBadge(userId: string, type: UserBadge['type']): Promise<UserBadge> {
+    const id = randomUUID();
+    const badge: UserBadge = {
+      id,
+      userId,
+      type,
+      awardedAt: new Date()
+    };
+    
+    const userBadges = this.userBadges.get(userId) || [];
+    // Check if user already has this badge type
+    if (!userBadges.some(b => b.type === type)) {
+      userBadges.push(badge);
+      this.userBadges.set(userId, userBadges);
+    }
+    
+    return badge;
+  }
+
+  async startMining(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    if (!user.miningStartedAt) {
+      const updatedUser = { ...user, miningStartedAt: new Date() };
+      this.users.set(userId, updatedUser);
+      // Recompute badges after starting mining
+      await this.recomputeBadges(userId);
+      return updatedUser;
+    }
+    
+    return user;
+  }
+  
+  async stopMining(userId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, miningStartedAt: null };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async recomputeBadges(userId: string): Promise<UserBadge[]> {
+    const user = this.users.get(userId);
+    if (!user) return [];
+    
+    const currentBadges = this.userBadges.get(userId) || [];
+    const badgeTypes = new Set(currentBadges.map(b => b.type));
+    
+    // Check referral badges
+    if (user.referralCount >= 5 && !badgeTypes.has('referrals_5')) {
+      await this.awardBadge(userId, 'referrals_5');
+    }
+    if (user.referralCount >= 10 && !badgeTypes.has('referrals_10')) {
+      await this.awardBadge(userId, 'referrals_10');
+    }
+    if (user.referralCount >= 25 && !badgeTypes.has('referrals_25')) {
+      await this.awardBadge(userId, 'referrals_25');
+    }
+    if (user.referralCount >= 50 && !badgeTypes.has('referrals_50')) {
+      await this.awardBadge(userId, 'referrals_50');
+    }
+    
+    // Check mining duration badges
+    if (user.miningStartedAt) {
+      const now = new Date();
+      const miningDays = Math.floor((now.getTime() - user.miningStartedAt.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (miningDays >= 7 && !badgeTypes.has('mining_week_1')) {
+        await this.awardBadge(userId, 'mining_week_1');
+      }
+      if (miningDays >= 30 && !badgeTypes.has('mining_month_1')) {
+        await this.awardBadge(userId, 'mining_month_1');
+      }
+      if (miningDays >= 365 && !badgeTypes.has('mining_year_1')) {
+        await this.awardBadge(userId, 'mining_year_1');
+      }
+    }
+    
+    return this.getUserBadges(userId);
   }
 }
 

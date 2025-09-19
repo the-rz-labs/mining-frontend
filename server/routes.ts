@@ -5,7 +5,10 @@ import {
   sendCodeSchema, 
   verifyCodeSchema, 
   insertUserSchema, 
-  signInSchema 
+  signInSchema,
+  updateProfileSchema,
+  connectWalletSchema,
+  connectRankSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -32,7 +35,8 @@ class RateLimiter {
   
   cleanup() {
     const now = Date.now();
-    for (const [key, record] of this.attempts.entries()) {
+    const entries = Array.from(this.attempts.entries());
+    for (const [key, record] of entries) {
       if (now - record.windowStart > 3600000) { // 1 hour cleanup
         this.attempts.delete(key);
       }
@@ -220,6 +224,232 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Sign in error:", error);
       res.status(500).json({ error: "Failed to sign in" });
+    }
+  });
+
+  // Profile management routes
+  
+  // Get current user profile
+  app.get("/api/me", async (req, res) => {
+    try {
+      // For now, return a mock user. In production, get from session/JWT
+      const userId = req.headers['x-user-id'] as string;
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = user;
+      res.json(userResponse);
+    } catch (error) {
+      console.error("Get profile error:", error);
+      res.status(500).json({ error: "Failed to get profile" });
+    }
+  });
+  
+  // Update user profile
+  app.patch("/api/profile", async (req, res) => {
+    try {
+      const updates = updateProfileSchema.parse(req.body);
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.updateUserProfile(userId, updates);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Profile updated successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Update profile error:", error);
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+  
+  // Connect wallet
+  app.post("/api/wallet/connect", async (req, res) => {
+    try {
+      const { address } = connectWalletSchema.parse(req.body);
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.connectWallet(userId, address);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Wallet connected successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Connect wallet error:", error);
+      res.status(500).json({ error: "Failed to connect wallet" });
+    }
+  });
+  
+  // Disconnect wallet
+  app.delete("/api/wallet", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.disconnectWallet(userId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Wallet disconnected successfully" });
+    } catch (error) {
+      console.error("Disconnect wallet error:", error);
+      res.status(500).json({ error: "Failed to disconnect wallet" });
+    }
+  });
+  
+  // Connect rank account
+  app.post("/api/rank/connect", async (req, res) => {
+    try {
+      const { rankId } = connectRankSchema.parse(req.body);
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.connectRank(userId, rankId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Rank account connected successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Connect rank error:", error);
+      res.status(500).json({ error: "Failed to connect rank account" });
+    }
+  });
+  
+  // Disconnect rank account
+  app.delete("/api/rank", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.disconnectRank(userId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Rank account disconnected successfully" });
+    } catch (error) {
+      console.error("Disconnect rank error:", error);
+      res.status(500).json({ error: "Failed to disconnect rank account" });
+    }
+  });
+  
+  // Get user badges
+  app.get("/api/badges", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const badges = await storage.getUserBadges(userId);
+      res.json(badges);
+    } catch (error) {
+      console.error("Get badges error:", error);
+      res.status(500).json({ error: "Failed to get badges" });
+    }
+  });
+  
+  // Recompute badges (admin/development)
+  app.post("/api/badges/recompute", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const badges = await storage.recomputeBadges(userId);
+      res.json({ badges, message: "Badges recomputed successfully" });
+    } catch (error) {
+      console.error("Recompute badges error:", error);
+      res.status(500).json({ error: "Failed to recompute badges" });
+    }
+  });
+  
+  // Mining management routes
+  
+  // Start mining
+  app.post("/api/mining/start", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.startMining(userId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Mining started successfully" });
+    } catch (error) {
+      console.error("Start mining error:", error);
+      res.status(500).json({ error: "Failed to start mining" });
+    }
+  });
+  
+  // Stop mining
+  app.post("/api/mining/stop", async (req, res) => {
+    try {
+      const userId = req.headers['x-user-id'] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const updatedUser = await storage.stopMining(userId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const { passwordHash, ...userResponse } = updatedUser;
+      res.json({ user: userResponse, message: "Mining stopped successfully" });
+    } catch (error) {
+      console.error("Stop mining error:", error);
+      res.status(500).json({ error: "Failed to stop mining" });
     }
   });
 
