@@ -43,7 +43,7 @@ export default function SignIn() {
         title: "Welcome back!",
         description: `Successfully signed in as ${data.user.username}`
       });
-      navigate("/"); // Navigate to home or dashboard
+      navigate("/dashboard"); // Navigate to dashboard
     },
     onError: (error: any) => {
       toast({
