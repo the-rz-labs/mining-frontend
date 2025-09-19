@@ -12,6 +12,8 @@ import SignIn from "@/pages/SignIn";
 import ForgotPassword from "@/pages/ForgotPassword";
 import DashboardHome from "@/pages/DashboardHome";
 import Profile from "@/pages/Profile";
+import Referrals from "@/pages/Referrals";
+import Giveaways from "@/pages/Giveaways";
 import Support from "@/pages/Support";
 import FAQ from "@/pages/FAQ";
 import NotFound from "@/pages/not-found";
@@ -28,6 +30,16 @@ function Router() {
       <Route path="/app/profile">
         <AppLayout>
           <Profile />
+        </AppLayout>
+      </Route>
+      <Route path="/app/referrals">
+        <AppLayout>
+          <Referrals />
+        </AppLayout>
+      </Route>
+      <Route path="/app/giveaways">
+        <AppLayout>
+          <Giveaways />
         </AppLayout>
       </Route>
       <Route path="/app/support">

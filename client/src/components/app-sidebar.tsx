@@ -1,4 +1,4 @@
-import { Home, User, HelpCircle, MessageSquare, Settings } from "lucide-react";
+import { Home, User, HelpCircle, MessageSquare, Settings, Users, Gift } from "lucide-react";
 import { Link } from "wouter";
 import {
   Sidebar,
@@ -26,6 +26,18 @@ const navigationItems = [
     href: "/app/profile",
     icon: User,
     testId: "link-nav-profile",
+  },
+  {
+    title: "Referrals",
+    href: "/app/referrals",
+    icon: Users,
+    testId: "link-nav-referrals",
+  },
+  {
+    title: "Giveaways",
+    href: "/app/giveaways",
+    icon: Gift,
+    testId: "link-nav-giveaways",
   },
   {
     title: "Support",
