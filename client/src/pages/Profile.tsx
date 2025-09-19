@@ -63,7 +63,7 @@ const achievementBadges = {
     label: "Mining Pioneer", 
     description: "Complete your first mining session", 
     icon: Zap, 
-    color: "from-blue-500 to-cyan-500",
+    color: "from-neon-purple to-purple-500",
     unlocked: true,
     rarity: "common",
     requirement: "Mine for 1 hour"
@@ -72,7 +72,7 @@ const achievementBadges = {
     label: "Consistent Miner", 
     description: "Mine for 7 consecutive days", 
     icon: Flame, 
-    color: "from-orange-500 to-red-500",
+    color: "from-neon-purple to-purple-600",
     unlocked: true,
     rarity: "uncommon",
     requirement: "7-day streak"
@@ -81,7 +81,7 @@ const achievementBadges = {
     label: "Mining Legend", 
     description: "Achieve 30-day mining streak", 
     icon: Medal, 
-    color: "from-purple-500 to-pink-500",
+    color: "from-purple-500 to-purple-600",
     unlocked: false,
     rarity: "rare",
     requirement: "30-day streak"
@@ -90,7 +90,7 @@ const achievementBadges = {
     label: "Community Builder", 
     description: "Invite 5 friends to start mining", 
     icon: User, 
-    color: "from-mining-orange to-orange-500",
+    color: "from-neon-purple to-purple-500",
     unlocked: true,
     rarity: "uncommon",
     requirement: "5 referrals"
@@ -99,7 +99,7 @@ const achievementBadges = {
     label: "Treasure Hunter", 
     description: "Claim 25 daily bonuses", 
     icon: Gem, 
-    color: "from-yellow-500 to-orange-500",
+    color: "from-purple-400 to-purple-500",
     unlocked: false,
     rarity: "epic",
     requirement: "25 daily claims"
@@ -108,7 +108,7 @@ const achievementBadges = {
     label: "Mining Marathon", 
     description: "Mine continuously for 24 hours", 
     icon: Timer, 
-    color: "from-purple-600 to-indigo-600",
+    color: "from-purple-400 to-purple-700",
     unlocked: false,
     rarity: "epic",
     requirement: "24h continuous"
@@ -117,7 +117,7 @@ const achievementBadges = {
     label: "Lightning Miner", 
     description: "Achieve highest mining efficiency", 
     icon: Rocket, 
-    color: "from-cyan-500 to-blue-500",
+    color: "from-purple-400 to-purple-500",
     unlocked: false,
     rarity: "rare",
     requirement: "95%+ efficiency"
@@ -126,7 +126,7 @@ const achievementBadges = {
     label: "Diamond Hands", 
     description: "Hold mined tokens for 100+ days", 
     icon: Diamond, 
-    color: "from-cyan-400 to-blue-600",
+    color: "from-purple-400 to-purple-600",
     unlocked: false,
     rarity: "legendary",
     requirement: "Hold 100 days"
@@ -135,7 +135,7 @@ const achievementBadges = {
     label: "Big Earner", 
     description: "Earn 1000+ tokens from mining", 
     icon: Coins, 
-    color: "from-yellow-600 to-amber-600",
+    color: "from-purple-500 to-purple-700",
     unlocked: false,
     rarity: "rare",
     requirement: "1000+ tokens"
@@ -144,7 +144,7 @@ const achievementBadges = {
     label: "Social Butterfly", 
     description: "Get 20 miners from referrals", 
     icon: Crown, 
-    color: "from-pink-500 to-rose-500",
+    color: "from-purple-500 to-purple-700",
     unlocked: false,
     rarity: "epic",
     requirement: "20 referrals"
@@ -153,7 +153,7 @@ const achievementBadges = {
     label: "Ultimate Miner", 
     description: "Master all mining techniques", 
     icon: Star, 
-    color: "from-gradient-to-r from-yellow-400 via-orange-500 to-red-500",
+    color: "from-purple-400 via-purple-500 to-purple-600",
     unlocked: false,
     rarity: "legendary",
     requirement: "Complete all challenges"
@@ -200,18 +200,18 @@ function MinerProfileHeader() {
       {/* Enhanced Profile Header Card */}
       <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/20 hover:shadow-neon-purple/30 transition-all duration-500 hover:border-white/20 relative overflow-hidden">
         {/* Animated background effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-transparent to-mining-orange/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-transparent to-purple-500/10"></div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-neon-purple/20 to-transparent opacity-50 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-mining-orange/15 to-transparent opacity-30 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-neon-purple/15 to-transparent opacity-30 blur-2xl"></div>
         
         <CardHeader className="relative space-y-6 pb-4">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-6 lg:space-y-0">
             {/* Left Section - Avatar and Basic Info */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="relative group">
-                <Avatar className="w-24 h-24 border-4 border-gradient-to-r from-neon-purple to-mining-orange shadow-lg shadow-neon-purple/30 transition-all duration-300 group-hover:scale-105">
+                <Avatar className="w-24 h-24 border-4 border-gradient-to-r from-neon-purple to-purple-500 shadow-lg shadow-neon-purple/30 transition-all duration-300 group-hover:scale-105">
                   <AvatarImage src={selectedAvatar || ""} alt="Profile" />
-                  <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-mining-orange/30 text-white text-2xl font-bold">
+                  <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-purple-500/30 text-white text-2xl font-bold">
                     {profile.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -237,7 +237,7 @@ function MinerProfileHeader() {
               <div className="space-y-3 text-center sm:text-left">
                 <div>
                   <div className="flex items-center justify-center sm:justify-start space-x-2">
-                    <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-mining-orange bg-clip-text text-transparent" data-testid="text-username">
+                    <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-purple-600 bg-clip-text text-transparent" data-testid="text-username">
                       {profile.username}
                     </h2>
                     <Button size="icon" variant="ghost" className="w-6 h-6 text-white/60 hover:text-white hover:bg-white/10">
@@ -248,11 +248,11 @@ function MinerProfileHeader() {
                 </div>
                 
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
+                  <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
                     <Crown className="w-4 h-4 mr-1" />
                     {profile.rank}
                   </Badge>
-                  <Badge className="bg-gradient-to-r from-mining-orange to-orange-600 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
+                  <Badge className="bg-gradient-to-r from-neon-purple to-purple-600 text-white border-none px-3 py-1 hover:scale-105 transition-transform">
                     <Flame className="w-4 h-4 mr-1" />
                     {profile.miningStreak} day streak
                   </Badge>
@@ -283,9 +283,9 @@ function MinerProfileHeader() {
 
       {/* Enhanced Mining Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-mining-orange/30 hover:scale-105 transition-all duration-300 group">
+        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-neon-purple/30 hover:scale-105 transition-all duration-300 group">
           <CardContent className="p-6 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-purple to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <Coins className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -307,9 +307,9 @@ function MinerProfileHeader() {
           </CardContent>
         </Card>
 
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-mining-orange/30 hover:scale-105 transition-all duration-300 group">
+        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-neon-purple/30 hover:scale-105 transition-all duration-300 group">
           <CardContent className="p-6 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-purple to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <Flame className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -319,9 +319,9 @@ function MinerProfileHeader() {
           </CardContent>
         </Card>
 
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-yellow-500/30 hover:scale-105 transition-all duration-300 group">
+        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:border-neon-purple/30 hover:scale-105 transition-all duration-300 group">
           <CardContent className="p-6 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -356,10 +356,10 @@ function MinerProfileHeader() {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-white/70">Mining Time</span>
-                <span className="text-2xl font-bold text-mining-orange">{profile.miningTime}</span>
+                <span className="text-2xl font-bold text-neon-purple">{profile.miningTime}</span>
               </div>
               <div className="w-full bg-white/10 rounded-full h-2">
-                <div className="bg-gradient-to-r from-mining-orange to-orange-500 h-2 rounded-full" style={{width: '45%'}}></div>
+                <div className="bg-gradient-to-r from-neon-purple to-purple-500 h-2 rounded-full" style={{width: '45%'}}></div>
               </div>
             </div>
           </div>
@@ -398,18 +398,18 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
 }) {
   const rarityColors = {
     common: 'from-gray-500 to-gray-600',
-    uncommon: 'from-mining-orange to-orange-600',
-    rare: 'from-blue-500 to-purple-600',
-    epic: 'from-purple-600 to-pink-600',
-    legendary: 'from-yellow-500 to-orange-600'
+    uncommon: 'from-neon-purple to-purple-600',
+    rare: 'from-purple-400 to-purple-600',
+    epic: 'from-purple-500 to-purple-700',
+    legendary: 'from-purple-400 to-purple-600'
   };
 
   const rarityBorder = {
     common: 'border-gray-500/50',
-    uncommon: 'border-mining-orange/50',
-    rare: 'border-blue-500/50',
+    uncommon: 'border-neon-purple/50',
+    rare: 'border-purple-500/50',
     epic: 'border-purple-500/50',
-    legendary: 'border-yellow-500/50'
+    legendary: 'border-purple-600/50'
   };
   
   return (
@@ -428,7 +428,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
         {isUnlocked && (
           <>
             <div className="absolute top-2 left-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
-            <div className="absolute top-4 right-3 w-1 h-1 bg-yellow-400 rounded-full animate-bounce"></div>
+            <div className="absolute top-4 right-3 w-1 h-1 bg-neon-purple rounded-full animate-bounce"></div>
             <div className="absolute bottom-3 left-3 w-1 h-1 bg-neon-purple rounded-full animate-pulse"></div>
           </>
         )}
@@ -459,7 +459,7 @@ function AchievementBadge({ badgeKey, badge, isUnlocked }: {
           {/* Show requirement for locked badges */}
           {!isUnlocked && (
             <div className="p-2 bg-white/5 rounded-lg border border-white/10 mt-2">
-              <p className="text-xs text-mining-orange font-medium">
+              <p className="text-xs text-neon-purple font-medium">
                 Goal: {badge.requirement}
               </p>
             </div>
@@ -528,7 +528,7 @@ function AchievementsShowcase() {
 
         <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300">
           <CardContent className="p-6 text-center space-y-2">
-            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 mx-auto bg-gradient-to-br from-neon-purple to-purple-600 rounded-full flex items-center justify-center">
               <Target className="w-6 h-6 text-white" />
             </div>
             <p className="text-2xl font-bold text-white">{unlockedAchievements.length}</p>
@@ -550,14 +550,14 @@ function AchievementsShowcase() {
       {/* Main Achievement Gallery */}
       <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20 relative overflow-hidden">
         {/* Background effects */}
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-neon-purple/5 via-transparent to-mining-orange/5"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-mining-orange/10 to-transparent opacity-60 blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-neon-purple/5 via-transparent to-purple-500/5"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-neon-purple/10 to-transparent opacity-60 blur-3xl"></div>
         
         <CardHeader className="relative">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div>
               <CardTitle className="flex items-center space-x-3 text-white mb-2">
-                <div className="p-2 rounded-full bg-gradient-to-r from-mining-orange to-yellow-500">
+                <div className="p-2 rounded-full bg-gradient-to-r from-neon-purple to-purple-500">
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-2xl font-bold">Achievement Gallery</span>
@@ -662,14 +662,14 @@ export default function Profile() {
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60"></div>
         <div className="absolute top-40 right-20 w-1 h-1 bg-neon-purple rounded-full animate-ping opacity-40"></div>
-        <div className="absolute bottom-40 left-20 w-1 h-1 bg-mining-orange rounded-full animate-pulse opacity-50"></div>
-        <div className="absolute top-60 right-40 w-2 h-2 bg-yellow-400 rounded-full animate-bounce opacity-30"></div>
+        <div className="absolute bottom-40 left-20 w-1 h-1 bg-neon-purple rounded-full animate-pulse opacity-50"></div>
+        <div className="absolute top-60 right-40 w-2 h-2 bg-neon-purple rounded-full animate-bounce opacity-30"></div>
       </div>
 
       {/* Gaming Header */}
       <div className="relative space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-mining-orange bg-clip-text text-transparent animate-gradient">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-purple-400 to-purple-600 bg-clip-text text-transparent animate-gradient">
             Miner's Hub
           </h1>
           <p className="text-white/70 text-xl">
@@ -684,11 +684,11 @@ export default function Profile() {
             <span className="text-white/80 font-medium text-sm">Mining Active</span>
           </div>
           <div className="flex items-center space-x-2 px-3 py-2 bg-white/5 rounded-full border border-white/10">
-            <Medal className="w-5 h-5 text-yellow-400" />
+            <Medal className="w-5 h-5 text-neon-purple" />
             <span className="text-white/80 font-medium text-sm">Achievements Earned</span>
           </div>
           <div className="flex items-center space-x-2 px-3 py-2 bg-white/5 rounded-full border border-white/10">
-            <Trophy className="w-5 h-5 text-mining-orange" />
+            <Trophy className="w-5 h-5 text-neon-purple" />
             <span className="text-white/80 font-medium text-sm">Achievements Earned</span>
           </div>
         </div>
@@ -701,7 +701,7 @@ export default function Profile() {
       {/* Achievement Showcase */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-mining-orange to-yellow-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent">
             🏆 Your Achievements
           </h2>
           <p className="text-white/70 text-lg">
@@ -718,7 +718,7 @@ export default function Profile() {
           <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent">
             Keep Mining, Keep Winning!
           </h3>
-          <Gem className="w-8 h-8 text-mining-orange" />
+          <Gem className="w-8 h-8 text-neon-purple" />
         </div>
         <p className="text-white/70 text-lg">
           Your mining journey continues! Keep achieving great things!
@@ -728,11 +728,11 @@ export default function Profile() {
             <Star className="w-4 h-4 mr-2" />
             Epic Rewards
           </Badge>
-          <Badge className="bg-gradient-to-r from-mining-orange to-orange-500 text-white border-none px-4 py-2 text-lg">
+          <Badge className="bg-gradient-to-r from-neon-purple to-purple-500 text-white border-none px-4 py-2 text-lg">
             <Diamond className="w-4 h-4 mr-2" />
             Rare Achievements
           </Badge>
-          <Badge className="bg-gradient-to-r from-mining-orange to-yellow-500 text-white border-none px-4 py-2 text-lg">
+          <Badge className="bg-gradient-to-r from-neon-purple to-purple-400 text-white border-none px-4 py-2 text-lg">
             <Crown className="w-4 h-4 mr-2" />
             Legend Status
           </Badge>
