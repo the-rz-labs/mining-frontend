@@ -56,42 +56,6 @@ const mockMinerProfile = {
   rank: "Diamond Miner"
 };
 
-// Giveaway system data
-const activeGiveaways = [
-  {
-    id: "daily-bonus",
-    title: "Daily Mining Bonus",
-    description: "Claim your daily reward for continuous mining",
-    reward: "50 MGC + 25 RZ",
-    timeLeft: 18000000, // 5 hours in milliseconds
-    type: "daily",
-    icon: Gift,
-    gradient: "from-neon-purple to-pink-500",
-    claimed: false
-  },
-  {
-    id: "weekend-special",
-    title: "Weekend Mining Boost",
-    description: "2x mining rewards for weekend warriors",
-    reward: "Double Mining Rate",
-    timeLeft: 172800000, // 48 hours
-    type: "special",
-    icon: Rocket,
-    gradient: "from-neon-green to-emerald-500",
-    claimed: false
-  },
-  {
-    id: "treasure-hunt",
-    title: "Weekly Treasure Hunt",
-    description: "Complete 3 challenges to unlock the treasure",
-    reward: "Mystery Chest",
-    timeLeft: 432000000, // 5 days
-    type: "event",
-    icon: Crown,
-    gradient: "from-mining-orange to-yellow-500",
-    claimed: false
-  }
-];
 
 // Achievement badges focused on mining goals
 const achievementBadges = {
@@ -205,18 +169,6 @@ const achievementBadges = {
   }
 };
 
-// Helper function to format time remaining
-function formatTimeRemaining(milliseconds: number): string {
-  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
-  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
-  
-  if (hours > 24) {
-    const days = Math.floor(hours / 24);
-    const remainingHours = hours % 24;
-    return `${days}d ${remainingHours}h`;
-  }
-  return `${hours}h ${minutes}m`;
-}
 
 function MinerProfileHeader() {
   const { toast } = useToast();
@@ -438,211 +390,6 @@ function MinerProfileHeader() {
   );
 }
 
-function GiveawayCard({ giveaway }: { giveaway: typeof activeGiveaways[0] }) {
-  const { toast } = useToast();
-  const [timeLeft, setTimeLeft] = useState(giveaway.timeLeft);
-  const [claimed, setClaimed] = useState(giveaway.claimed);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => Math.max(0, prev - 1000));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleClaim = () => {
-    setClaimed(true);
-    toast({
-      title: "Reward Claimed! 🎉",
-      description: `You've claimed: ${giveaway.reward}`,
-    });
-  };
-
-  const IconComponent = giveaway.icon;
-  const isExpired = timeLeft === 0;
-  const isUrgent = timeLeft < 3600000; // Less than 1 hour
-
-  return (
-    <Card className={`border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl relative overflow-hidden group ${
-      claimed ? 'opacity-70 scale-95' : 'hover:border-white/30'
-    } ${isUrgent && !claimed && !isExpired ? 'animate-pulse-glow' : ''}`}>
-      
-      {/* Animated background gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${giveaway.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
-      
-      {/* Glow effect */}
-      <div className={`absolute -inset-1 bg-gradient-to-r ${giveaway.gradient} opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500`}></div>
-      
-      {/* Urgency indicator */}
-      {isUrgent && !claimed && !isExpired && (
-        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-bounce">
-          URGENT
-        </div>
-      )}
-      
-      <CardHeader className="relative pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3 flex-1">
-            <div className={`p-3 rounded-full bg-gradient-to-r ${giveaway.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-              <IconComponent className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <CardTitle className="text-white font-bold text-lg">{giveaway.title}</CardTitle>
-              <CardDescription className="text-white/70 text-sm">{giveaway.description}</CardDescription>
-            </div>
-          </div>
-          <Badge className={`bg-gradient-to-r ${giveaway.gradient} text-white border-none font-medium px-3 py-1 text-xs`}>
-            {giveaway.type}
-          </Badge>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="relative space-y-4">
-        {/* Enhanced Reward Display */}
-        <div className={`p-4 bg-gradient-to-r ${giveaway.gradient} bg-opacity-10 border border-white/10 rounded-lg text-center hover:bg-opacity-20 transition-all duration-300`}>
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
-            <span className="text-white/80 text-sm font-medium">REWARD</span>
-            <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
-          </div>
-          <p className="text-xl font-bold text-white mb-1">{giveaway.reward}</p>
-          <div className="flex justify-center">
-            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 text-xs">
-              Exclusive
-            </Badge>
-          </div>
-        </div>
-        
-        {/* Enhanced Timer */}
-        <div className={`p-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-300 ${
-          isUrgent ? 'border-red-500/50 bg-red-500/10' : ''
-        }`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Timer className={`w-5 h-5 ${isUrgent ? 'text-red-400' : 'text-mining-orange'}`} />
-              <span className="text-white/80 font-medium text-sm">
-                {isExpired ? 'Expired' : 'Time Left'}
-              </span>
-            </div>
-            <div className="text-right">
-              <span className={`font-bold text-lg ${
-                isExpired ? 'text-red-400' : isUrgent ? 'text-red-400' : 'text-mining-orange'
-              }`}>
-                {isExpired ? 'EXPIRED' : formatTimeRemaining(timeLeft)}
-              </span>
-              {isUrgent && !isExpired && (
-                <p className="text-red-400 text-xs animate-pulse">Hurry!</p>
-              )}
-            </div>
-          </div>
-          
-          {/* Progress bar for time */}
-          {!isExpired && (
-            <div className="mt-2 w-full bg-white/10 rounded-full h-1">
-              <div 
-                className={`h-1 rounded-full transition-all duration-1000 ${
-                  isUrgent ? 'bg-red-500' : `bg-gradient-to-r ${giveaway.gradient}`
-                }`}
-                style={{ width: `${Math.max((timeLeft / giveaway.timeLeft) * 100, 5)}%` }}
-              ></div>
-            </div>
-          )}
-        </div>
-        
-        {/* Enhanced Claim Button */}
-        <Button 
-          className={`w-full font-bold text-lg relative overflow-hidden group/btn ${
-            claimed 
-              ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
-              : isExpired
-              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              : `bg-gradient-to-r ${giveaway.gradient} hover:scale-105 shadow-lg hover:shadow-xl transition-all duration-300`
-          }`}
-          onClick={handleClaim}
-          disabled={claimed || isExpired}
-          data-testid={`button-claim-${giveaway.id}`}
-        >
-          {/* Button animation effect */}
-          {!claimed && !isExpired && (
-            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
-          )}
-          
-          <div className="relative flex items-center justify-center space-x-2">
-            {claimed ? (
-              <>
-                <Award className="w-5 h-5" />
-                <span>Claimed Successfully!</span>
-              </>
-            ) : isExpired ? (
-              <>
-                <Timer className="w-5 h-5" />
-                <span>Expired</span>
-              </>
-            ) : (
-              <>
-                <Gift className="w-5 h-5" />
-                <span>Claim Reward</span>
-              </>
-            )}
-          </div>
-        </Button>
-
-        {/* Claim Instructions */}
-        {!claimed && !isExpired && (
-          <div className="text-center">
-            <p className="text-white/50 text-xs">
-              Click to claim your reward instantly
-            </p>
-          </div>
-        )}
-      </CardContent>
-      
-      {/* Status Overlays */}
-      {claimed && (
-        <div className="absolute top-4 right-4 bg-green-500 rounded-full p-2 shadow-lg animate-bounce">
-          <Award className="w-5 h-5 text-white" />
-        </div>
-      )}
-      
-      {isExpired && !claimed && (
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="text-center text-white">
-            <Timer className="w-12 h-12 mx-auto mb-2 text-red-400" />
-            <p className="font-bold text-lg text-red-400">EXPIRED</p>
-            <p className="text-sm text-white/70">Better luck next time!</p>
-          </div>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-function ActiveGiveaways() {
-  return (
-    <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-neon-purple/10 hover:shadow-neon-purple/20 transition-all duration-500 hover:border-white/20">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-white">
-          <Gift className="w-6 h-6 text-neon-green" />
-          <span>Active Giveaways</span>
-          <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50 ml-2">
-            {activeGiveaways.length} Live
-          </Badge>
-        </CardTitle>
-        <CardDescription className="text-white/60">
-          Don't miss out! Claim your rewards before they expire
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-6">
-          {activeGiveaways.map((giveaway) => (
-            <GiveawayCard key={giveaway.id} giveaway={giveaway} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 function AchievementBadge({ badgeKey, badge, isUnlocked }: { 
   badgeKey: string; 
@@ -761,7 +508,9 @@ function AchievementsShowcase() {
     );
   };
 
-  const filteredAchievements = getAchievementsByCategory(selectedCategory);
+  const categoryAchievements = getAchievementsByCategory(selectedCategory);
+  // Only show unlocked achievements
+  const filteredAchievements = categoryAchievements.filter(([key]) => unlockedAchievements.includes(key));
 
   return (
     <div className="space-y-6">
@@ -782,8 +531,8 @@ function AchievementsShowcase() {
             <div className="w-12 h-12 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-full flex items-center justify-center">
               <Target className="w-6 h-6 text-white" />
             </div>
-            <p className="text-2xl font-bold text-white">{totalAchievements - unlockedAchievements.length}</p>
-            <p className="text-white/60 text-sm">Remaining</p>
+            <p className="text-2xl font-bold text-white">{unlockedAchievements.length}</p>
+            <p className="text-white/60 text-sm">Total Earned</p>
           </CardContent>
         </Card>
 
@@ -814,7 +563,7 @@ function AchievementsShowcase() {
                 <span className="text-2xl font-bold">Achievement Gallery</span>
               </CardTitle>
               <CardDescription className="text-white/70 text-lg">
-                Showcase your mining mastery and collect rare achievements
+                Your completed mining achievements and earned rewards
               </CardDescription>
             </div>
             
@@ -864,9 +613,8 @@ function AchievementsShowcase() {
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30 animate-shimmer"></div>
             </div>
             
-            <div className="flex justify-between text-sm text-white/60">
-              <span>Keep mining to unlock more achievements!</span>
-              <span>{totalAchievements - unlockedAchievements.length} remaining to unlock</span>
+            <div className="text-center text-sm text-white/60">
+              <span>Congratulations on your mining accomplishments!</span>
             </div>
           </div>
 
@@ -882,20 +630,20 @@ function AchievementsShowcase() {
             ))}
           </div>
 
-          {/* Next Achievement Hint */}
-          <Card className="border border-mining-orange/30 bg-gradient-to-r from-mining-orange/10 to-orange-600/10 backdrop-blur-lg">
+          {/* Achievement Summary */}
+          <Card className="border border-neon-green/30 bg-gradient-to-r from-neon-green/10 to-emerald-600/10 backdrop-blur-lg">
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-mining-orange/20 rounded-full">
-                  <Target className="w-5 h-5 text-mining-orange" />
+                <div className="p-2 bg-neon-green/20 rounded-full">
+                  <Trophy className="w-5 h-5 text-neon-green" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-white">Next Achievement Goal</h4>
-                  <p className="text-white/70 text-sm">Complete a 30-day mining streak to unlock "Mining Legend" achievement!</p>
+                  <h4 className="font-bold text-white">Achievement Collection</h4>
+                  <p className="text-white/70 text-sm">You've earned {unlockedAchievements.length} achievements in your mining journey!</p>
                 </div>
                 <div className="ml-auto">
-                  <Badge className="bg-mining-orange/20 text-mining-orange border-mining-orange/50">
-                    Rare
+                  <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50">
+                    Earned
                   </Badge>
                 </div>
               </div>
@@ -925,7 +673,7 @@ export default function Profile() {
             Miner's Hub
           </h1>
           <p className="text-white/70 text-xl">
-            Unlock achievements, claim rewards, and become a mining legend!
+            View your mining achievements and track your progress!
           </p>
         </div>
         
@@ -936,8 +684,8 @@ export default function Profile() {
             <span className="text-white/80 font-medium text-sm">Mining Active</span>
           </div>
           <div className="flex items-center space-x-2 px-3 py-2 bg-white/5 rounded-full border border-white/10">
-            <Sparkles className="w-5 h-5 text-yellow-400" />
-            <span className="text-white/80 font-medium text-sm">Rewards Available</span>
+            <Medal className="w-5 h-5 text-yellow-400" />
+            <span className="text-white/80 font-medium text-sm">Achievements Earned</span>
           </div>
           <div className="flex items-center space-x-2 px-3 py-2 bg-white/5 rounded-full border border-white/10">
             <Trophy className="w-5 h-5 text-mining-orange" />
@@ -949,27 +697,15 @@ export default function Profile() {
       {/* Miner Profile Header */}
       <MinerProfileHeader />
       
-      {/* Active Giveaways Section - Main Focus */}
-      <div className="space-y-4">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-neon-green to-emerald-400 bg-clip-text text-transparent">
-            🎁 Active Giveaways & Rewards
-          </h2>
-          <p className="text-white/70 text-lg">
-            Don't miss out on these limited-time rewards!
-          </p>
-        </div>
-        <ActiveGiveaways />
-      </div>
       
       {/* Achievement Showcase */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-mining-orange to-yellow-400 bg-clip-text text-transparent">
-            🏆 Achievement Gallery
+            🏆 Your Achievements
           </h2>
           <p className="text-white/70 text-lg">
-            Show off your mining mastery with rare collectible badges
+            Celebrating your mining accomplishments and milestones
           </p>
         </div>
         <AchievementsShowcase />
@@ -985,7 +721,7 @@ export default function Profile() {
           <Gem className="w-8 h-8 text-mining-orange" />
         </div>
         <p className="text-white/70 text-lg">
-          The more you mine, the more rewards you unlock. Complete challenges and become a mining legend!
+          Your mining journey continues! Keep achieving great things!
         </p>
         <div className="flex items-center justify-center space-x-6 mt-6">
           <Badge className="bg-gradient-to-r from-neon-purple to-pink-500 text-white border-none px-4 py-2 text-lg">
