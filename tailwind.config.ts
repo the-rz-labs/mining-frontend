@@ -19,7 +19,7 @@ export default {
         // Mining platform specific colors
         "neon-purple": "hsl(270 100% 65% / <alpha-value>)",
         "neon-green": "hsl(142 70% 55% / <alpha-value>)",
-        "mining-orange": "hsl(270 100% 65% / <alpha-value>)",
+        "mining-orange": "hsl(25 95% 55% / <alpha-value>)",
         "cyber-blue": "hsl(200 100% 60% / <alpha-value>)",
         card: {
           DEFAULT: "hsl(var(--card) / <alpha-value>)",
