@@ -70,7 +70,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               Welcome to Ranking Mining Platform
             </div>
           </header>
-          <main className="flex-1 overflow-hidden bg-gradient-to-br from-black via-purple-900/20 to-black">
+          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-black via-purple-900/20 to-black">
             {children}
           </main>
         </div>
