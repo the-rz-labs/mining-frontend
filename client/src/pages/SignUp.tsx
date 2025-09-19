@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { sendCodeSchema, verifyCodeSchema, insertUserSchema } from "@shared/schema";
+import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
 import type { z } from "zod";
 
 type Step = 1 | 2 | 3;
@@ -23,10 +24,18 @@ export default function SignUp() {
   const [step, setStep] = useState<Step>(1);
   const [email, setEmail] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [, navigate] = useLocation();
   const { toast } = useToast();
+
+  // Set random avatar if none selected when reaching step 3
+  useEffect(() => {
+    if (step === 3 && !selectedAvatar) {
+      setSelectedAvatar(getRandomAvatar());
+    }
+  }, [step, selectedAvatar]);
 
   // Extract referral code from URL parameters
   useEffect(() => {
@@ -172,7 +181,11 @@ export default function SignUp() {
   };
 
   const onSignUp = (data: SignUpForm) => {
-    signUpMutation.mutate({ ...data, email });
+    signUpMutation.mutate({ 
+      ...data, 
+      email,
+      avatar: selectedAvatar || getRandomAvatar()
+    });
   };
 
   const handleBackStep = () => {
@@ -534,6 +547,14 @@ export default function SignUp() {
                       </FormItem>
                     )}
                   />
+
+                  {/* Avatar Selection */}
+                  <div className="space-y-2">
+                    <AvatarSelection
+                      selectedAvatar={selectedAvatar}
+                      onAvatarSelect={setSelectedAvatar}
+                    />
+                  </div>
 
                   <Button
                     type="submit"
