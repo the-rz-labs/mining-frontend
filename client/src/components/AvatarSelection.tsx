@@ -73,7 +73,7 @@ const nftAvatarCollection = [
 const avatarCollection = nftAvatarCollection;
 
 // Function to get random avatar
-export const getRandomAvatar = (): string => {
+const getRandomAvatar = (): string => {
   return avatarCollection[Math.floor(Math.random() * avatarCollection.length)];
 };
 
@@ -81,6 +81,8 @@ interface AvatarSelectionProps {
   selectedAvatar: string | null;
   onAvatarSelect: (avatar: string) => void;
 }
+
+export { getRandomAvatar };
 
 export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelectionProps) {
   const [showAll, setShowAll] = useState(false);
