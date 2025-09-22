@@ -104,12 +104,9 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
               transition={{ delay: 0.3, duration: 0.8 }}
             >
               <p className="text-lg sm:text-xl text-purple-300 font-medium tracking-wide uppercase mb-4">
-                The Future of Digital Mining
+                MINERS THAT GO
               </p>
               <h1 className="text-hero font-black tracking-tight">
-                <span className="block text-white mb-4">
-                  MINING THAT GOES
-                </span>
                 <span className="block hero-text-gradient animate-text-glow">
                   BEYOND YOUR GAME
                 </span>
@@ -172,36 +169,67 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             </div>
           </motion.div>
 
-          {/* Stats Section */}
+          {/* Character/Avatar Display */}
           <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="pt-16"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 1 }}
+            className="pt-16 flex justify-center"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 + index * 0.2, duration: 0.6 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center group cursor-pointer"
-                  data-testid={`hero-stat-${index}`}
-                >
-                  <div className="glass-effect rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20">
-                    <stat.icon className="w-8 h-8 text-purple-400 mx-auto mb-3 group-hover:text-purple-300 transition-colors" />
-                    <div className="text-3xl sm:text-4xl font-black text-white mb-2 font-mono">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">
-                      {stat.label}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+            <div className="relative">
+              {/* Main character/miner image */}
+              <motion.div
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative z-10"
+              >
+                <img
+                  src="/attached_assets/generated_images/Animated_MGC_mining_rig_working_4f4350df.png"
+                  alt="Mining Character"
+                  className="w-64 h-64 sm:w-80 sm:h-80 object-contain"
+                />
+              </motion.div>
+              
+              {/* Glowing effect behind character */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-full blur-3xl opacity-60 animate-pulse" />
+              
+              {/* Secondary floating miners */}
+              <motion.div
+                animate={{ y: [-15, 15, -15], x: [-5, 5, -5] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -left-16 top-8 opacity-40"
+              >
+                <img
+                  src="/attached_assets/generated_images/Animated_RZ_mining_rig_working_b16b79a8.png"
+                  alt="Secondary Miner"
+                  className="w-32 h-32 object-contain"
+                />
+              </motion.div>
+              
+              <motion.div
+                animate={{ y: [15, -15, 15], x: [5, -5, 5] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute -right-16 top-12 opacity-40"
+              >
+                <img
+                  src="/attached_assets/generated_images/Animated_compact_MGC_miner_88c3f33b.png"
+                  alt="Compact Miner"
+                  className="w-28 h-28 object-contain"
+                />
+              </motion.div>
             </div>
+          </motion.div>
+          
+          {/* Supporting text */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8, duration: 0.8 }}
+            className="pt-12 text-center"
+          >
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Thousands of miners use our platform to power cross-blockchain mining operations
+            </p>
           </motion.div>
 
         </motion.div>
