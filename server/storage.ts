@@ -3,7 +3,7 @@ import { randomUUID, scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, sql as drizzleSql } from "drizzle-orm";
+import { eq, sql as drizzleSql, and } from "drizzle-orm";
 
 const scryptAsync = promisify(scrypt);
 
@@ -514,8 +514,7 @@ export class DbStorage implements IStorage {
     const existingBadge = await this.db
       .select()
       .from(userBadges)
-      .where(eq(userBadges.userId, userId))
-      .where(eq(userBadges.type, type))
+      .where(and(eq(userBadges.userId, userId), eq(userBadges.type, type)))
       .limit(1);
     
     if (existingBadge.length > 0) {
