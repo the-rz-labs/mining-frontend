@@ -26,7 +26,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground" data-testid="home-page">
+    <div className="min-h-screen bg-black text-foreground overflow-x-hidden" data-testid="home-page">
       {/* Navigation */}
       <Navigation />
 
