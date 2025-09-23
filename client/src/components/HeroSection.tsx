@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap, Users } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import gamingMiningImage from "@assets/generated_images/Beautiful_3D_mining_characters_premium_quality_dd5f9c6f.png";
+import gamingMiningImage from "@assets/generated_images/Crypto_traders_with_mining_rigs_86f6407c.png";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
