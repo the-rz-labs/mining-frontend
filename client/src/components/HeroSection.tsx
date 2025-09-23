@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import miningImage from "@assets/generated_images/Modern_3D_geometric_mining_cubes_55129112.png";
+import miningImage from "@assets/generated_images/RZ_CoinMining_3D_character_with_custom_coins_9e579aa4.png";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
@@ -19,11 +19,77 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
       className="relative min-h-screen flex items-center overflow-hidden"
       data-testid="hero-section"
       style={{
-        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"
+        background: "linear-gradient(135deg, #4a1a5c 0%, #6b2c7a 25%, #8b4ba8 50%, #a855f7 75%, #c084fc 100%)"
       }}
     >
-      {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20" />
+      {/* Floating Geometric Shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Large floating rectangles with gradients */}
+        <motion.div
+          animate={{
+            y: [-20, 20, -20],
+            rotate: [0, 5, -5, 0]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 right-20 w-32 h-32 rounded-3xl opacity-40"
+          style={{
+            background: "linear-gradient(135deg, #f59e0b 0%, #f97316 100%)",
+            transform: "rotate(15deg)"
+          }}
+        />
+        
+        <motion.div
+          animate={{
+            y: [20, -20, 20],
+            rotate: [0, -5, 5, 0]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-40 right-80 w-24 h-40 rounded-2xl opacity-30"
+          style={{
+            background: "linear-gradient(135deg, #ec4899 0%, #be185d 100%)",
+            transform: "rotate(-20deg)"
+          }}
+        />
+        
+        <motion.div
+          animate={{
+            y: [-15, 15, -15],
+            rotate: [0, 3, -3, 0]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-40 right-40 w-20 h-20 rounded-2xl opacity-50"
+          style={{
+            background: "linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)",
+            transform: "rotate(25deg)"
+          }}
+        />
+        
+        <motion.div
+          animate={{
+            y: [25, -25, 25],
+            rotate: [0, -8, 8, 0]
+          }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          className="absolute top-60 right-10 w-16 h-32 rounded-xl opacity-35"
+          style={{
+            background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+            transform: "rotate(-30deg)"
+          }}
+        />
+        
+        <motion.div
+          animate={{
+            y: [-10, 10, -10],
+            rotate: [0, 4, -4, 0]
+          }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute bottom-20 right-60 w-28 h-16 rounded-2xl opacity-40"
+          style={{
+            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+            transform: "rotate(35deg)"
+          }}
+        />
+      </div>
       
       {/* Main Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
@@ -115,8 +181,8 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             >
               <img
                 src={miningImage}
-                alt="3D Mining Cubes - MGC & RZ Tokens"
-                className="w-80 h-80 lg:w-96 lg:h-96 xl:w-[500px] xl:h-[500px] object-contain"
+                alt="RZ CoinMining 3D Character"
+                className="w-80 h-80 lg:w-96 lg:h-96 xl:w-[500px] xl:h-[400px] object-contain"
                 data-testid="hero-mining-image"
               />
               
