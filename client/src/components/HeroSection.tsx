@@ -107,18 +107,12 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="relative z-10"
               >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={cryptoCharacterImage}
-                    alt="Crypto Mining Character"
-                    className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain"
-                    data-testid="hero-crypto-character"
-                  />
-                  {/* Smooth blur fade on left and right sides */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent via-25% via-75% to-black/50 pointer-events-none" />
-                  {/* Additional purple tinted fade on edges */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-900/30 via-transparent via-20% via-80% to-purple-900/30 pointer-events-none" />
-                </div>
+                <img
+                  src={cryptoCharacterImage}
+                  alt="Crypto Mining Character"
+                  className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain"
+                  data-testid="hero-crypto-character"
+                />
               </motion.div>
               
               {/* Glowing effect behind character */}
