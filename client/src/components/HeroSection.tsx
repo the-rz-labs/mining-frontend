@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import miningImage from "@assets/generated_images/ReadyPlayer.me_image_with_RZ_CoinMining_text_b8a86955.png";
+import miningImage from "@assets/Gemini_Generated_Image_sh6axdsh6axdsh6a (1)_1758608880429.png";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
@@ -19,7 +19,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
       className="relative min-h-screen flex items-center overflow-hidden"
       data-testid="hero-section"
       style={{
-        background: "linear-gradient(135deg, #4a1a5c 0%, #6b2c7a 25%, #8b4ba8 50%, #a855f7 75%, #c084fc 100%)"
+        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #0d1b2a 75%, #000000 100%)"
       }}
     >
       {/* Floating Geometric Shapes */}
