@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap, Users } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import gamingMiningImage from "@assets/generated_images/Gaming_crypto_mining_scene_6933a451.png";
 
 interface HeroSectionProps {
   onStartMining?: () => void;
@@ -47,7 +48,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
       data-testid="hero-section"
     >
       {/* Dynamic Background */}
@@ -169,7 +170,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             </div>
           </motion.div>
 
-          {/* Character/Avatar Display */}
+          {/* Gaming Mining Scene */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -177,46 +178,50 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
             className="pt-16 flex justify-center"
           >
             <div className="relative">
-              {/* Main character/miner image */}
+              {/* Main gaming mining scene */}
               <motion.div
-                animate={{ y: [-10, 10, -10] }}
+                animate={{ y: [-5, 5, -5] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="relative z-10"
               >
                 <img
-                  src="/attached_assets/generated_images/Animated_MGC_mining_rig_working_4f4350df.png"
-                  alt="Mining Character"
-                  className="w-64 h-64 sm:w-80 sm:h-80 object-contain"
+                  src={gamingMiningImage}
+                  alt="Gaming Mining Scene"
+                  className="w-96 h-64 sm:w-[600px] sm:h-96 object-cover rounded-2xl shadow-2xl"
+                  data-testid="hero-gaming-image"
                 />
+                {/* Overlay gradient for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-2xl" />
               </motion.div>
               
-              {/* Glowing effect behind character */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-full blur-3xl opacity-60 animate-pulse" />
+              {/* Glowing effect behind image */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-2xl blur-3xl opacity-60 animate-pulse transform scale-110" />
               
-              {/* Secondary floating miners */}
+              {/* Additional glow particles around the image */}
               <motion.div
-                animate={{ y: [-15, 15, -15], x: [-5, 5, -5] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -left-16 top-8 opacity-40"
-              >
-                <img
-                  src="/attached_assets/generated_images/Animated_RZ_mining_rig_working_b16b79a8.png"
-                  alt="Secondary Miner"
-                  className="w-32 h-32 object-contain"
-                />
-              </motion.div>
-              
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.6, 0.3]
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -left-4 w-8 h-8 bg-purple-500 rounded-full blur-md"
+              />
               <motion.div
-                animate={{ y: [15, -15, 15], x: [5, -5, 5] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                className="absolute -right-16 top-12 opacity-40"
-              >
-                <img
-                  src="/attached_assets/generated_images/Animated_compact_MGC_miner_88c3f33b.png"
-                  alt="Compact Miner"
-                  className="w-28 h-28 object-contain"
-                />
-              </motion.div>
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.4, 0.8, 0.4]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-6 -right-6 w-6 h-6 bg-pink-500 rounded-full blur-md"
+              />
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.15, 1],
+                  opacity: [0.2, 0.5, 0.2]
+                }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute top-1/2 -left-8 w-4 h-4 bg-blue-500 rounded-full blur-sm"
+              />
             </div>
           </motion.div>
           
