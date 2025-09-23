@@ -12,15 +12,15 @@ export default function Navigation({ }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "Solutions", href: "#plans" },
-    { name: "Pricing", href: "#tokens" },
-    { name: "Resources", href: "#referral" },
+    { name: "Products", href: "#plans" },
+    { name: "Miners", href: "#miners" },
+    { name: "Resources", href: "#tokens" },
+    { name: "Community", href: "#referral" },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -29,13 +29,13 @@ export default function Navigation({ }: NavigationProps) {
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden md:flex flex-1 justify-center">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-12">
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
                   data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
-                  className="text-gray-300 hover:text-white transition-all duration-200 text-sm font-normal"
+                  className="text-gray-300 hover:text-white transition-all duration-300 text-base font-medium relative group"
                   onClick={(e) => {
                     e.preventDefault();
                     const element = document.querySelector(item.href);
@@ -50,24 +50,14 @@ export default function Navigation({ }: NavigationProps) {
             </div>
           </div>
 
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link href="/sign-in">
-              <Button
-                variant="ghost"
-                data-testid="button-login"
-                className="text-gray-300 hover:text-white font-normal text-sm"
-              >
-                Login
-              </Button>
-            </Link>
+          {/* Desktop Auth Button */}
+          <div className="hidden md:flex items-center">
             <Link href="/sign-up">
               <Button
-                variant="outline"
                 data-testid="button-sign-up"
-                className="border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 font-normal text-sm px-6 py-2 rounded-full transition-all duration-200"
+                className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-medium rounded-full px-8 py-2 text-sm transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
               >
-                Sign up
+                Start Mining
               </Button>
             </Link>
           </div>
@@ -96,14 +86,14 @@ export default function Navigation({ }: NavigationProps) {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="md:hidden bg-gray-900/95 backdrop-blur-xl" role="menu">
-          <div className="px-6 pt-4 pb-6 space-y-1">
+        <div id="mobile-menu" className="md:hidden bg-black/95 backdrop-blur-xl border-t border-gray-800" role="menu">
+          <div className="px-4 pt-4 pb-6 space-y-1">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
                 data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
-                className="text-gray-300 hover:text-white block px-4 py-3 text-base font-normal transition-all duration-200"
+                className="text-gray-300 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300"
                 role="menuitem"
                 onClick={(e) => {
                   e.preventDefault();
@@ -117,25 +107,14 @@ export default function Navigation({ }: NavigationProps) {
                 {item.name}
               </a>
             ))}
-            <div className="pt-4 border-t border-gray-700 mt-4 space-y-2">
-              <Link href="/sign-in">
-                <Button
-                  variant="ghost"
-                  data-testid="mobile-button-login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-gray-300 hover:text-white font-normal"
-                >
-                  Login
-                </Button>
-              </Link>
+            <div className="pt-4 border-t border-gray-800 mt-4">
               <Link href="/sign-up">
                 <Button
-                  variant="outline"
                   data-testid="mobile-button-sign-up"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full border-gray-600 text-gray-300 hover:text-white font-normal rounded-full"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white font-medium rounded-full h-12"
                 >
-                  Sign up
+                  Start Mining
                 </Button>
               </Link>
             </div>
