@@ -19,7 +19,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
       className="relative min-h-screen flex items-center overflow-hidden"
       data-testid="hero-section"
       style={{
-        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #0d1b2a 75%, #000000 100%)"
+        background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 25%, #6d28d9 50%, #5b21b6 75%, #4c1d95 100%)"
       }}
     >
       {/* Floating Geometric Shapes */}
