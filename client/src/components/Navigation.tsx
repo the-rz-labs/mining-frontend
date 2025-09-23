@@ -19,7 +19,7 @@ export default function Navigation({ }: NavigationProps) {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-900/95 via-black/95 to-purple-900/95 backdrop-blur-xl border-b border-purple-500/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -35,7 +35,7 @@ export default function Navigation({ }: NavigationProps) {
                   key={item.name}
                   href={item.href}
                   data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
-                  className="text-gray-300 hover:text-white transition-all duration-300 text-base font-medium relative group"
+                  className="text-purple-200 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]"
                   onClick={(e) => {
                     e.preventDefault();
                     const element = document.querySelector(item.href);
