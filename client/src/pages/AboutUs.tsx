@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Shield, Zap, Users, Target, Award, Sparkles, Globe, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 export default function AboutUs() {
   const features = [
@@ -53,7 +55,9 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 pt-24 pb-16">
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 pt-24 pb-16">
       {/* Background Effects */}
       <div className="fixed inset-0 z-0">
         <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl opacity-70 animate-float"></div>
@@ -245,6 +249,8 @@ export default function AboutUs() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
