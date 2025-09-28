@@ -27,7 +27,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const y = useTransform(scrollY, [0, 500], [0, 150]);
 
   const BASE_URL = "https://coinmaining.game";
-  const heroImgPath = `${BASE_URL}/images/hero-img.png`;
+  const heroImgPath = `${BASE_URL}/images/hero-img.webp`;
 
   // Create floating particles
   useEffect(() => {
