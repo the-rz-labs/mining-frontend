@@ -27,7 +27,7 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const y = useTransform(scrollY, [0, 500], [0, 150]);
 
   const BASE_URL = "https://coinmaining.game";
-  const heroImgPath = `${BASE_URL}/images/hero-img.png`;
+  const heroImgPath = `${BASE_URL}/images/hero-img.webp`;
 
   // Create floating particles
   useEffect(() => {
@@ -54,20 +54,121 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
       className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 flex items-center justify-center overflow-hidden pt-20"
       data-testid="hero-section"
     >
-      {/* Modern Background Effects - Exact same as sign-in page */}
+      {/* Enhanced Background Effects with Lighting Curves and Lines */}
       <div className="fixed inset-0 z-0">
         {/* Animated gradient orbs */}
         <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-70"></div>
         <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-breathing opacity-60" style={{ animationDelay: "2s" }}></div>
         <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
         
+        {/* Curved Lightning Lines */}
+        <div className="absolute inset-0 w-full h-full opacity-20">
+          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 800">
+            <defs>
+              <linearGradient id="lightningGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#a855f7', stopOpacity: 0.8 }} />
+                <stop offset="50%" style={{ stopColor: '#ec4899', stopOpacity: 0.6 }} />
+                <stop offset="100%" style={{ stopColor: '#06b6d4', stopOpacity: 0.4 }} />
+              </linearGradient>
+              <linearGradient id="lightningGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#10b981', stopOpacity: 0.7 }} />
+                <stop offset="50%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.5 }} />
+                <stop offset="100%" style={{ stopColor: '#f59e0b', stopOpacity: 0.3 }} />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            
+            {/* Static curved paths for now */}
+            <path
+              d="M0,200 Q300,100 600,250 T1200,150"
+              fill="none"
+              stroke="url(#lightningGrad1)"
+              strokeWidth="2"
+              filter="url(#glow)"
+              className="animate-pulse"
+            />
+            <path
+              d="M1200,300 Q900,200 600,400 T0,350"
+              fill="none"
+              stroke="url(#lightningGrad2)"
+              strokeWidth="1.5"
+              filter="url(#glow)"
+              className="animate-pulse"
+              style={{ animationDelay: "1s" }}
+            />
+            <path
+              d="M200,600 Q500,450 800,550 Q1000,600 1200,500"
+              fill="none"
+              stroke="url(#lightningGrad1)"
+              strokeWidth="1"
+              filter="url(#glow)"
+              className="animate-pulse"
+              style={{ animationDelay: "2s" }}
+            />
+          </svg>
+        </div>
+
+        {/* Grid Pattern with Glow */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(rgba(168, 85, 247, 0.3) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(168, 85, 247, 0.3) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+            filter: 'blur(0.5px)'
+          }}></div>
+        </div>
+
+        {/* Floating Energy Orbs */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-4 h-4 bg-purple-400 rounded-full shadow-lg shadow-purple-400/50"
+          animate={{ 
+            y: [0, -20, 0],
+            x: [0, 10, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.4, 1, 0.4]
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-3/4 right-1/4 w-3 h-3 bg-pink-400 rounded-full shadow-lg shadow-pink-400/50"
+          animate={{ 
+            y: [0, 15, 0],
+            x: [0, -15, 0],
+            scale: [1, 0.8, 1],
+            opacity: [0.6, 0.3, 0.6]
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/6 w-2 h-2 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50"
+          animate={{ 
+            y: [0, -10, 0],
+            x: [0, 20, 0],
+            scale: [1, 1.5, 1],
+            opacity: [0.3, 0.8, 0.3]
+          }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+
         {/* Subtle radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50"></div>
         
-        {/* Floating particles */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60 hidden md:block"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block" style={{ animationDelay: "3s" }}></div>
+        {/* Enhanced floating particles */}
+        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60 hidden md:block shadow-lg shadow-purple-400/50"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-float opacity-40 hidden lg:block shadow-lg shadow-green-400/50" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block shadow-lg shadow-orange-400/50" style={{ animationDelay: "3s" }}></div>
+        
+        {/* Additional corner lighting effects */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-600/20 to-transparent blur-2xl"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-600/20 to-transparent blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-cyan-600/20 to-transparent blur-2xl"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-orange-600/20 to-transparent blur-2xl"></div>
       </div>
 
       {/* Main Content */}

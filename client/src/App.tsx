@@ -17,12 +17,16 @@ import Giveaways from "@/pages/Giveaways";
 import Support from "@/pages/Support";
 import FAQ from "@/pages/FAQ";
 import Achievements from "@/pages/Achievements";
+import Contact from "@/pages/Contact";
+import AboutUs from "@/pages/AboutUs";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/about-us" component={AboutUs} />
       <Route path="/sign-up" component={SignUp} />
       <Route path="/sign-in" component={SignIn} />
       <Route path="/forgot-password" component={ForgotPassword} />

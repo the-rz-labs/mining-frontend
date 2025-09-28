@@ -4,73 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, User, Shuffle } from "lucide-react";
 
-// NFT-Style Avatar Collection (150+ options)
-// Using DiceBear's fun-emoji and lorelei styles for cartoon/NFT aesthetic
-const nftAvatarCollection = [
-  // Ape/Monkey style NFTs with various backgrounds and accessories
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=ape1&backgroundColor=00d4aa",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=ape2&backgroundColor=ffb800",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=ape3&backgroundColor=c0392b",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=ape4&backgroundColor=8e44ad",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=ape5&backgroundColor=2980b9",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=monkey1&backgroundColor=e67e22",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=monkey2&backgroundColor=27ae60",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=monkey3&backgroundColor=f39c12",
-  
-  // Cat style NFTs
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=cat1&backgroundColor=3498db",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=cat2&backgroundColor=e91e63",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=cat3&backgroundColor=9c27b0",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=cat4&backgroundColor=ff5722",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=kitty1&backgroundColor=4caf50",
-  "https://api.dicebear.com/7.x/fun-emoji/svg?seed=kitty2&backgroundColor=ff9800",
-  
-  // Cartoon character style NFTs using lorelei
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft1&backgroundColor=ff6b6b",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft2&backgroundColor=4ecdc4",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft3&backgroundColor=45b7d1",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft4&backgroundColor=f9ca24",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft5&backgroundColor=f0932b",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft6&backgroundColor=eb4d4b",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft7&backgroundColor=6ab04c",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=nft8&backgroundColor=130f40",
-  
-  // More character variations with vibrant NFT backgrounds
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto1&backgroundColor=ff9ff3",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto2&backgroundColor=54a0ff",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto3&backgroundColor=5f27cd",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto4&backgroundColor=00d2d3",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto5&backgroundColor=ff9f43",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto6&backgroundColor=10ac84",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto7&backgroundColor=ee5a24",
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=crypto8&backgroundColor=0984e3",
-  
-  // Additional NFT-style variations
-  ...Array.from({ length: 120 }, (_, i) => {
-    const seeds = [
-      'legend', 'epic', 'rare', 'cool', 'fresh', 'cyber', 'neon', 'galaxy', 
-      'cosmic', 'digital', 'pixel', 'mint', 'gold', 'diamond', 'ruby', 'emerald',
-      'blazing', 'storm', 'thunder', 'lightning', 'fire', 'ice', 'shadow', 'light',
-      'hero', 'warrior', 'knight', 'mage', 'ninja', 'samurai', 'robot', 'android'
-    ];
-    const nftColors = [
-      'ff6b6b', '4ecdc4', '45b7d1', 'f9ca24', 'f0932b', 'eb4d4b', '6ab04c',
-      'ff9ff3', '54a0ff', '5f27cd', '00d2d3', 'ff9f43', '10ac84', 'ee5a24',
-      '0984e3', 'a29bfe', 'fd79a8', '00cec9', 'e17055', '74b9ff', 'e84393',
-      '00b894', 'fdcb6e', 'e55039', '4834d4', '686de0', 'ff7675', '00b2ee'
-    ];
-    
-    const styles = ['lorelei', 'fun-emoji'];
-    const style = styles[i % 2]; // Alternate between styles
-    const seed = seeds[i % seeds.length] + (i + 1);
-    const color = nftColors[i % nftColors.length];
-    
-    return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=${color}`;
-  })
-];
+// Profile avatar collection using coinmaining.game profile images (pr-1 to pr-85)
+const profileAvatarCollection = Array.from({ length: 85 }, (_, i) => 
+  `https://coinmaining.game/profiles/pr-${i + 1}.jpeg`
+);
 
-// Use the NFT collection as the main avatar collection
-const avatarCollection = nftAvatarCollection;
+// Use the profile collection as the main avatar collection
+const avatarCollection = profileAvatarCollection;
 
 // Function to get random avatar
 const getRandomAvatar = (): string => {
@@ -99,7 +39,7 @@ export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelect
         <CardTitle className="flex items-center justify-between text-white">
           <div className="flex items-center space-x-2">
             <User className="w-5 h-5 text-neon-green" />
-            <span>Choose Your NFT Avatar</span>
+            <span>Choose Your Profile Avatar</span>
           </div>
           <Button
             variant="outline"
@@ -117,10 +57,11 @@ export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelect
         {/* Selected Avatar Preview */}
         <div className="text-center">
           <div className="relative inline-block">
-            <Avatar className="w-20 h-20 border-4 border-neon-green/50 shadow-lg">
+            <Avatar className="w-24 h-24 border-4 border-neon-green/50 shadow-lg">
               <AvatarImage 
                 src={selectedAvatar || ""} 
                 alt="Selected avatar"
+                className="object-cover"
               />
               <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-xl font-bold">
                 ?
@@ -133,7 +74,7 @@ export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelect
             )}
           </div>
           <p className="text-white/70 text-sm mt-2">
-            {selectedAvatar ? "NFT style looks great!" : "Select your NFT-style avatar below"}
+            {selectedAvatar ? "Profile looks great!" : "Select your profile avatar below"}
           </p>
         </div>
 
@@ -150,8 +91,12 @@ export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelect
               }`}
               data-testid={`avatar-option-${index}`}
             >
-              <Avatar className="w-12 h-12">
-                <AvatarImage src={avatar} alt={`Avatar ${index + 1}`} />
+              <Avatar className="w-14 h-14">
+                <AvatarImage 
+                  src={avatar} 
+                  alt={`Profile ${index + 1}`} 
+                  className="object-cover"
+                />
                 <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-xs">
                   {index + 1}
                 </AvatarFallback>
@@ -173,7 +118,7 @@ export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelect
             className="text-white/70 hover:text-white hover:bg-white/10"
             data-testid="button-toggle-avatars"
           >
-            {showAll ? 'Show Less' : `Show All ${avatarCollection.length} NFT Avatars`}
+            {showAll ? 'Show Less' : `Show All ${avatarCollection.length} Profile Avatars`}
           </Button>
         </div>
       </CardContent>
