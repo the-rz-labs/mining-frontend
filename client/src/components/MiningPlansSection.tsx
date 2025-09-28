@@ -34,7 +34,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "50 MH/s", 
       minInvestment: 1000,
       dailyReward: "12.5 MGC",
-      image: `${BASE_URL}/images/1mgc.png`,
+      image: `${BASE_URL}/images/1mgc.webp`,
       roiPercentage: 1
     },
     {
@@ -44,7 +44,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "150 MH/s",
       minInvestment: 5000,
       dailyReward: "45.2 MGC", 
-      image: `${BASE_URL}/images/2mgc.png`,
+      image: `${BASE_URL}/images/2mgc.webp`,
       popular: true,
       roiPercentage: 1.1
     },
@@ -55,7 +55,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "300 MH/s",
       minInvestment: 12000,
       dailyReward: "95.8 MGC",
-      image: `${BASE_URL}/images/3mgc.png`,
+      image: `${BASE_URL}/images/3mgc.webp`,
       roiPercentage: 1.2
     },
     {
@@ -65,7 +65,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "500 MH/s",
       minInvestment: 25000,
       dailyReward: "168.5 MGC",
-      image: `${BASE_URL}/images/4mgc.png`,
+      image: `${BASE_URL}/images/4mgc.webp`,
       roiPercentage: 1.3
     },
     {
@@ -75,7 +75,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "1000 MH/s",
       minInvestment: 50000,
       dailyReward: "350.0 MGC",
-      image: `${BASE_URL}/images/5mgc.png`,
+      image: `${BASE_URL}/images/5mgc.webp`,
       roiPercentage: 1.4
     }
   ];
@@ -88,7 +88,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "75 MH/s",
       minInvestment: 2000,
       dailyReward: "18.3 RZ",
-      image: `${BASE_URL}/images/1rz.png`,
+      image: `${BASE_URL}/images/1rz.webp`,
       roiPercentage: 1
     },
     {
@@ -98,7 +98,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "200 MH/s",
       minInvestment: 8000,
       dailyReward: "52.1 RZ",
-      image: `${BASE_URL}/images/2rz.png`,
+      image: `${BASE_URL}/images/2rz.webp`,
       popular: true,
       roiPercentage: 1.1
     },
@@ -109,7 +109,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "400 MH/s",
       minInvestment: 18000,
       dailyReward: "110.4 RZ",
-      image: `${BASE_URL}/images/3rz.png`,
+      image: `${BASE_URL}/images/3rz.webp`,
       roiPercentage: 1.2
     },
     {
@@ -119,7 +119,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "750 MH/s", 
       minInvestment: 35000,
       dailyReward: "215.8 RZ",
-      image: `${BASE_URL}/images/4rz.png`,
+      image: `${BASE_URL}/images/4rz.webp`,
       roiPercentage: 1.3
     },
     {
@@ -129,7 +129,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "1500 MH/s",
       minInvestment: 75000, 
       dailyReward: "450.0 RZ",
-      image: `${BASE_URL}/images/5rz.png`,
+      image: `${BASE_URL}/images/5rz.webp`,
       roiPercentage: 1.4
     }
   ];
