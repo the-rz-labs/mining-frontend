@@ -17,7 +17,6 @@ export default function Navigation({ }: NavigationProps) {
     { name: "Mining Plans", href: "#plans", isRoute: false },
     { name: "Tokens", href: "#tokens", isRoute: false },
     { name: "Boost Rewards", href: "#referral", isRoute: false },
-    { name: "About Us", href: "/about-us", isRoute: true },
     { name: "Contact", href: "/contact", isRoute: true },
   ];
 
