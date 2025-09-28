@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
-import { ChevronLeft, Mail, Shield, KeyRound, Users, ArrowRight, Loader2 } from "lucide-react";
+import { ChevronLeft, Mail, Shield, KeyRound, Users, ArrowRight, Loader2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,6 +13,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { sendCodeSchema, verifyCodeSchema, insertUserSchema } from "@shared/schema";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
 import type { z } from "zod";
+import { useAppKit } from "@reown/appkit/react";
+import { useAccountEffect } from 'wagmi'
 
 type Step = 1 | 2 | 3;
 
@@ -29,6 +31,13 @@ export default function SignUp() {
   const [refreshToken, setRefreshToken] = useState("");
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { open } = useAppKit();
+
+  useAccountEffect({
+    onConnect(data) {
+      console.log('Connected!', data)
+    },
+  });
 
   // Set random avatar if none selected when reaching step 3
   useEffect(() => {
@@ -325,45 +334,22 @@ export default function SignUp() {
         </CardHeader>
 
         <CardContent className="p-8 space-y-8">
-          {/* Step 1: Email Input */}
+          {/* Step 1: Wallet Connection */}
           {step === 1 && (
             <div className="space-y-8">
               <div className="text-center space-y-3 animate-fade-in">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
-                  <Mail className="w-8 h-8 text-neon-purple animate-pulse-glow" />
+                  <Wallet className="w-8 h-8 text-neon-purple animate-pulse-glow" />
                 </div>
-                <p className="text-white/60 animate-slide-in-left animate-stagger-1">Enter your email to get started</p>
+                <p className="text-white/60 animate-slide-in-left animate-stagger-1">Connect your wallet to get started</p>
               </div>
 
               <Form {...emailForm}>
                 <form onSubmit={emailForm.handleSubmit(onSendCode)} className="space-y-6">
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Email Address</FormLabel>
-                        <FormControl>
-                          <div className="relative group">
-                            <Input
-                              {...field}
-                              type="email"
-                              placeholder="your.email@example.com"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-purple/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
-                              data-testid="input-email"
-                            />
-                            <div className="absolute inset-y-0 right-3 flex items-center">
-                              <Mail className="w-4 h-4 text-white/30" />
-                            </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-
+                  
                   <Button
                     type="submit"
+                    onClick={() => open({ view: "Connect" })}
                     className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
                     disabled={sendCodeMutation.isPending}
                     data-testid="button-send-code"
@@ -375,7 +361,7 @@ export default function SignUp() {
                       </>
                     ) : (
                       <>
-                        Send Verification Code
+                        Connect Wallet
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </>
                     )}
