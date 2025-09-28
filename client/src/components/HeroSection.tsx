@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap, Users } from "lucide-react";
-import { gsap } from "gsap";
+import { motion, useScroll, useTransform } from "framer-motion";
 import cryptoCharacterImage from "@assets/Gemini_Generated_Image_sh6axdsh6axdsh6a (1)_1758609322691.png";
 
 interface HeroSectionProps {
@@ -21,137 +21,25 @@ interface Particle {
 
 export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
   const [, navigate] = useLocation();
-  const containerRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const charactersRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
-  const morphShapeRef = useRef<SVGSVGElement>(null);
-  const buttonsRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
 
   const BASE_URL = "https://coinmaining.game";
   const heroImgPath = `${BASE_URL}/images/hero-img.png`;
 
-  // Enhanced GSAP animations
+  // Create floating particles
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Set initial states
-      gsap.set([titleRef.current, subtitleRef.current, descriptionRef.current, buttonsRef.current], {
-        opacity: 0,
-        y: 50
-      });
-      gsap.set(charactersRef.current, { opacity: 0, x: 100 });
-
-      // Create master timeline
-      const tl = gsap.timeline();
-
-      // Background entrance animation
-      tl.from(".hero-bg-layer", {
-        scale: 1.2,
-        opacity: 0,
-        duration: 2,
-        ease: "power2.out"
-      });
-
-      // Text animations with stagger
-      tl.to([subtitleRef.current], {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "back.out(1.7)"
-      }, "-=1.5")
-      .to([titleRef.current], {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out"
-      }, "-=0.3")
-      .to([descriptionRef.current], {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.5")
-      .to([buttonsRef.current], {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "back.out(1.7)"
-      }, "-=0.3")
-      .to([charactersRef.current], {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: "elastic.out(1, 0.5)"
-      }, "-=1");
-
-      // Continuous animations
-      gsap.to(".float-particle", {
-        y: "-=20",
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: {
-          amount: 4,
-          from: "random"
-        }
-      });
-
-      // Character floating animation
-      gsap.to(".crypto-character", {
-        y: -15,
-        rotation: 2,
-        duration: 4,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-
-      // Enhanced background animations  
-      gsap.to(".morph-shape-1", {
-        scale: 1.2,
-        rotation: 360,
-        duration: 20,
-        repeat: -1,
-        ease: "none"
-      });
-
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // Mouse parallax effect
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
-      
-      gsap.to(".parallax-layer-1", {
-        x: x * 0.5,
-        y: y * 0.5,
-        duration: 1,
-        ease: "power2.out"
-      });
-      gsap.to(".parallax-layer-2", {
-        x: x * 0.3,
-        y: y * 0.3,
-        duration: 1.2,
-        ease: "power2.out"
-      });
-      gsap.to(".parallax-layer-3", {
-        x: x * 0.1,
-        y: y * 0.1,
-        duration: 1.5,
-        ease: "power2.out"
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    const newParticles: Particle[] = Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      color: ['#a855f7', '#d946ef', '#ec4899'][Math.floor(Math.random() * 3)],
+      delay: Math.random() * 8
+    }));
+    setParticles(newParticles);
   }, []);
 
   const stats = [
@@ -162,148 +50,122 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
 
   return (
     <section
-      ref={containerRef}
       id="home"
       className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 flex items-center justify-center overflow-hidden pt-20"
       data-testid="hero-section"
     >
-      {/* Advanced GSAP Background Effects */}
+      {/* Modern Background Effects - Exact same as sign-in page */}
       <div className="fixed inset-0 z-0">
-        {/* Morphing SVG Background */}
-        <svg 
-          ref={morphShapeRef}
-          className="absolute inset-0 w-full h-full opacity-30"
-          viewBox="0 0 1000 1000"
-        >
-          <defs>
-            <linearGradient id="morphGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6"/>
-              <stop offset="50%" stopColor="#d946ef" stopOpacity="0.4"/>
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.6"/>
-            </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-              <feMerge> 
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          <path 
-            className="morph-shape-1"
-            d="M200,300 Q400,200 600,300 T900,400 Q700,600 500,500 T200,300"
-            fill="url(#morphGradient)"
-            filter="url(#glow)"
-          />
-          <path 
-            className="morph-shape-2"
-            d="M300,200 Q500,400 700,200 T800,500 Q600,700 400,600 T300,200"
-            fill="none"
-            opacity="0"
-          />
-        </svg>
-
-        {/* Dynamic Particle System */}
-        <div ref={particlesRef} className="absolute inset-0">
-          {Array.from({ length: 80 }, (_, i) => (
-            <div
-              key={i}
-              className={`float-particle parallax-layer-${(i % 3) + 1} absolute rounded-full pointer-events-none`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: `${Math.random() * 8 + 2}px`,
-                height: `${Math.random() * 8 + 2}px`,
-                background: ['#a855f7', '#d946ef', '#ec4899', '#06b6d4', '#10b981'][Math.floor(Math.random() * 5)],
-                boxShadow: `0 0 ${Math.random() * 20 + 10}px currentColor`,
-                animationDelay: `${Math.random() * 5}s`,
-                opacity: Math.random() * 0.8 + 0.2
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Liquid Background Layers */}
-        <div className="hero-bg-layer parallax-layer-1 absolute -top-10 -right-10 w-[600px] h-[600px] bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full blur-3xl opacity-70" />
-        <div className="hero-bg-layer parallax-layer-2 absolute -bottom-10 -left-10 w-[700px] h-[700px] bg-gradient-to-r from-cyan-500/15 to-purple-600/15 rounded-full blur-3xl opacity-60" />
-        <div className="hero-bg-layer parallax-layer-3 absolute top-1/2 right-1/4 w-96 h-96 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-full blur-3xl opacity-50" />
+        {/* Animated gradient orbs */}
+        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/30 to-neon-green/30 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-70"></div>
+        <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/20 to-neon-purple/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-breathing opacity-60" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/20 to-mining-orange/20 rounded-full blur-3xl md:blur-3xl blur-xl animate-float opacity-50 hidden sm:block" style={{ animationDelay: "4s" }}></div>
         
-        {/* Interactive Glow Effects */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50" />
+        {/* Subtle radial gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-50"></div>
+        
+        {/* Floating particles */}
+        <div className="absolute top-20 left-20 w-2 h-2 bg-neon-purple rounded-full animate-float opacity-60 hidden md:block"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-neon-green rounded-full animate-float opacity-40 hidden lg:block" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-mining-orange rounded-full animate-float opacity-50 hidden md:block" style={{ animationDelay: "3s" }}></div>
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
           
-          {/* Right Side - Enhanced Crypto Character */}
-          <div ref={charactersRef} className="flex justify-center lg:justify-end order-2 lg:order-2">
+          {/* Right Side - Crypto Character */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 1 }}
+            className="flex justify-center lg:justify-end order-2 lg:order-2"
+          >
             <div className="relative">
-              {/* Main crypto character with GSAP animation */}
-              <div className="crypto-character relative z-10">
+              {/* Main crypto character */}
+              <motion.div
+                animate={{ y: [-5, 5, -5] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative z-10"
+              >
                 <img
                   src={heroImgPath}
                   alt="Crypto Mining Character"
-                  className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain rounded-lg filter drop-shadow-2xl"
+                  className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain rounded-lg"
                   data-testid="hero-crypto-character"
                 />
-              </div>
+              </motion.div>
               
-              {/* Enhanced Glowing Effects */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/40 to-pink-600/40 rounded-full blur-3xl opacity-60 animate-pulse transform scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-emerald-500/30 rounded-full blur-2xl opacity-40 animate-pulse transform scale-125" style={{animationDelay: '1s'}} />
+              {/* Glowing effect behind character */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-full blur-3xl opacity-60 animate-pulse transform scale-110" />
               
-              {/* Floating Orbital Elements */}
-              {Array.from({ length: 6 }, (_, i) => (
-                <div
-                  key={i}
-                  className="float-particle absolute rounded-full bg-gradient-to-r from-purple-500 to-pink-500 blur-sm"
-                  style={{
-                    width: `${Math.random() * 16 + 8}px`,
-                    height: `${Math.random() * 16 + 8}px`,
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                    animationDelay: `${i * 0.5}s`
-                  }}
-                />
-              ))}
+              {/* Additional glow particles */}
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.6, 0.3]
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -left-4 w-8 h-8 bg-purple-500 rounded-full blur-md"
+              />
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.4, 0.8, 0.4]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-6 -right-6 w-6 h-6 bg-pink-500 rounded-full blur-md"
+              />
             </div>
-          </div>
+          </motion.div>
 
-          {/* Left Side - Enhanced Content with GSAP */}
-          <div className="space-y-8 text-center lg:text-left order-1 lg:order-1">
-            {/* Main Headline with Character Animation */}
+          {/* Left Side - Content */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="space-y-8 text-center lg:text-left order-1 lg:order-1"
+          >
+            {/* Main Headline */}
             <div className="space-y-6">
-              <div>
-                <p 
-                  ref={subtitleRef}
-                  className="text-lg sm:text-xl text-purple-300 font-medium tracking-wide uppercase mb-4"
-                >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+              >
+                <p className="text-lg sm:text-xl text-purple-300 font-medium tracking-wide uppercase mb-4">
                   MINERS THAT GO
                 </p>
-                <h1 
-                  ref={titleRef}
-                  className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight"
-                >
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight">
                   <span className="block hero-text-gradient animate-text-glow">
                     BEYOND YOUR GAME
                   </span>
                 </h1>
-              </div>
+              </motion.div>
               
-              <p 
-                ref={descriptionRef}
+              <motion.p 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
                 className="text-xl sm:text-2xl text-gray-300 leading-relaxed font-light"
               >
                 Revolutionary mining platform built on fairness and transparency. 
                 Start earning without deposits - mine with your resources, keep your rewards.
-              </p>
+              </motion.p>
             </div>
 
-            {/* Enhanced CTA Section */}
-            <div ref={buttonsRef} className="space-y-8">
+            {/* CTA Section */}
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+              className="space-y-8"
+            >
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start items-center">
-                <div className="relative group">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Button
                     size="lg"
                     data-testid="button-start-mining"
@@ -318,11 +180,12 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
                     </span>
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-xl" />
                   </Button>
-                  {/* Button glow effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 opacity-20 blur-xl group-hover:opacity-40 transition-all duration-500" />
-                </div>
+                </motion.div>
                 
-                <div className="relative group">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Button
                     variant="outline"
                     size="lg"
@@ -332,10 +195,10 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
                   >
                     Learn More
                   </Button>
-                </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
