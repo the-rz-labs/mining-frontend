@@ -12,12 +12,13 @@ export default function Navigation({ }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "Live Stats", href: "#stats" },
-    { name: "Mining Plans", href: "#plans" },
-    { name: "Tokens", href: "#tokens" },
-    { name: "Boost Rewards", href: "#referral" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "#home", isRoute: false },
+    { name: "Live Stats", href: "#stats", isRoute: false },
+    { name: "Mining Plans", href: "#plans", isRoute: false },
+    { name: "Tokens", href: "#tokens", isRoute: false },
+    { name: "Boost Rewards", href: "#referral", isRoute: false },
+    { name: "About Us", href: "/about-us", isRoute: true },
+    { name: "Contact", href: "/contact", isRoute: true },
   ];
 
   return (
@@ -33,21 +34,32 @@ export default function Navigation({ }: NavigationProps) {
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center space-x-12">
               {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
-                  className="text-white/80 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const element = document.querySelector(item.href);
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  {item.name}
-                </a>
+                item.isRoute ? (
+                  <Link key={item.name} href={item.href}>
+                    <span
+                      data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                      className="text-white/80 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)] cursor-pointer"
+                    >
+                      {item.name}
+                    </span>
+                  </Link>
+                ) : (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                    className="text-white/80 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.querySelector(item.href);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </a>
+                )
               ))}
             </div>
           </div>
@@ -91,23 +103,36 @@ export default function Navigation({ }: NavigationProps) {
         <div id="mobile-menu" className="md:hidden bg-gradient-to-br from-slate-900/95 via-purple-900/20 to-slate-900/95 backdrop-blur-xl border-t border-white/10" role="menu">
           <div className="px-4 pt-4 pb-6 space-y-1">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
-                className="text-white/80 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300 hover:bg-white/5 rounded-lg mx-2"
-                role="menuitem"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const element = document.querySelector(item.href);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                  }
-                  setMobileMenuOpen(false);
-                }}
-              >
-                {item.name}
-              </a>
+              item.isRoute ? (
+                <Link key={item.name} href={item.href}>
+                  <span
+                    data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                    className="text-white/80 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300 hover:bg-white/5 rounded-lg mx-2 cursor-pointer"
+                    role="menuitem"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              ) : (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                  className="text-white/80 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300 hover:bg-white/5 rounded-lg mx-2"
+                  role="menuitem"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.querySelector(item.href);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  {item.name}
+                </a>
+              )
             ))}
             <div className="pt-4 border-t border-gray-800 mt-4">
               <Link href="/sign-up">
