@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Loader2 } from "lucide-react";
+import { Mail, Loader2, MessageSquare, Send, Sparkles, Zap, Globe, Shield } from "lucide-react";
 import { z } from "zod";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -24,6 +24,7 @@ type ContactForm = z.infer<typeof contactSchema>;
 
 export default function Contact() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ContactForm>({
@@ -82,23 +83,70 @@ export default function Contact() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
+          {/* Enhanced Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-6 tracking-tight">
-              Contact Us
-            </h1>
-            <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+            <div className="flex justify-center items-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mr-4 animate-pulse">
+                <MessageSquare className="w-8 h-8 text-neon-green" />
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent tracking-tight">
+                Contact Us
+              </h1>
+            </div>
+            <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed mb-8">
               Have questions about our mining platform? We're here to help you get started on your crypto mining journey.
             </p>
+            
+            {/* Contact method cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+              <div className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Mail className="w-6 h-6 text-neon-green" />
+                </div>
+                <h3 className="text-white font-semibold mb-2">Email Support</h3>
+                <p className="text-white/60 text-sm">support@rankingmining.com</p>
+                <p className="text-neon-purple text-xs mt-1">24/7 Response</p>
+              </div>
+              
+              <div className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Globe className="w-6 h-6 text-neon-green" />
+                </div>
+                <h3 className="text-white font-semibold mb-2">Global Reach</h3>
+                <p className="text-white/60 text-sm">150+ Countries</p>
+                <p className="text-neon-purple text-xs mt-1">Worldwide Support</p>
+              </div>
+              
+              <div className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Shield className="w-6 h-6 text-neon-green" />
+                </div>
+                <h3 className="text-white font-semibold mb-2">Secure Platform</h3>
+                <p className="text-white/60 text-sm">99.9% Uptime</p>
+                <p className="text-neon-purple text-xs mt-1">Enterprise Security</p>
+              </div>
+            </div>
           </div>
 
-          {/* Contact Form */}
-          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-white text-2xl">Send us a Message</CardTitle>
-              <CardDescription className="text-white/70">
-                Fill out the form below and we'll get back to you as soon as possible
-              </CardDescription>
+          {/* Enhanced Contact Form */}
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-neon-purple/20 transition-all duration-500 relative overflow-hidden group">
+            {/* Animated border effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/20 via-transparent to-neon-green/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <CardHeader className="relative z-10">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center animate-pulse">
+                  <Send className="w-6 h-6 text-neon-green" />
+                </div>
+                <div>
+                  <CardTitle className="text-white text-2xl flex items-center">
+                    Send us a Message
+                    <Sparkles className="w-5 h-5 text-neon-purple ml-2 animate-pulse" />
+                  </CardTitle>
+                  <CardDescription className="text-white/70">
+                    Fill out the form below and we'll get back to you as soon as possible
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {isSubmitted ? (
