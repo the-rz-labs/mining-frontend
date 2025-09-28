@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Twitter, Github, Linkedin, Mail, Globe, Shield, Zap } from "lucide-react";
+import { Link } from "wouter";
 import Logo from "./Logo";
 
 interface FooterProps {
@@ -21,19 +22,19 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
     {
       title: "Platform",
       links: [
-        { name: "Mining Plans", href: "#plans" },
-        { name: "Live Stats", href: "#stats" },
-        { name: "Token Charts", href: "#tokens" },
-        { name: "Referral Program", href: "#referral" }
+        { name: "Mining Plans", href: "#plans", isRoute: false },
+        { name: "Live Stats", href: "#stats", isRoute: false },
+        { name: "Token Charts", href: "#tokens", isRoute: false },
+        { name: "Referral Program", href: "#referral", isRoute: false }
       ]
     },
     {
       title: "Company",
       links: [
-        { name: "About Us", href: "#about" },
-        { name: "Contact", href: "#contact" },
-        { name: "Careers", href: "#careers" },
-        { name: "Press", href: "#press" }
+        { name: "About Us", href: "/about-us", isRoute: true },
+        { name: "Contact", href: "/contact", isRoute: true },
+        { name: "Careers", href: "#careers", isRoute: false },
+        { name: "Press", href: "#press", isRoute: false }
       ]
     }
   ];
@@ -87,20 +88,32 @@ export default function Footer({ onContactClick, onNewsletterSignup }: FooterPro
               <ul className="space-y-3">
                 {section.links.map((link, linkIndex) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      data-testid={`footer-link-${section.title.toLowerCase()}-${linkIndex}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log(`Footer link clicked: ${link.name}`);
-                        if (link.name === "Contact") {
-                          onContactClick?.();
-                        }
-                      }}
-                      className="text-muted-foreground hover:text-neon-purple transition-colors duration-300 hover-elevate px-2 py-1 rounded-md -mx-2"
-                    >
-                      {link.name}
-                    </a>
+                    {link.isRoute ? (
+                      <Link href={link.href}>
+                        <span
+                          data-testid={`footer-link-${section.title.toLowerCase()}-${linkIndex}`}
+                          className="text-muted-foreground hover:text-neon-purple transition-colors duration-300 hover-elevate px-2 py-1 rounded-md -mx-2 cursor-pointer"
+                        >
+                          {link.name}
+                        </span>
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        data-testid={`footer-link-${section.title.toLowerCase()}-${linkIndex}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          console.log(`Footer link clicked: ${link.name}`);
+                          const element = document.querySelector(link.href);
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                        className="text-muted-foreground hover:text-neon-purple transition-colors duration-300 hover-elevate px-2 py-1 rounded-md -mx-2"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
