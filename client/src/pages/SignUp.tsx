@@ -3,41 +3,50 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
-import { ChevronLeft, Mail, Shield, KeyRound, Users, ArrowRight, Loader2, Wallet } from "lucide-react";
+import { ChevronLeft, Shield, KeyRound, Users, ArrowRight, Loader2, Wallet, Image, CheckCircle, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { sendCodeSchema, verifyCodeSchema, insertUserSchema } from "@shared/schema";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
-import type { z } from "zod";
 import { useAppKit } from "@reown/appkit/react";
-import { useAccountEffect } from 'wagmi'
+import { useAccount, useSignMessage } from 'wagmi';
+import { z } from "zod";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
-type SendCodeForm = z.infer<typeof sendCodeSchema>;
-type VerifyCodeForm = z.infer<typeof verifyCodeSchema>;
-type SignUpForm = z.infer<typeof insertUserSchema>;
+// Define the schemas for the new flow
+const finalRegistrationSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
+  avatar_id: z.string().min(1, "Please select an avatar"),
+  invite_code: z.string().optional()
+});
+
+type FinalRegistrationForm = z.infer<typeof finalRegistrationSchema>;
 
 export default function SignUp() {
   const [step, setStep] = useState<Step>(1);
-  const [email, setEmail] = useState("");
-  const [referralCode, setReferralCode] = useState("");
+  const [nonce, setNonce] = useState<string>("");
+  const [signature, setSignature] = useState<string>("");
+  const [walletAddress, setWalletAddress] = useState<string>("");
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
-  const [accessToken, setAccessToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { open } = useAppKit();
+  const { address, isConnected } = useAccount();
+  const { signMessage, isPending: isSigningMessage } = useSignMessage();
 
-  useAccountEffect({
-    onConnect(data) {
-      console.log('Connected!', data)
-    },
-  });
+  // Handle wallet connection
+  useEffect(() => {
+    if (isConnected && address && step === 1) {
+      setWalletAddress(address);
+      // Automatically fetch nonce and move to step 2
+      fetchNonce(address);
+    }
+  }, [isConnected, address, step]);
 
   // Set random avatar if none selected when reaching step 3
   useEffect(() => {
@@ -46,182 +55,152 @@ export default function SignUp() {
     }
   }, [step, selectedAvatar]);
 
-  // Extract referral code from URL parameters
+  // Extract invite code from URL parameters
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const refParam = params.get("ref");
+    const refParam = params.get("ref") || params.get("invite");
     if (refParam) {
-      setReferralCode(refParam);
+      setInviteCode(refParam);
     }
   }, []);
 
-  // Step 1: Send verification code
-  const emailForm = useForm<SendCodeForm>({
-    resolver: zodResolver(sendCodeSchema),
-    defaultValues: { email: "" }
-  });
-
-  const sendCodeMutation = useMutation({
-    mutationFn: async (data: SendCodeForm) => {
-      const response = await fetch("https://coinmaining.game/backend/api/users/auth/email/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: data.email }),
-      });
+  // Mock API function to fetch nonce
+  const fetchNonce = async (walletAddress: string) => {
+    try {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/auth/nonce', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ wallet_address: walletAddress })
+      // });
+      // const data = await response.json();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to send verification code");
-      }
-      
-      return response.json();
-    },
-    onSuccess: (responseData: any) => {
-      toast({
-        title: "Verification code sent!",
-        description: responseData.detail || "Check your email for the 5-digit verification code."
-      });
+      // Mock nonce for now
+      const mockNonce = `Please sign this message to verify your wallet ownership. Nonce: ${Date.now()}`;
+      setNonce(mockNonce);
       setStep(2);
-    },
-    onError: (error: any) => {
+      
+      toast({
+        title: "Wallet Connected!",
+        description: "Please sign the message to verify ownership.",
+      });
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send verification code",
+        description: "Failed to fetch nonce. Please try again.",
         variant: "destructive"
       });
     }
-  });
+  };
 
-  // Step 2: Verify code
-  const codeForm = useForm<VerifyCodeForm>({
-    resolver: zodResolver(verifyCodeSchema),
-    defaultValues: { email: "", code: "" }
-  });
+  // Handle message signing
+  const handleSignMessage = async () => {
+    if (!nonce || !walletAddress) return;
 
-  const verifyCodeMutation = useMutation({
-    mutationFn: async (data: VerifyCodeForm) => {
-      // In development mode, accept test verification codes
-      const isDevelopment = import.meta.env.NODE_ENV === 'development' || import.meta.env.DEV;
-      if (isDevelopment && (data.code === "12345" || data.code === "00000")) {
-        // Mock successful verification for testing
-        return {
-          access_token: "mock_access_token",
-          refresh_token: "mock_refresh_token",
-          need_username: true,
-          message: "Email verified successfully (test mode)"
-        };
-      }
-
-      const response = await fetch("https://coinmaining.game/backend/api/users/auth/verify-code/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          email: data.email, 
-          otp_code: data.code 
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Invalid or expired code");
-      }
-      
-      return response.json();
-    },
-    onSuccess: (responseData: any) => {
-      // Store the tokens
-      setAccessToken(responseData.access_token);
-      setRefreshToken(responseData.refresh_token);
-      
-      toast({
-        title: "Email verified!",
-        description: responseData.message || "Now create your account details."
-      });
-      
-      // Move to step 3 if username is needed
-      if (responseData.need_username) {
-        setStep(3);
-      } else {
-        // If no username needed, redirect to dashboard
-        navigate("/");
-      }
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Verification failed",
-        description: error.message || "Invalid or expired code",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Step 3: Complete signup
-  const signUpForm = useForm<SignUpForm>({
-    resolver: zodResolver(insertUserSchema),
-    defaultValues: { 
-      email: "", 
-      username: "", 
-      password: "",
-      confirmPassword: "",
-      referredByUserId: referralCode
-    }
-  });
-
-  const signUpMutation = useMutation({
-    mutationFn: async (data: SignUpForm) => {
-      // In development mode, mock successful signup for testing
-      const isDevelopment = import.meta.env.NODE_ENV === 'development' || import.meta.env.DEV;
-      if (isDevelopment && data.username === "testuser123") {
-        // Mock successful signup for testing
-        return {
-          user: {
-            id: "test-user-id",
-            username: data.username,
-            email: data.email,
-            avatar: data.avatar
+    try {
+      await signMessage(
+        { message: nonce },
+        {
+          onSuccess: (sig) => {
+            setSignature(sig);
+            setStep(3);
+            toast({
+              title: "Message Signed!",
+              description: "Now let's set up your avatar.",
+            });
           },
-          message: "Account created successfully (test mode)"
-        };
-      }
-
-      const response = await apiRequest("POST", "/api/auth/sign-up", data);
-      return response.json();
-    },
-    onSuccess: (data: any) => {
+          onError: (error) => {
+            toast({
+              title: "Signing Failed",
+              description: error.message || "Failed to sign message",
+              variant: "destructive"
+            });
+          }
+        }
+      );
+    } catch (error) {
       toast({
-        title: "Account created successfully!",
+        title: "Error",
+        description: "Failed to sign message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Final registration form
+  const finalForm = useForm<FinalRegistrationForm>({
+    resolver: zodResolver(finalRegistrationSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      avatar_id: selectedAvatar || "",
+      invite_code: inviteCode
+    }
+  });
+
+  // Update form when selectedAvatar or inviteCode changes
+  useEffect(() => {
+    if (selectedAvatar) {
+      finalForm.setValue("avatar_id", selectedAvatar);
+    }
+  }, [selectedAvatar, finalForm]);
+
+  useEffect(() => {
+    if (inviteCode) {
+      finalForm.setValue("invite_code", inviteCode);
+    }
+  }, [inviteCode, finalForm]);
+
+  // Final registration mutation
+  const finalRegistrationMutation = useMutation({
+    mutationFn: async (data: FinalRegistrationForm) => {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/auth/register', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     username: data.username,
+      //     email: data.email,
+      //     wallet_address: walletAddress,
+      //     signature: signature,
+      //     avatar_id: data.avatar_id,
+      //     invite_code: data.invite_code,
+      //     nonce: nonce
+      //   })
+      // });
+      // return response.json();
+
+      // Mock successful registration
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return {
+        success: true,
+        user: {
+          id: "mock-user-id",
+          username: data.username,
+          email: data.email,
+          wallet_address: walletAddress,
+          avatar_id: data.avatar_id
+        }
+      };
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Registration Successful!",
         description: `Welcome to Mining, ${data.user.username}!`
       });
-      navigate("/"); // Navigate to home or dashboard
+      navigate("/");
     },
     onError: (error: any) => {
       toast({
-        title: "Registration failed",
+        title: "Registration Failed",
         description: error.message || "Failed to create account",
         variant: "destructive"
       });
     }
   });
 
-  const onSendCode = (data: SendCodeForm) => {
-    setEmail(data.email);
-    sendCodeMutation.mutate(data);
-  };
-
-  const onVerifyCode = (data: VerifyCodeForm) => {
-    verifyCodeMutation.mutate({ ...data, email });
-  };
-
-  const onSignUp = (data: SignUpForm) => {
-    signUpMutation.mutate({ 
-      ...data, 
-      email,
-      avatar: selectedAvatar || getRandomAvatar()
-    });
+  const onFinalSubmit = (data: FinalRegistrationForm) => {
+    finalRegistrationMutation.mutate(data);
   };
 
   const handleBackStep = () => {
@@ -230,16 +209,25 @@ export default function SignUp() {
     }
   };
 
-  // Update form email when step changes
-  useEffect(() => {
-    if (step === 2) {
-      codeForm.setValue("email", email);
+  const getStepTitle = () => {
+    switch (step) {
+      case 1: return "Connect Your Wallet";
+      case 2: return "Verify Ownership";
+      case 3: return "Choose Your Avatar";
+      case 4: return "Complete Registration";
+      default: return "Join Mining";
     }
-    if (step === 3) {
-      signUpForm.setValue("email", email);
-      signUpForm.setValue("referredByUserId", referralCode);
+  };
+
+  const getStepDescription = () => {
+    switch (step) {
+      case 1: return "Connect your wallet to get started";
+      case 2: return "Sign a message to verify wallet ownership";
+      case 3: return "Select an avatar for your profile";
+      case 4: return "Fill in your details to complete registration";
+      default: return "Start your crypto mining journey";
     }
-  }, [step, email, referralCode, codeForm, signUpForm]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -285,7 +273,7 @@ export default function SignUp() {
 
           {/* Progress Steps */}
           <div className="flex items-center justify-center space-x-4 mb-6">
-            {[1, 2, 3].map((stepNumber) => (
+            {[1, 2, 3, 4].map((stepNumber) => (
               <div key={stepNumber} className="flex items-center">
                 <div 
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
@@ -296,7 +284,7 @@ export default function SignUp() {
                 >
                   {step > stepNumber ? '✓' : stepNumber}
                 </div>
-                {stepNumber < 3 && (
+                {stepNumber < 4 && (
                   <div className={`w-8 h-0.5 mx-2 transition-all duration-500 ${
                     step > stepNumber ? 'bg-gradient-to-r from-neon-purple to-neon-green' : 'bg-white/20'
                   }`}></div>
@@ -307,18 +295,16 @@ export default function SignUp() {
 
           <div className="space-y-3 animate-slide-in-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent tracking-tight">
-              Join Mining
+              {getStepTitle()}
             </CardTitle>
             <CardDescription className="text-white/70 text-lg animate-fade-in animate-stagger-1">
-              {step === 1 && "Start your crypto mining journey"}
-              {step === 2 && "Verify your email address"}
-              {step === 3 && "Complete your account setup"}
+              {getStepDescription()}
             </CardDescription>
           </div>
 
           {/* Progress Indicators */}
           <div className="flex items-center justify-center space-x-2">
-            {[1, 2, 3].map((num) => (
+            {[1, 2, 3, 4].map((num) => (
               <div
                 key={num}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -326,7 +312,7 @@ export default function SignUp() {
                     ? "bg-neon-purple w-8"
                     : num < step
                     ? "bg-neon-green"
-                    : "bg-muted"
+                    : "bg-white/20"
                 }`}
               />
             ))}
@@ -341,37 +327,37 @@ export default function SignUp() {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-green/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
                   <Wallet className="w-8 h-8 text-neon-purple animate-pulse-glow" />
                 </div>
-                <p className="text-white/60 animate-slide-in-left animate-stagger-1">Connect your wallet to get started</p>
+                <p className="text-white/60 animate-slide-in-left animate-stagger-1">
+                  {isConnected && address ? 
+                    `Connected: ${address.slice(0, 6)}...${address.slice(-4)}` : 
+                    "Connect your wallet to get started"
+                  }
+                </p>
               </div>
 
-              <Form {...emailForm}>
-                <form onSubmit={emailForm.handleSubmit(onSendCode)} className="space-y-6">
-                  
-                  <Button
-                    type="submit"
-                    onClick={() => open({ view: "Connect" })}
-                    className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
-                    disabled={sendCodeMutation.isPending}
-                    data-testid="button-send-code"
-                  >
-                    {sendCodeMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Sending Code...
-                      </>
-                    ) : (
-                      <>
-                        Connect Wallet
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </Form>
+              <Button
+                type="button"
+                onClick={() => open({ view: "Connect" })}
+                className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
+                disabled={isConnected}
+                data-testid="button-connect-wallet"
+              >
+                {isConnected ? (
+                  <>
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Wallet Connected
+                  </>
+                ) : (
+                  <>
+                    Connect Wallet
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </Button>
             </div>
           )}
 
-          {/* Step 2: Verification Code */}
+          {/* Step 2: Sign Message */}
           {step === 2 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
@@ -379,81 +365,74 @@ export default function SignUp() {
                   <Shield className="w-8 h-8 text-neon-green animate-pulse-glow" />
                 </div>
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
-                  <p className="text-white/60">We sent a verification code to</p>
-                  <p className="text-white font-medium">{email}</p>
+                  <p className="text-white/60">Please sign the message to verify ownership</p>
+                  <p className="text-white font-medium text-sm break-all bg-white/5 p-3 rounded-lg border border-white/10">
+                    {nonce}
+                  </p>
                 </div>
               </div>
 
-              <Form {...codeForm}>
-                <form onSubmit={codeForm.handleSubmit(onVerifyCode)} className="space-y-6">
-                  <FormField
-                    control={codeForm.control}
-                    name="code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Verification Code</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              {...field}
-                              placeholder="00000"
-                              className="h-14 bg-white/5 border-white/10 text-white placeholder:text-white/30 text-center font-mono text-2xl tracking-[0.5em] rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300"
-                              maxLength={5}
-                              data-testid="input-code"
-                            />
-                            <div className="absolute inset-y-0 right-3 flex items-center">
-                              <KeyRound className="w-5 h-5 text-white/30" />
-                            </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
-                    disabled={verifyCodeMutation.isPending}
-                    data-testid="button-verify-code"
-                  >
-                    {verifyCodeMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Verifying...
-                      </>
-                    ) : (
-                      <>
-                        Verify Email
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </>
-                    )}
-                  </Button>
-
-                </form>
-              </Form>
-
               <Button
                 type="button"
-                variant="ghost"
-                className="w-full text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
-                onClick={() => {
-                  setStep(1);
-                  sendCodeMutation.reset();
-                }}
-                data-testid="button-resend-code"
+                onClick={handleSignMessage}
+                className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
+                disabled={isSigningMessage}
+                data-testid="button-sign-message"
               >
-                Resend Code
+                {isSigningMessage ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    Signing Message...
+                  </>
+                ) : (
+                  <>
+                    Sign Message
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           )}
 
-          {/* Step 3: Complete Registration */}
+          {/* Step 3: Avatar Selection */}
           {step === 3 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-mining-orange/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
-                  <Users className="w-8 h-8 text-mining-orange animate-pulse-glow" />
+                  <Image className="w-8 h-8 text-mining-orange animate-pulse-glow" />
+                </div>
+                <div className="space-y-2 animate-slide-in-left animate-stagger-1">
+                  <p className="text-white/60">Choose your avatar</p>
+                  <p className="text-white font-medium">This will represent you in the mining platform</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <AvatarSelection
+                  selectedAvatar={selectedAvatar}
+                  onAvatarSelect={setSelectedAvatar}
+                />
+
+                <Button
+                  type="button"
+                  onClick={() => setStep(4)}
+                  className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
+                  disabled={!selectedAvatar}
+                  data-testid="button-continue-avatar"
+                >
+                  Continue
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Final Registration */}
+          {step === 4 && (
+            <div className="space-y-8">
+              <div className="text-center space-y-4 animate-fade-in">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
+                  <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
                 </div>
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">Almost there!</p>
@@ -461,10 +440,32 @@ export default function SignUp() {
                 </div>
               </div>
 
-              <Form {...signUpForm}>
-                <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-6">
+              <Form {...finalForm}>
+                <form onSubmit={finalForm.handleSubmit(onFinalSubmit)} className="space-y-6">
                   <FormField
-                    control={signUpForm.control}
+                    control={finalForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white/80 font-medium">Email</FormLabel>
+                        <FormControl>
+                          <div className="relative group">
+                            <Input
+                              {...field}
+                              type="email"
+                              placeholder="your@email.com"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-email"
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={finalForm.control}
                     name="username"
                     render={({ field }) => (
                       <FormItem>
@@ -474,7 +475,7 @@ export default function SignUp() {
                             <Input
                               {...field}
                               placeholder="Choose a unique username"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
                               data-testid="input-username"
                             />
                             <div className="absolute inset-y-0 right-3 flex items-center">
@@ -488,102 +489,41 @@ export default function SignUp() {
                   />
 
                   <FormField
-                    control={signUpForm.control}
-                    name="password"
+                    control={finalForm.control}
+                    name="invite_code"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Password</FormLabel>
+                        <FormLabel className="text-white/80 font-medium">Invite Code (Optional)</FormLabel>
                         <FormControl>
                           <div className="relative group">
                             <Input
                               {...field}
-                              type="password"
-                              placeholder="Create a secure password"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
-                              data-testid="input-password"
+                              placeholder="Enter invite code if you have one"
+                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              data-testid="input-invite-code"
                             />
-                            <div className="absolute inset-y-0 right-3 flex items-center">
-                              <KeyRound className="w-4 h-4 text-white/30" />
-                            </div>
                           </div>
                         </FormControl>
                         <FormMessage className="text-red-400" />
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={signUpForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Confirm Password</FormLabel>
-                        <FormControl>
-                          <div className="relative group">
-                            <Input
-                              {...field}
-                              type="password"
-                              placeholder="Confirm your password"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
-                              data-testid="input-confirm-password"
-                            />
-                            <div className="absolute inset-y-0 right-3 flex items-center">
-                              <KeyRound className="w-4 h-4 text-white/30" />
-                            </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={signUpForm.control}
-                    name="referredByUserId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Referral Code (Optional)</FormLabel>
-                        <FormControl>
-                          <div className="relative group">
-                            <Input
-                              {...field}
-                              placeholder="Enter referral code"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-mining-orange/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
-                              data-testid="input-referral"
-                            />
-                            <div className="absolute inset-y-0 right-3 flex items-center">
-                              <Users className="w-4 h-4 text-white/30" />
-                            </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Avatar Selection */}
-                  <div className="space-y-2">
-                    <AvatarSelection
-                      selectedAvatar={selectedAvatar}
-                      onAvatarSelect={setSelectedAvatar}
-                    />
-                  </div>
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-mining-orange to-neon-purple hover:from-mining-orange/80 hover:to-neon-purple/80 text-white font-semibold rounded-xl shadow-lg shadow-mining-orange/20 hover:shadow-mining-orange/40 transition-all duration-300 hover:scale-[1.02]"
-                    disabled={signUpMutation.isPending}
-                    data-testid="button-create-account"
+                    className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
+                    disabled={finalRegistrationMutation.isPending}
+                    data-testid="button-complete-registration"
                   >
-                    {signUpMutation.isPending ? (
+                    {finalRegistrationMutation.isPending ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
                         Creating Account...
                       </>
                     ) : (
                       <>
-                        Create Account
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        Complete Registration
+                        <CheckCircle className="w-5 h-5 ml-2" />
                       </>
                     )}
                   </Button>
@@ -591,20 +531,6 @@ export default function SignUp() {
               </Form>
             </div>
           )}
-
-          {/* Terms and Privacy */}
-          <div className="text-xs text-center text-muted-foreground space-y-1">
-            <p>By creating an account, you agree to our</p>
-            <div className="flex items-center justify-center gap-1">
-              <Link href="#" className="text-neon-purple hover:underline">
-                Terms of Service
-              </Link>
-              <span>and</span>
-              <Link href="#" className="text-neon-purple hover:underline">
-                Privacy Policy
-              </Link>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
