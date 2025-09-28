@@ -43,11 +43,7 @@ import type { User as UserType, UserBadge } from "@shared/schema";
 import { useLocation } from "wouter";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
 
-// Import custom referral badge images
-import referral5Image from "@assets/5rb_1758305317536.jpg";
-import referral10Image from "@assets/10rb_1758305322560.jpg";
-import referral20Image from "@assets/20rb_1758305326625.jpg";
-import referral50Image from "@assets/50rb_1758305331049.jpg";
+const BASE_URL = "https://coinmaining.game";
 
 // Mining profile data
 const mockMinerProfile = {
@@ -100,7 +96,7 @@ const achievementBadges = {
     unlocked: true,
     rarity: "uncommon",
     requirement: "5 referrals",
-    customImage: referral5Image
+    customImage: BASE_URL + "/images/5ref.png"
   },
   referral_recruiter: { 
     label: "Network Recruiter", 
@@ -110,7 +106,7 @@ const achievementBadges = {
     unlocked: false,
     rarity: "rare",
     requirement: "10 referrals",
-    customImage: referral10Image
+    customImage: BASE_URL + "/images/5ref.png"
   },
   treasure_hunter: { 
     label: "Treasure Hunter", 
@@ -165,7 +161,7 @@ const achievementBadges = {
     unlocked: false,
     rarity: "epic",
     requirement: "20 referrals",
-    customImage: referral20Image
+    customImage:  BASE_URL + "/images/5ref.png"
   },
   referral_legend: { 
     label: "Referral Legend", 
@@ -175,7 +171,7 @@ const achievementBadges = {
     unlocked: false,
     rarity: "legendary",
     requirement: "50 referrals",
-    customImage: referral50Image
+    customImage:  BASE_URL + "/images/5ref.png"
   },
   ultimate_miner: { 
     label: "Ultimate Miner", 

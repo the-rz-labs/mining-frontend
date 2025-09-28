@@ -3,10 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Cpu, Zap } from "lucide-react";
 import MiningPlanCard, { type MiningPlan } from "./MiningPlanCard";
-import mgcRig1 from "@assets/generated_images/Purple_neon_mining_rig_MGC_62391ec5.png";
-import rzRig1 from "@assets/generated_images/Green_neon_mining_rig_RZ_7f27de2a.png";
-import orangeRig from "@assets/generated_images/Orange_accent_mining_rig_54bcdb96.png";
-import whiteRig from "@assets/generated_images/Premium_white_purple_mining_rig_e2f86744.png";
+
+const BASE_URL = "https://coinmaining.game";
 
 interface MiningPlansSectionProps {
   onStartMining?: (plan: MiningPlan) => void;
@@ -31,59 +29,54 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
   const mgcPlans: MiningPlan[] = [
     {
       id: "mgc-starter",
-      name: "MGC Starter",
+      name: "MGC Basic",
       token: "MGC",
       hashRate: "50 MH/s", 
       minInvestment: 1000,
       dailyReward: "12.5 MGC",
-      image: mgcRig1,
-      features: ["Basic mining setup", "Standard support", "Pool access"],
-      roiPercentage: 15
+      image: `${BASE_URL}/images/1mgc.png`,
+      roiPercentage: 1
     },
     {
       id: "mgc-pro",
-      name: "MGC Pro",
+      name: "MGC Standard",
       token: "MGC",
       hashRate: "150 MH/s",
       minInvestment: 5000,
       dailyReward: "45.2 MGC", 
-      image: whiteRig,
+      image: `${BASE_URL}/images/2mgc.png`,
       popular: true,
-      features: ["Advanced GPU optimization", "24/7 monitoring", "Priority support"],
-      roiPercentage: 18
+      roiPercentage: 1.1
     },
     {
       id: "mgc-elite",
-      name: "MGC Elite",
+      name: "MGC Advanced",
       token: "MGC",
       hashRate: "300 MH/s",
       minInvestment: 12000,
       dailyReward: "95.8 MGC",
-      image: mgcRig1,
-      features: ["Enterprise hardware", "Dedicated support", "Custom pools"],
-      roiPercentage: 22
+      image: `${BASE_URL}/images/3mgc.png`,
+      roiPercentage: 1.2
     },
     {
       id: "mgc-ultimate",
-      name: "MGC Ultimate",
+      name: "MGC Expert",
       token: "MGC", 
       hashRate: "500 MH/s",
       minInvestment: 25000,
       dailyReward: "168.5 MGC",
-      image: whiteRig,
-      features: ["Max performance", "VIP support", "Exclusive features"],
-      roiPercentage: 25
+      image: `${BASE_URL}/images/4mgc.png`,
+      roiPercentage: 1.3
     },
     {
       id: "mgc-enterprise",
-      name: "MGC Enterprise",
+      name: "MGC Titan",
       token: "MGC",
       hashRate: "1000 MH/s",
       minInvestment: 50000,
       dailyReward: "350.0 MGC",
-      image: mgcRig1,
-      features: ["Industrial scale", "Dedicated manager", "Custom solutions"],
-      roiPercentage: 28
+      image: `${BASE_URL}/images/5mgc.png`,
+      roiPercentage: 1.4
     }
   ];
 
@@ -95,43 +88,39 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "75 MH/s",
       minInvestment: 2000,
       dailyReward: "18.3 RZ",
-      image: rzRig1,
-      features: ["Eco-friendly mining", "Green energy", "Basic analytics"],
-      roiPercentage: 16
+      image: `${BASE_URL}/images/1rz.png`,
+      roiPercentage: 1
     },
     {
       id: "rz-advanced",
-      name: "RZ Advanced", 
+      name: "RZ Standard", 
       token: "RZ",
       hashRate: "200 MH/s",
       minInvestment: 8000,
       dailyReward: "52.1 RZ",
-      image: orangeRig,
+      image: `${BASE_URL}/images/2rz.png`,
       popular: true,
-      features: ["Smart cooling", "Auto-optimization", "Real-time monitoring"],
-      roiPercentage: 20
+      roiPercentage: 1.1
     },
     {
       id: "rz-professional",
-      name: "RZ Professional",
+      name: "RZ Advanced",
       token: "RZ", 
       hashRate: "400 MH/s",
       minInvestment: 18000,
       dailyReward: "110.4 RZ",
-      image: rzRig1,
-      features: ["Professional grade", "Advanced analytics", "Priority pools"],
-      roiPercentage: 24
+      image: `${BASE_URL}/images/3rz.png`,
+      roiPercentage: 1.2
     },
     {
       id: "rz-master",
-      name: "RZ Master",
+      name: "RZ Expert",
       token: "RZ",
       hashRate: "750 MH/s", 
       minInvestment: 35000,
       dailyReward: "215.8 RZ",
-      image: orangeRig,
-      features: ["Master tier performance", "Dedicated resources", "Premium support"],
-      roiPercentage: 27
+      image: `${BASE_URL}/images/4rz.png`,
+      roiPercentage: 1.3
     },
     {
       id: "rz-titan",
@@ -140,9 +129,8 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       hashRate: "1500 MH/s",
       minInvestment: 75000, 
       dailyReward: "450.0 RZ",
-      image: rzRig1,
-      features: ["Maximum power", "Custom hardware", "White-glove service"],
-      roiPercentage: 30
+      image: `${BASE_URL}/images/5rz.png`,
+      roiPercentage: 1.4
     }
   ];
 
@@ -203,105 +191,99 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
   };
 
   return (
-    <section id="plans" className="py-32 bg-white" data-testid="mining-plans-section">
+    <section id="plans" className="py-20 bg-gradient-to-b from-card/30 to-background" data-testid="mining-plans-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-24">
-          <h2 className="text-6xl sm:text-7xl md:text-8xl font-black text-center mb-8">
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-none">
-              A FRAGMENTED MARKET
-            </span>
-          </h2>
-          <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Every game is different - different engines, devices, standards, and art styles. Moving miners and 
-            assets between them is complex. Our platform solves this with infrastructure designed for interoperability. 
-            Our technology handles translation, optimization, and delivery across engines, platforms, and formats - 
-            ensuring miners perform consistently, look great, and fit seamlessly into any experience.
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center space-x-3 mb-6">
+            <Cpu className="w-8 h-8 text-neon-purple" />
+            <h2 className="text-4xl font-bold text-foreground font-mono">
+              <span className="bg-gradient-to-r from-neon-purple to-neon-green bg-clip-text text-transparent">
+                MINING PLANS
+              </span>
+            </h2>
+          </div>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            Choose from our professional mining plans designed for maximum profitability. 
+            Each plan includes cutting-edge hardware and 24/7 monitoring.
           </p>
 
+          {/* Scroll Controls */}
+          <div className="flex justify-center items-center space-x-4 mb-8">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollLeft}
+              data-testid="scroll-left"
+              aria-label="Scroll left through mining plans"
+              className="rounded-full border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <Badge variant="outline" className="text-neon-purple border-neon-purple/30">
+                MGC Plans
+              </Badge>
+              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-green"></div>
+              <Badge variant="outline" className="text-neon-green border-neon-green/30">
+                RZ Plans
+              </Badge>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollRight}
+              data-testid="scroll-right"
+              aria-label="Scroll right through mining plans"
+              className="rounded-full border-neon-green/30 text-neon-green hover:bg-neon-green/10"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
-        {/* Simple Mining Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Featured plans only - simplified */}
-          {[
-            {
-              name: "Starter",
-              token: "MGC",
-              hashRate: "50 MH/s",
-              dailyReward: "12.5 MGC",
-              features: ["Basic mining setup", "Standard support", "Pool access"]
-            },
-            {
-              name: "Professional", 
-              token: "RZ",
-              hashRate: "200 MH/s",
-              dailyReward: "52.1 RZ",
-              features: ["Advanced optimization", "24/7 monitoring", "Priority support"],
-              popular: true
-            },
-            {
-              name: "Enterprise",
-              token: "MGC", 
-              hashRate: "1000 MH/s",
-              dailyReward: "350.0 MGC",
-              features: ["Industrial scale", "Dedicated manager", "Custom solutions"]
-            }
-          ].map((plan, index) => (
-            <div
-              key={plan.name}
-              className={`relative bg-gray-50 rounded-3xl p-8 border transition-all duration-300 hover:shadow-xl ${
-                plan.popular 
-                  ? 'border-purple-200 shadow-lg shadow-purple-100' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-6 py-2 rounded-full text-sm font-medium">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                <div className="text-4xl font-black text-purple-600 mb-1">{plan.hashRate}</div>
-                <div className="text-gray-600 mb-6">{plan.dailyReward} daily</div>
-                
-                <div className="space-y-3 mb-8 text-left">
-                  {plan.features.map((feature, i) => (
-                    <div key={i} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <Button
-                  onClick={() => onStartMining?.({ 
-                    id: plan.name.toLowerCase(),
-                    name: plan.name,
-                    token: plan.token,
-                    hashRate: plan.hashRate,
-                    dailyReward: plan.dailyReward,
-                    features: plan.features,
-                    minInvestment: 1000,
-                    roiPercentage: 20,
-                    image: mgcRig1
-                  } as MiningPlan)}
-                  className={`w-full rounded-xl py-3 font-medium transition-all duration-300 ${
-                    plan.popular
-                      ? 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white shadow-lg'
-                      : 'bg-gray-900 hover:bg-gray-800 text-white'
-                  }`}
-                >
-                  Start Mining
-                </Button>
+        {/* Mining Plans Carousel */}
+        <div className="relative max-w-7xl mx-auto">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+          
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+
+          {/* Scrollable container */}
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto scrollbar-hide gap-6 py-6 px-12 snap-x snap-mandatory scroll-smooth"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-testid="plans-carousel"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {allPlans.map((plan, index) => (
+              <div
+                key={plan.id}
+                className="flex-shrink-0 snap-start w-[360px] sm:w-[380px] md:w-[390px] xl:w-[400px]"
+                data-plan-index={index}
+              >
+                <MiningPlanCard
+                  plan={plan}
+                  highlightTop={plan.roiPercentage === topROI}
+                  highlightTopMGC={plan.token === "MGC" && plan.roiPercentage === topMGC}
+                  onStartMining={(plan) => {
+                    console.log(`Starting mining for ${plan.name}`);
+                    onStartMining?.(plan);
+                  }}
+                />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
   );

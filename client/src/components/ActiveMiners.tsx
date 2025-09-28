@@ -129,10 +129,12 @@ export function ActiveMiners() {
   };
 
   const getMinerImage = (token: 'MGC' | 'RZ', status: string) => {
+    const BASE_URL = "https://coinmaining.game";
+
     if (token === 'MGC') {
-      return mgcMinerRig;
+      return `${BASE_URL}/images/1mgc.png`;
     }
-    return rzMinerRig;
+    return `${BASE_URL}/images/1rz.png`;
   };
 
   const activeMiners = miners.filter(m => m.status === 'active');

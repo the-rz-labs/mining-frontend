@@ -97,7 +97,7 @@ export default function LiveStats({}: LiveStatsProps) {
   ];
 
   return (
-    <section id="stats" className="py-20 bg-background" data-testid="live-stats-section">
+    <section id="stats" className="py-20 bg-gradient-to-b from-card/30 to-background" data-testid="live-stats-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">

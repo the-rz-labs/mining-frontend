@@ -26,6 +26,9 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
 
+  const BASE_URL = "https://coinmaining.game";
+  const heroImgPath = `${BASE_URL}/images/hero-img.png`;
+
   // Create floating particles
   useEffect(() => {
     const newParticles: Particle[] = Array.from({ length: 50 }, (_, i) => ({
@@ -86,9 +89,9 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
                 className="relative z-10"
               >
                 <img
-                  src={cryptoCharacterImage}
+                  src={heroImgPath}
                   alt="Crypto Mining Character"
-                  className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain"
+                  className="w-80 h-80 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] object-contain rounded-lg"
                   data-testid="hero-crypto-character"
                 />
               </motion.div>
@@ -195,19 +198,6 @@ export default function HeroSection({ onStartMining, onLearnMore }: HeroSectionP
                 </motion.div>
               </div>
             </motion.div>
-            
-            {/* Supporting text */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-              className="pt-8"
-            >
-              <p className="text-lg text-gray-300">
-                Join thousands of crypto enthusiasts earning with our mining platform
-              </p>
-            </motion.div>
-
           </motion.div>
         </div>
       </div>

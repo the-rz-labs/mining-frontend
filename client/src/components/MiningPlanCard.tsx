@@ -12,7 +12,6 @@ export interface MiningPlan {
   dailyReward: string;
   image: string;
   popular?: boolean;
-  features: string[];
   roiPercentage: number;
 }
 
@@ -49,7 +48,7 @@ export default function MiningPlanCard({ plan, highlightTop = false, highlightTo
 
   return (
     <div
-      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-[1.02] h-[580px] w-full ${theme.bg} ${theme.border} ${
+      className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-500 hover:scale-[1.02] h-[650px] w-full ${theme.bg} ${theme.border} ${
         highlightTop 
           ? `ring-2 ring-mining-orange/60 shadow-2xl shadow-mining-orange/20 md:scale-[1.02]` 
           : highlightTopMGC
@@ -107,7 +106,7 @@ export default function MiningPlanCard({ plan, highlightTop = false, highlightTo
           <img
             src={plan.image}
             alt={`${plan.name} Mining Rig`}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-55 object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className={`absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
         </div>

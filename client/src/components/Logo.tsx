@@ -1,11 +1,13 @@
-import logoImage from "@assets/Logo.3c792b77_1758189998712.png";
-
 export default function Logo() {
+  const BASE_URL = "https://coinmaining.game";
+  const logoPath = "/images/Logo.png"; // relative path from base URL
+  const logoUrl = `${BASE_URL}${logoPath}`;
+
   return (
     <div className="flex items-center space-x-3" data-testid="logo">
       <div className="w-10 h-10 rounded-lg overflow-hidden">
         <img 
-          src={logoImage} 
+          src={logoUrl} 
           alt="Ranking Logo" 
           className="w-full h-full object-contain"
         />
