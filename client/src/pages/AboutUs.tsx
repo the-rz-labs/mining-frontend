@@ -71,22 +71,10 @@ export default function AboutUs() {
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-6 tracking-tight">
             About Ranking Mining
           </h1>
-          <p className="text-xl text-white/70 max-w-4xl mx-auto leading-relaxed mb-8">
+          <p className="text-xl text-white/70 max-w-4xl mx-auto leading-relaxed">
             We're revolutionizing the crypto mining industry with fairness, transparency, and cutting-edge technology. 
             Our platform empowers miners worldwide to earn rewards without traditional barriers.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/sign-up">
-              <Button className="bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold px-8 py-3 text-lg shadow-lg" data-testid="button-start-mining">
-                Start Mining Today
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 py-3 text-lg" data-testid="button-contact-us">
-                Contact Us
-              </Button>
-            </Link>
-          </div>
         </div>
 
         {/* Stats Section */}
@@ -225,29 +213,6 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <Card className="border border-white/10 bg-gradient-to-r from-neon-purple/10 to-neon-green/10 backdrop-blur-xl shadow-xl">
-          <CardContent className="text-center py-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Start Mining?
-            </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of miners who are already earning with our transparent and fair mining platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/sign-up">
-                <Button className="bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold px-8 py-3 text-lg shadow-lg" data-testid="button-join-now">
-                  Join the Platform
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 py-3 text-lg" data-testid="button-learn-more">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
       </div>
       </div>
       <Footer />
