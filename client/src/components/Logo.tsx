@@ -16,10 +16,10 @@ export default function Logo() {
       {/* Brand text */}
       <div className="flex flex-col">
         <span className="text-xl font-bold bg-gradient-to-r from-mining-orange to-neon-green bg-clip-text text-transparent font-mono tracking-wider">
-          RANKING
+          MINING
         </span>
         <span className="text-xs text-muted-foreground font-light tracking-widest">
-          MINING PLATFORM
+          RZ PLATFORM
         </span>
       </div>
     </div>
