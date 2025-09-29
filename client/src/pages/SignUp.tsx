@@ -432,7 +432,7 @@ export default function SignUp() {
           {step === 4 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 mx-auto backdrop-blur-sm border border-white/10 overflow-hidden">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 mx-auto backdrop-blur-sm border border-white/10 overflow-hidden">
                   {selectedAvatar ? (
                     <Avatar className="w-full h-full">
                       <AvatarImage 
