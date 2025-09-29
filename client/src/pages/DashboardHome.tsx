@@ -156,110 +156,125 @@ function EarningsDisplay() {
 
 export default function DashboardHome() {
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-6 relative overflow-hidden">
+      {/* Cyberpunk Background Effects */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/20 to-neon-green/20 rounded-full blur-3xl animate-float opacity-60"></div>
+        <div className="absolute -bottom-10 -left-10 w-[500px] h-[500px] bg-gradient-to-r from-mining-orange/15 to-neon-purple/15 rounded-full blur-3xl animate-breathing opacity-50" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-gradient-to-r from-neon-green/15 to-mining-orange/15 rounded-full blur-3xl animate-float opacity-40 hidden lg:block" style={{ animationDelay: "4s" }}></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto space-y-8 relative z-10">
         
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-white mb-2">Mining Dashboard</h1>
-            <p className="text-slate-400">Monitor your cryptocurrency mining operations</p>
+          <div className="animate-slide-in-left">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-3">Mining Dashboard</h1>
+            <p className="text-white/70 text-lg">Monitor your cryptocurrency mining operations</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-lg px-4 py-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-slate-300">2 Miners Active</span>
+          <div className="flex items-center gap-4 animate-slide-in-right">
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-4 py-2 shadow-lg">
+              <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
+              <span className="text-sm text-white/80 font-medium">2 Miners Active</span>
             </div>
           </div>
         </div>
 
         {/* Earnings Overview */}
-        <EarningsDisplay />
+        <div className="animate-fade-in">
+          <EarningsDisplay />
+        </div>
 
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
           {/* Left Column - Wallet Balances */}
-          <div className="xl:col-span-1 space-y-6">
+          <div className="xl:col-span-1 space-y-6 animate-slide-in-left">
             
             {/* MGC Balance */}
-            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 hover:border-slate-700 transition-colors">
-              <CardContent className="p-6">
+            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-purple/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-purple-600/5"></div>
+              <CardContent className="p-6 relative">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <Coins className="w-5 h-5 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-r from-neon-purple to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <Coins className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">MGC Token</h3>
-                      <p className="text-sm text-slate-400">Premium Mining</p>
+                      <h3 className="font-semibold text-white">MGC Token</h3>
+                      <p className="text-sm text-purple-300">Premium Mining</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-slate-400">Balance</p>
-                    <p className="text-xl font-semibold text-white" data-testid="balance-mgc">{miningStats.mgcBalance}</p>
+                    <p className="text-sm text-white/60">Balance</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent" data-testid="balance-mgc">{miningStats.mgcBalance}</p>
                   </div>
                 </div>
-                <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">USD Value</span>
-                    <span className="text-white font-medium">$2,468.90</span>
+                <div className="bg-white/10 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-white/70">USD Value</span>
+                    <span className="text-white font-bold">$2,468.90</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Daily Rate</span>
-                    <span className="text-emerald-400 font-medium">+12.3 MGC</span>
+                  <div className="flex justify-between">
+                    <span className="text-white/70">Daily Rate</span>
+                    <span className="text-neon-purple font-bold">+12.3 MGC</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* RZ Balance */}
-            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 hover:border-slate-700 transition-colors">
-              <CardContent className="p-6">
+            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-mining-orange/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-mining-orange/10 to-orange-600/5"></div>
+              <CardContent className="p-6 relative">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                      <Coins className="w-5 h-5 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-r from-mining-orange to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <Coins className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">RZ Token</h3>
-                      <p className="text-sm text-slate-400">Reward Zone</p>
+                      <h3 className="font-semibold text-white">RZ Token</h3>
+                      <p className="text-sm text-orange-300">Reward Zone</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-slate-400">Balance</p>
-                    <p className="text-xl font-semibold text-white" data-testid="balance-rz">{miningStats.rzBalance}</p>
+                    <p className="text-sm text-white/60">Balance</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent" data-testid="balance-rz">{miningStats.rzBalance}</p>
                   </div>
                 </div>
-                <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">USD Value</span>
-                    <span className="text-white font-medium">$17,802.46</span>
+                <div className="bg-white/10 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-white/70">USD Value</span>
+                    <span className="text-white font-bold">$17,802.46</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Staking APY</span>
-                    <span className="text-emerald-400 font-medium">+5.2%</span>
+                  <div className="flex justify-between">
+                    <span className="text-white/70">Staking APY</span>
+                    <span className="text-mining-orange font-bold">+5.2%</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Quick Stats */}
-            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800">
-              <CardContent className="p-6">
-                <h3 className="font-medium text-white mb-4">Mining Statistics</h3>
+            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-green/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-green/10 to-emerald-600/5"></div>
+              <CardContent className="p-6 relative">
+                <h3 className="font-semibold text-white mb-4 flex items-center">
+                  <Activity className="w-5 h-5 mr-2 text-neon-green" />
+                  Mining Statistics
+                </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Hash Rate</span>
-                    <span className="text-white font-medium">{miningStats.hashRate}</span>
+                  <div className="flex items-center justify-between py-2 border-b border-white/10">
+                    <span className="text-white/70">Hash Rate</span>
+                    <span className="text-white font-bold">{miningStats.hashRate}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Uptime</span>
-                    <span className="text-emerald-400 font-medium">{miningStats.uptime}</span>
+                  <div className="flex items-center justify-between py-2 border-b border-white/10">
+                    <span className="text-white/70">Uptime</span>
+                    <span className="text-neon-green font-bold">{miningStats.uptime}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Power Usage</span>
-                    <span className="text-white font-medium">{miningStats.power}</span>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-white/70">Power Usage</span>
+                    <span className="text-white font-bold">{miningStats.power}</span>
                   </div>
                 </div>
               </CardContent>
@@ -267,7 +282,7 @@ export default function DashboardHome() {
           </div>
 
           {/* Right Column - Active Miners */}
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-2 animate-slide-in-right">
             <ActiveMiners />
           </div>
         </div>

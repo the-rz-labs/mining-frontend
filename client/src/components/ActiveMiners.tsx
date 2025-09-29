@@ -105,12 +105,16 @@ export function ActiveMiners() {
       {/* Section Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-white mb-1">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent mb-2">
             Active Mining Operations
           </h2>
-          <p className="text-slate-400">
-            Real-time mining dashboard
+          <p className="text-white/70 text-lg">
+            Real-time mining dashboard with live rewards
           </p>
+        </div>
+        <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-4 py-2 shadow-lg">
+          <Activity className="w-4 h-4 text-neon-green animate-pulse" />
+          <span className="text-white/80 font-medium">{activeMiners.length} Miners Online</span>
         </div>
       </div>
 
@@ -120,10 +124,17 @@ export function ActiveMiners() {
           {activeMiners.map((miner) => (
             <Card 
               key={miner.id}
-              className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 hover:border-slate-700 transition-colors"
+              className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-purple/20 relative overflow-hidden"
               data-testid={`active-miner-${miner.token.toLowerCase()}`}
             >
-              <CardContent className="p-0">
+              {/* Animated background effects */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${
+                miner.token === 'MGC' 
+                  ? 'from-neon-purple/10 to-purple-600/5' 
+                  : 'from-mining-orange/10 to-orange-600/5'
+              } transition-all duration-1000`}></div>
+              
+              <CardContent className="p-0 relative">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   
                   {/* Video Section */}
@@ -140,20 +151,20 @@ export function ActiveMiners() {
                       {/* Status overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40">
                         <div className="absolute top-4 left-4">
-                          <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                          <div className={`flex items-center gap-2 px-3 py-1 rounded-full backdrop-blur-sm ${
                             miner.token === 'MGC' 
-                              ? 'bg-purple-600/90' 
-                              : 'bg-orange-600/90'
-                          } text-white text-sm font-medium`}>
-                            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                              ? 'bg-neon-purple/80 border border-neon-purple/50' 
+                              : 'bg-mining-orange/80 border border-mining-orange/50'
+                          } text-white text-sm font-medium shadow-lg`}>
+                            <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
                             {miner.token} Mining
                           </div>
                         </div>
                         
                         <div className="absolute bottom-4 left-4">
                           <div className="text-white">
-                            <div className="text-lg font-semibold">{miner.rate}% Rate</div>
-                            <div className="text-sm text-slate-300">Active Mining</div>
+                            <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{miner.rate}% Rate</div>
+                            <div className="text-sm text-white/80 font-medium">Active Mining</div>
                           </div>
                         </div>
                         
@@ -162,7 +173,7 @@ export function ActiveMiners() {
                             size="sm"
                             variant="ghost"
                             onClick={() => toggleMinerStatus(miner.id)}
-                            className="text-white hover:bg-white/20 rounded-full h-8 w-8 p-0"
+                            className="text-white hover:bg-white/20 rounded-full h-10 w-10 p-0 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
                             data-testid={`button-toggle-${miner.token.toLowerCase()}-miner`}
                           >
                             {miner.status === 'active' ? (
@@ -179,42 +190,59 @@ export function ActiveMiners() {
                   {/* Stats Section */}
                   <div className="p-6 space-y-6">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-white">{miner.token} Mining Rig</h3>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      <h3 className="text-xl font-bold text-white flex items-center">
+                        <span className={`w-3 h-3 rounded-full mr-3 ${
+                          miner.status === 'active' ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-white/40'
+                        }`}></span>
+                        {miner.token} Mining Rig
+                      </h3>
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold ${
                         miner.status === 'active' 
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                          : 'bg-slate-700 text-slate-400'
+                          ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
+                          : 'bg-white/10 text-white/60 border border-white/20'
                       }`}>
-                        {miner.status === 'active' ? 'Active' : 'Paused'}
+                        {miner.status === 'active' ? 'ACTIVE' : 'PAUSED'}
                       </div>
                     </div>
 
                     {/* Mining Stats */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between py-3 border-b border-slate-800">
+                      <div className="flex items-center justify-between py-3 border-b border-white/10">
                         <div className="flex items-center gap-3">
-                          <Clock className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-300">Working Time</span>
+                          <Clock className="w-5 h-5 text-neon-green" />
+                          <span className="text-white/80 font-medium">Working Time</span>
                         </div>
-                        <span className="text-white font-medium">{miner.workingTime}</span>
+                        <span className="text-white font-bold text-lg">{miner.workingTime}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-3 border-b border-slate-800">
+                      <div className="flex items-center justify-between py-3 border-b border-white/10">
                         <div className="flex items-center gap-3">
-                          <TrendingUp className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-300">Mining Rate</span>
+                          <TrendingUp className="w-5 h-5 text-neon-purple" />
+                          <span className="text-white/80 font-medium">Mining Rate</span>
                         </div>
-                        <span className="text-white font-medium">{miner.rate}%</span>
+                        <span className="text-white font-bold text-lg">{miner.rate}%</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-3">
+                      <div className={`flex items-center justify-between py-4 rounded-lg border-2 ${
+                        miner.token === 'MGC' 
+                          ? 'bg-gradient-to-r from-neon-purple/20 to-purple-600/20 border-neon-purple/50' 
+                          : 'bg-gradient-to-r from-mining-orange/20 to-orange-600/20 border-mining-orange/50'
+                      } shadow-lg`}>
                         <div className="flex items-center gap-3">
-                          <Coins className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-300">Earned Rewards</span>
+                          <Coins className={`w-6 h-6 ${
+                            miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
+                          } animate-pulse-glow`} />
+                          <span className="text-white font-semibold text-lg">Earned Rewards</span>
                         </div>
                         <div className="text-right">
-                          <div className="text-white font-semibold">{miner.tokensEarned} {miner.token}</div>
-                          <div className="text-sm text-emerald-400">Live Earnings</div>
+                          <div className={`text-2xl font-black ${
+                            miner.token === 'MGC' 
+                              ? 'bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent' 
+                              : 'bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent'
+                          } animate-pulse-glow`}>
+                            {miner.tokensEarned} {miner.token}
+                          </div>
+                          <div className="text-sm text-neon-green font-bold">Live Earnings</div>
                         </div>
                       </div>
                     </div>
@@ -226,23 +254,24 @@ export function ActiveMiners() {
         </div>
       ) : (
         /* No Active Miners State */
-        <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800">
-          <CardContent className="p-12 text-center space-y-6">
-            <div className="w-16 h-16 mx-auto bg-slate-800 rounded-lg flex items-center justify-center">
-              <Activity className="w-8 h-8 text-slate-400" />
+        <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/5 animate-pulse"></div>
+          <CardContent className="p-12 text-center space-y-6 relative">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-neon-purple/20 to-mining-orange/20 rounded-2xl flex items-center justify-center border-2 border-white/20 shadow-lg">
+              <Activity className="w-10 h-10 text-white/60 animate-pulse-glow" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-white mb-2">No Active Mining Operations</h3>
-              <p className="text-slate-400">
+              <h3 className="text-2xl font-bold text-white mb-3">No Active Mining Operations</h3>
+              <p className="text-white/70 text-lg">
                 Start your mining rigs to begin earning rewards
               </p>
             </div>
             <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              className="bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold px-8 py-3 rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
               data-testid="button-start-mining"
             >
-              <Play className="w-4 h-4 mr-2" />
-              Start Mining
+              <Play className="w-5 h-5 mr-2" />
+              Launch Mining Operations
             </Button>
           </CardContent>
         </Card>
