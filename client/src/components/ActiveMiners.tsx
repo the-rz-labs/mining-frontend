@@ -98,21 +98,6 @@ export function ActiveMiners() {
 
   return (
     <div className="space-y-6">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent mb-2">
-            Active Mining Operations
-          </h2>
-          <p className="text-white/70 text-lg">
-            Real-time mining dashboard with live rewards
-          </p>
-        </div>
-        <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-4 py-2 shadow-lg">
-          <Activity className="w-4 h-4 text-neon-green animate-pulse" />
-          <span className="text-white/80 font-medium">{activeMiners.length} Miner Online</span>
-        </div>
-      </div>
 
       {/* Active Miners Grid */}
       {activeMiners.length > 0 ? (
@@ -164,21 +149,6 @@ export function ActiveMiners() {
                           </div>
                         </div>
                         
-                        <div className="absolute top-4 right-4">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => toggleMinerStatus(miner.id)}
-                            className="text-white hover:bg-white/20 rounded-full h-10 w-10 p-0 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
-                            data-testid={`button-toggle-${miner.token.toLowerCase()}-miner`}
-                          >
-                            {miner.status === 'active' ? (
-                              <Pause className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </Button>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -310,21 +280,6 @@ export function ActiveMiners() {
                             </div>
                           </div>
                           
-                          <div className="absolute top-6 right-6">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => toggleMinerStatus(miner.id)}
-                              className="text-white hover:bg-white/20 rounded-full h-12 w-12 p-0 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
-                              data-testid={`button-toggle-${miner.token.toLowerCase()}-miner`}
-                            >
-                              {miner.status === 'active' ? (
-                                <Pause className="w-5 h-5" />
-                              ) : (
-                                <Play className="w-5 h-5" />
-                              )}
-                            </Button>
-                          </div>
                         </div>
                       </div>
                     </div>
