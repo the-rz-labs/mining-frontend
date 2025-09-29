@@ -203,16 +203,20 @@ export default function DashboardHome() {
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">Total Earned</span>
-                    <span className="text-neon-green font-bold text-lg">$1,247.83</span>
+                    <span className="text-white/70 font-medium">MGC Earned</span>
+                    <span className="text-neon-purple font-bold text-lg">154.789 MGC</span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">Total Claimed</span>
-                    <span className="text-blue-400 font-bold text-lg">$985.30</span>
+                    <span className="text-white/70 font-medium">MGC Claimed</span>
+                    <span className="text-blue-400 font-bold text-lg">89.456 MGC</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-white/10">
+                    <span className="text-white/70 font-medium">MGC Pending</span>
+                    <span className="text-mining-orange font-bold text-lg">65.333 MGC</span>
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-white/70 font-medium">Pending</span>
-                    <span className="text-mining-orange font-bold text-lg">$262.53</span>
+                    <span className="text-white/70 font-medium">RZ Available</span>
+                    <span className="text-mining-orange font-bold text-lg">0.000 RZ</span>
                   </div>
                 </div>
               </CardContent>
