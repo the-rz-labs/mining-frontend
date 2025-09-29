@@ -156,7 +156,6 @@ export default function DashboardHome() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white">MGC Token</h3>
-                      <p className="text-sm text-purple-300">Premium Mining</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -168,10 +167,6 @@ export default function DashboardHome() {
                   <div className="flex justify-between">
                     <span className="text-white/70">USD Value</span>
                     <span className="text-white font-bold">$2,468.90</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-white/70">Daily Rate</span>
-                    <span className="text-neon-purple font-bold">+12.3 MGC</span>
                   </div>
                 </div>
               </CardContent>
@@ -188,7 +183,6 @@ export default function DashboardHome() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white">RZ Token</h3>
-                      <p className="text-sm text-orange-300">Reward Zone</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -201,10 +195,6 @@ export default function DashboardHome() {
                     <span className="text-white/70">USD Value</span>
                     <span className="text-white font-bold">$17,802.46</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-white/70">Staking APY</span>
-                    <span className="text-mining-orange font-bold">+5.2%</span>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -215,16 +205,20 @@ export default function DashboardHome() {
               <CardContent className="p-6 relative">
                 <h3 className="font-semibold text-white mb-4 flex items-center">
                   <Trophy className="w-5 h-5 mr-2 text-neon-green" />
-                  Total Earnings
+                  Earnings Overview
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3 border-b border-white/10">
-                    <span className="text-white/70 font-medium">MGC Earned</span>
-                    <span className="text-neon-purple font-bold text-lg">154.789 MGC</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between py-2 border-b border-white/10">
+                    <span className="text-white/70 font-medium">Total Earned</span>
+                    <span className="text-neon-green font-bold text-lg">$1,247.83</span>
                   </div>
-                  <div className="flex items-center justify-between py-3">
-                    <span className="text-white/70 font-medium">RZ Earned</span>
-                    <span className="text-mining-orange font-bold text-lg">89.456 RZ</span>
+                  <div className="flex items-center justify-between py-2 border-b border-white/10">
+                    <span className="text-white/70 font-medium">Total Claimed</span>
+                    <span className="text-blue-400 font-bold text-lg">$985.30</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-white/70 font-medium">Pending</span>
+                    <span className="text-mining-orange font-bold text-lg">$262.53</span>
                   </div>
                 </div>
               </CardContent>
