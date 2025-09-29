@@ -32,7 +32,6 @@ const miningStats = {
   hashRate: "2.45 TH/s",
   hashRateChange: 12.5,
   power: "1,420 W",
-  temperature: "72°C",
   uptime: "99.8%",
   mgcBalance: "1,234.56",
   rzBalance: "8,901.23",
