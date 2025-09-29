@@ -48,7 +48,7 @@ export default function Navigation({ }: NavigationProps) {
           </div>
 
           {/* Desktop Navigation - Centered */}
-          <div className="hidden md:flex flex-1 justify-center">
+          <div className="hidden lg:flex flex-1 justify-center">
             <div className="flex items-center space-x-12">
               {navItems.map((item) => (
                 item.isRoute ? (
@@ -78,7 +78,7 @@ export default function Navigation({ }: NavigationProps) {
           </div>
 
           {/* Desktop Auth Button */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden lg:flex items-center">
             <Link href="/sign-up">
               <Button
                 data-testid="button-sign-up"
@@ -90,7 +90,7 @@ export default function Navigation({ }: NavigationProps) {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -113,7 +113,7 @@ export default function Navigation({ }: NavigationProps) {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="md:hidden bg-gradient-to-br from-slate-900/95 via-purple-900/20 to-slate-900/95 backdrop-blur-xl border-t border-white/10" role="menu">
+        <div id="mobile-menu" className="lg:hidden bg-gradient-to-br from-slate-900/95 via-purple-900/20 to-slate-900/95 backdrop-blur-xl border-t border-white/10" role="menu">
           <div className="px-4 pt-4 pb-6 space-y-1">
             {navItems.map((item) => (
               item.isRoute ? (
