@@ -178,14 +178,14 @@ export default function Profile() {
   return (
     <div className="max-w-6xl mx-auto space-y-12 p-6">
       
-      {/* Centered Profile Section */}
-      <div className="text-center space-y-8">
-        {/* Large Centered Avatar */}
-        <div className="flex justify-center">
+      {/* Profile Section */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          {/* Avatar on left */}
           <div className="relative">
-            <Avatar className="w-40 h-40 border-4 border-white/20 shadow-2xl">
+            <Avatar className="w-32 h-32 border-4 border-white/20 shadow-2xl">
               <AvatarImage src={selectedAvatar || ""} alt="Profile" />
-              <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-white text-4xl font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-white text-3xl font-bold">
                 {profile.username.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -193,47 +193,47 @@ export default function Profile() {
             <Button 
               size="icon"
               variant="ghost"
-              className="absolute -bottom-2 -right-2 w-12 h-12 bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20 rounded-full"
+              className="absolute -bottom-2 -right-2 w-10 h-10 bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20 rounded-full"
               onClick={() => setShowAvatarEdit(!showAvatarEdit)}
               data-testid="button-edit-avatar"
             >
-              <Camera className="w-6 h-6 text-white" />
+              <Camera className="w-5 h-5 text-white" />
             </Button>
+          </div>
+          
+          {/* Profile Info on right */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-white" data-testid="text-username">
+                {profile.username}
+              </h1>
+              <Button size="icon" variant="ghost" className="w-8 h-8 text-white/60 hover:text-white hover:bg-white/10">
+                <Edit3 className="w-5 h-5" />
+              </Button>
+            </div>
+            <p className="text-white/60 text-lg">{profile.email}</p>
           </div>
         </div>
         
-        {/* Profile Info */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="text-3xl font-bold text-white" data-testid="text-username">
-              {profile.username}
-            </h1>
-            <Button size="icon" variant="ghost" className="w-8 h-8 text-white/60 hover:text-white hover:bg-white/10">
-              <Edit3 className="w-5 h-5" />
-            </Button>
-          </div>
-          <p className="text-white/60 text-lg">{profile.email}</p>
-          
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-4 pt-4">
-            <Button 
-              variant="outline" 
-              className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-              data-testid="button-settings"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-            <Button 
-              variant="outline" 
-              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
-              onClick={handleLogout}
-              data-testid="button-logout"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex gap-4">
+          <Button 
+            variant="outline" 
+            className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+            data-testid="button-settings"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
+          </Button>
+          <Button 
+            variant="outline" 
+            className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+            onClick={handleLogout}
+            data-testid="button-logout"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 
