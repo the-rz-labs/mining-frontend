@@ -30,7 +30,7 @@ const mockMinersData: MinerData[] = [
     plan: 'Premium MGC Plan',
     status: 'active',
     rate: 1.2,
-    tokensEarned: 45.8,
+    tokensEarned: 0.000124, // Low decimals for real-time visibility
     workingTime: '2h 15m'
   },
   {
@@ -39,7 +39,7 @@ const mockMinersData: MinerData[] = [
     plan: 'Standard RZ Plan',
     status: 'active',
     rate: 1.1,
-    tokensEarned: 23.4,
+    tokensEarned: 0.000089, // Low decimals for real-time visibility
     workingTime: '1h 42m'
   }
 ];
@@ -48,26 +48,31 @@ export function ActiveMiners() {
   const [miners, setMiners] = useState<MinerData[]>(mockMinersData);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Real-time simulation for active miners
+  // Real-time simulation for active miners with 1% monthly ratio for 50 tokens
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
       
       setMiners(prev => prev.map(miner => {
         if (miner.status === 'active') {
-          // Simulate real-time updates
-          const tokensIncrement = (miner.rate / 100) * 0.01; // Based on rate percentage
+          // 1% monthly ratio for 50 tokens = 0.5 tokens per month
+          // Per second: 0.5 / (30 * 24 * 60 * 60) = 0.000000193 tokens per second
+          // Scale by miner rate percentage
+          const baseTokensPerSecond = 0.5 / (30 * 24 * 60 * 60);
+          const tokensIncrement = baseTokensPerSecond * (miner.rate / 1.0); // Scale by rate
           const newTokensEarned = miner.tokensEarned + tokensIncrement;
           
-          // Update working time
-          const currentTimeMinutes = Math.floor((currentTime.getTime() - new Date().setHours(0, 0, 0, 0)) / 60000);
-          const hours = Math.floor(currentTimeMinutes / 60) % 24;
-          const minutes = currentTimeMinutes % 60;
+          // Update working time (simplified simulation)
+          const startTime = new Date();
+          startTime.setHours(startTime.getHours() - 2); // Simulate 2 hours ago start
+          const elapsedMs = new Date().getTime() - startTime.getTime();
+          const hours = Math.floor(elapsedMs / (1000 * 60 * 60));
+          const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
           const newWorkingTime = `${hours}h ${minutes}m`;
           
           return {
             ...miner,
-            tokensEarned: Math.round(newTokensEarned * 100) / 100,
+            tokensEarned: Math.round(newTokensEarned * 1000000) / 1000000, // Show 6 decimals for visibility
             workingTime: newWorkingTime
           };
         }
@@ -92,7 +97,7 @@ export function ActiveMiners() {
     const BASE_URL = "https://coinmaining.game";
 
     if (token === 'MGC') {
-      return `${BASE_URL}/miners_vid/1mgc-video.mp4`;
+      return `${BASE_URL}/miners_vid/1mgc-vido.mp4`;
     }
     return `${BASE_URL}/miners_vid/1rz-video.mp4`;
   };
@@ -134,12 +139,12 @@ export function ActiveMiners() {
                   : 'from-mining-orange/10 to-orange-600/5'
               } transition-all duration-1000`}></div>
               
-              <CardContent className="p-0 relative">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+              <CardContent className="p-0 relative h-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 h-full">
                   
                   {/* Video Section */}
-                  <div className="relative">
-                    <div className="aspect-video relative overflow-hidden rounded-l-lg">
+                  <div className="relative h-full">
+                    <div className="h-full relative overflow-hidden rounded-l-lg">
                       <video 
                         src={getMinerVideo(miner.token)}
                         autoPlay
@@ -188,7 +193,7 @@ export function ActiveMiners() {
                   </div>
 
                   {/* Stats Section */}
-                  <div className="p-6 space-y-6">
+                  <div className="p-6 space-y-6 flex flex-col justify-between h-full">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold text-white flex items-center">
                         <span className={`w-3 h-3 rounded-full mr-3 ${
@@ -223,27 +228,64 @@ export function ActiveMiners() {
                         <span className="text-white font-bold text-lg">{miner.rate}%</span>
                       </div>
 
-                      <div className={`flex items-center justify-between py-4 rounded-lg border-2 ${
+                      <div className={`relative overflow-hidden rounded-xl p-4 ${
                         miner.token === 'MGC' 
-                          ? 'bg-gradient-to-r from-neon-purple/20 to-purple-600/20 border-neon-purple/50' 
-                          : 'bg-gradient-to-r from-mining-orange/20 to-orange-600/20 border-mining-orange/50'
-                      } shadow-lg`}>
-                        <div className="flex items-center gap-3">
-                          <Coins className={`w-6 h-6 ${
-                            miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
-                          } animate-pulse-glow`} />
-                          <span className="text-white font-semibold text-lg">Earned Rewards</span>
-                        </div>
-                        <div className="text-right">
-                          <div className={`text-2xl font-black ${
-                            miner.token === 'MGC' 
-                              ? 'bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent' 
-                              : 'bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent'
-                          } animate-pulse-glow`}>
-                            {miner.tokensEarned} {miner.token}
+                          ? 'bg-gradient-to-br from-neon-purple/10 via-purple-500/5 to-neon-purple/10' 
+                          : 'bg-gradient-to-br from-mining-orange/10 via-orange-500/5 to-mining-orange/10'
+                      } backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500`}>
+                        {/* Modern glow effect */}
+                        <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${
+                          miner.token === 'MGC' 
+                            ? 'from-neon-purple/20 to-purple-400/20' 
+                            : 'from-mining-orange/20 to-orange-400/20'
+                        } opacity-50 blur-xl`}></div>
+                        
+                        <div className="relative flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Coins className={`w-7 h-7 ${
+                              miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
+                            } drop-shadow-lg animate-pulse-glow`} />
+                            <span className="text-white font-bold text-xl">Live Earnings</span>
                           </div>
-                          <div className="text-sm text-neon-green font-bold">Live Earnings</div>
+                          <div className="text-right">
+                            <div className={`text-3xl font-black ${
+                              miner.token === 'MGC' 
+                                ? 'bg-gradient-to-r from-neon-purple via-purple-300 to-purple-400 bg-clip-text text-transparent' 
+                                : 'bg-gradient-to-r from-mining-orange via-orange-300 to-orange-400 bg-clip-text text-transparent'
+                            } drop-shadow-lg animate-pulse-glow`}>
+                              {miner.tokensEarned.toFixed(6)} {miner.token}
+                            </div>
+                            <div className="text-sm text-neon-green font-bold uppercase tracking-wider">+Realtime</div>
+                          </div>
                         </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-2 gap-3 mt-6">
+                        <Button
+                          onClick={() => toggleMinerStatus(miner.id)}
+                          className={`h-12 font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] ${
+                            miner.status === 'active'
+                              ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white shadow-lg shadow-red-500/30'
+                              : 'bg-gradient-to-r from-neon-green to-green-500 hover:from-neon-green/80 hover:to-green-400 text-white shadow-lg shadow-neon-green/30'
+                          }`}
+                          data-testid={`button-stop-claim-${miner.token.toLowerCase()}`}
+                        >
+                          {miner.status === 'active' ? (
+                            <>Stop & Claim</>
+                          ) : (
+                            <>Start Mining</>
+                          )}
+                        </Button>
+                        
+                        {miner.status === 'active' && (
+                          <Button
+                            className="h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
+                            data-testid={`button-claim-${miner.token.toLowerCase()}`}
+                          >
+                            Claim Now
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
