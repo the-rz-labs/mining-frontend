@@ -5,7 +5,6 @@ import {
   Zap,
   Flame,
   Coins,
-  Sparkles,
   Medal,
   Rocket,
   Diamond,
@@ -18,11 +17,16 @@ import {
   Target,
   Award,
   Crown,
-  Star
+  Star,
+  CheckCircle,
+  Lock,
+  Progress,
+  BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
@@ -34,65 +38,120 @@ const mockMinerProfile = {
   id: "1",
   username: "CryptoMiner_Pro",
   email: "admin@gmail.com",
+  level: 47,
+  currentXP: 12840,
+  nextLevelXP: 15000,
   miningPower: 2847.5,
-  hashRate: "4.2 TH/s",
   totalMiners: 3,
   referralCount: 7,
   dailyEarnings: 142.3,
-  weeklyEarnings: 987.4,
-  totalEarnings: 14250.75,
-  efficiency: 94.7
+  completedChallenges: 12,
+  totalChallenges: 20
 };
 
-// Visual achievement badges
-const visualBadges = [
+// Gamified achievements with progress
+const achievements = [
   { 
-    id: "pioneer",
-    title: "Mining Pioneer", 
+    id: "first_mine",
+    title: "First Steps", 
+    description: "Complete your first mining session",
     icon: Zap, 
-    gradient: "from-blue-400 via-blue-500 to-cyan-500",
-    shadowColor: "shadow-blue-500/50",
-    description: "First mining session completed"
+    color: "bg-gradient-to-br from-blue-500 to-blue-600",
+    borderColor: "border-blue-400/30",
+    completed: true,
+    progress: 100,
+    xpReward: 100
   },
   { 
-    id: "flame",
-    title: "Fire Streak", 
+    id: "streak_7",
+    title: "Week Warrior", 
+    description: "Mine for 7 consecutive days",
     icon: Flame, 
-    gradient: "from-orange-400 via-red-500 to-pink-500",
-    shadowColor: "shadow-orange-500/50",
-    description: "7-day mining streak achieved"
+    color: "bg-gradient-to-br from-orange-500 to-red-600",
+    borderColor: "border-orange-400/30",
+    completed: true,
+    progress: 100,
+    xpReward: 250
   },
   { 
     id: "community",
-    title: "Community Leader", 
+    title: "Team Builder", 
+    description: "Invite 5 friends to join",
     icon: Users, 
-    gradient: "from-purple-400 via-pink-500 to-rose-500",
-    shadowColor: "shadow-purple-500/50",
-    description: "5+ referrals completed"
+    color: "bg-gradient-to-br from-purple-500 to-pink-600",
+    borderColor: "border-purple-400/30",
+    completed: true,
+    progress: 100,
+    xpReward: 500
   },
   { 
-    id: "diamond",
-    title: "Diamond Hands", 
-    icon: Diamond, 
-    gradient: "from-cyan-400 via-blue-500 to-indigo-500",
-    shadowColor: "shadow-cyan-500/50",
-    description: "Elite mining status"
-  },
-  { 
-    id: "rocket",
-    title: "Power Boost", 
+    id: "power_house",
+    title: "Power House", 
+    description: "Reach 5000+ mining power",
     icon: Rocket, 
-    gradient: "from-yellow-400 via-orange-500 to-red-500",
-    shadowColor: "shadow-yellow-500/50",
-    description: "Maximum efficiency reached"
+    color: "bg-gradient-to-br from-green-500 to-emerald-600",
+    borderColor: "border-green-400/30",
+    completed: false,
+    progress: 57,
+    xpReward: 750
   },
   { 
-    id: "crown",
-    title: "Mining Royalty", 
+    id: "diamond_tier",
+    title: "Diamond Elite", 
+    description: "Achieve diamond status",
+    icon: Diamond, 
+    color: "bg-gradient-to-br from-cyan-500 to-blue-600",
+    borderColor: "border-cyan-400/30",
+    completed: false,
+    progress: 23,
+    xpReward: 1000
+  },
+  { 
+    id: "master_miner",
+    title: "Master Miner", 
+    description: "Complete all mining challenges",
     icon: Crown, 
-    gradient: "from-amber-400 via-yellow-500 to-orange-500",
-    shadowColor: "shadow-amber-500/50",
-    description: "Top tier achievement"
+    color: "bg-gradient-to-br from-yellow-500 to-orange-600",
+    borderColor: "border-yellow-400/30",
+    completed: false,
+    progress: 60,
+    xpReward: 2000
+  }
+];
+
+// Stats data
+const stats = [
+  {
+    title: "Mining Power",
+    value: "2,847.5",
+    subtitle: "TH/s",
+    icon: Zap,
+    color: "from-orange-500 to-red-500",
+    progress: 85
+  },
+  {
+    title: "Active Miners", 
+    value: "3",
+    subtitle: "All Online",
+    icon: Activity,
+    color: "from-purple-500 to-pink-500",
+    progress: 100
+  },
+  {
+    title: "Referrals",
+    value: "7",
+    subtitle: "Growing",
+    icon: Users,
+    color: "from-blue-500 to-cyan-500",
+    progress: 70
+  },
+  {
+    title: "Daily Earnings",
+    value: "142.3",
+    subtitle: "MGC + RZ",
+    icon: TrendingUp,
+    color: "from-green-500 to-emerald-500",
+    progress: 92
   }
 ];
 
@@ -120,165 +179,186 @@ export default function Profile() {
   };
 
   const profile = mockMinerProfile;
+  const levelProgress = (profile.currentXP / profile.nextLevelXP) * 100;
+  const completedAchievements = achievements.filter(a => a.completed).length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 p-6">
-      {/* Modern Profile Header */}
-      <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-        <div className="flex flex-col lg:flex-row items-start gap-8">
-          
-          {/* Left Section - Avatar & Info */}
-          <div className="flex items-center gap-6">
-            <div className="relative">
-              <Avatar className="w-20 h-20 border-2 border-white/20">
-                <AvatarImage src={selectedAvatar || ""} alt="Profile" />
-                <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-white text-xl font-bold">
-                  {profile.username.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              
-              <Button 
-                size="icon"
-                variant="ghost"
-                className="absolute -bottom-1 -right-1 w-7 h-7 bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20 rounded-full"
-                onClick={() => setShowAvatarEdit(!showAvatarEdit)}
-                data-testid="button-edit-avatar"
-              >
-                <Camera className="w-3 h-3 text-white" />
-              </Button>
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-xl font-semibold text-white" data-testid="text-username">
-                  {profile.username}
-                </h1>
-                <Button size="icon" variant="ghost" className="w-6 h-6 text-white/60 hover:text-white hover:bg-white/10">
-                  <Edit3 className="w-3 h-3" />
+    <div className="max-w-6xl mx-auto space-y-8 p-6">
+      {/* Clean Profile Header */}
+      <Card className="border-0 bg-white/5 backdrop-blur-xl">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Avatar className="w-16 h-16 border-2 border-white/20">
+                  <AvatarImage src={selectedAvatar || ""} alt="Profile" />
+                  <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-white font-bold">
+                    {profile.username.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <Button 
+                  size="icon"
+                  variant="ghost"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20 rounded-full"
+                  onClick={() => setShowAvatarEdit(!showAvatarEdit)}
+                  data-testid="button-edit-avatar"
+                >
+                  <Camera className="w-3 h-3 text-white" />
                 </Button>
               </div>
-              <p className="text-white/60 text-sm">{profile.email}</p>
-            </div>
-          </div>
-          
-          {/* Right Section - Actions */}
-          <div className="flex gap-3 ml-auto">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-              data-testid="button-settings"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
-              onClick={handleLogout}
-              data-testid="button-logout"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Visual Badges Grid */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white">Achievements</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {visualBadges.map((badge, index) => (
-            <div key={badge.id} className="group relative">
-              {/* Badge Card */}
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-6 text-center hover:scale-105 transition-all duration-500 hover:border-white/20">
-                {/* Glow Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${badge.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}></div>
-                
-                {/* Icon */}
-                <div className={`relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${badge.gradient} flex items-center justify-center ${badge.shadowColor} shadow-2xl group-hover:shadow-3xl transition-all duration-500`}>
-                  <badge.icon className="w-8 h-8 text-white" />
-                </div>
-                
-                {/* Title */}
-                <h3 className="text-white font-bold text-sm mb-2 relative">{badge.title}</h3>
-                
-                {/* Sparkle Effect */}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <Sparkles className="w-4 h-4 text-yellow-400" />
-                </div>
-              </div>
               
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
-                <div className="bg-black/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap border border-white/20">
-                  {badge.description}
-                </div>
+              <div>
+                <h1 className="text-lg font-semibold text-white" data-testid="text-username">
+                  {profile.username}
+                </h1>
+                <p className="text-white/60 text-sm">{profile.email}</p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                data-testid="button-settings"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                onClick={handleLogout}
+                data-testid="button-logout"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Level Progress Card */}
+      <Card className="border-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 backdrop-blur-xl">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Level {profile.level}</h2>
+              <p className="text-white/60">{profile.currentXP.toLocaleString()} / {profile.nextLevelXP.toLocaleString()} XP</p>
+            </div>
+            <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold px-3 py-1">
+              {Math.round(levelProgress)}% Complete
+            </Badge>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-4 mb-2">
+            <div 
+              className="h-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000 relative overflow-hidden"
+              style={{width: `${levelProgress}%`}}
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+            </div>
+          </div>
+          <p className="text-white/60 text-sm">
+            {profile.nextLevelXP - profile.currentXP} XP to next level
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Mining Power */}
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300 group">
-          <CardContent className="p-6 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto bg-gradient-to-br from-mining-orange to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Coins className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white mb-1">{profile.miningPower.toFixed(1)}</p>
-              <p className="text-white/60 text-sm font-medium">Mining Power</p>
-              <p className="text-mining-orange text-xs font-medium mt-1">{profile.hashRate}</p>
-            </div>
-          </CardContent>
-        </Card>
+        {stats.map((stat, index) => (
+          <Card key={index} className="border-0 bg-white/5 backdrop-blur-xl hover:bg-white/10 transition-all duration-300 group">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <stat.icon className="w-6 h-6 text-white" />
+                </div>
+                <Badge variant="outline" className="border-white/20 text-white/60">
+                  {stat.progress}%
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
+                  <p className="text-white/60 text-sm">{stat.title}</p>
+                  <p className="text-white/40 text-xs">{stat.subtitle}</p>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div 
+                    className={`h-2 bg-gradient-to-r ${stat.color} rounded-full transition-all duration-1000`}
+                    style={{width: `${stat.progress}%`}}
+                  ></div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        {/* Active Miners */}
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300 group">
-          <CardContent className="p-6 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto bg-gradient-to-br from-neon-purple to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Activity className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white mb-1" data-testid="text-total-miners">{profile.totalMiners}</p>
-              <p className="text-white/60 text-sm font-medium">Active Miners</p>
-              <p className="text-neon-purple text-xs font-medium mt-1">All Online</p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Achievements Section */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Achievements</h2>
+            <p className="text-white/60">{completedAchievements} of {achievements.length} completed</p>
+          </div>
+          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold px-4 py-2">
+            {Math.round((completedAchievements / achievements.length) * 100)}% Complete
+          </Badge>
+        </div>
 
-        {/* Referrals */}
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300 group">
-          <CardContent className="p-6 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Users className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white mb-1" data-testid="text-referral-count">{profile.referralCount}</p>
-              <p className="text-white/60 text-sm font-medium">Referrals</p>
-              <p className="text-blue-400 text-xs font-medium mt-1">Network Growing</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Daily Earnings */}
-        <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl hover:scale-105 transition-all duration-300 group">
-          <CardContent className="p-6 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white mb-1">{profile.dailyEarnings}</p>
-              <p className="text-white/60 text-sm font-medium">Daily Earnings</p>
-              <p className="text-yellow-400 text-xs font-medium mt-1">MGC + RZ</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {achievements.map((achievement) => (
+            <Card 
+              key={achievement.id} 
+              className={`border ${achievement.borderColor} bg-white/5 backdrop-blur-xl hover:bg-white/10 transition-all duration-300 group ${achievement.completed ? 'ring-2 ring-green-400/30' : ''}`}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-14 h-14 rounded-xl ${achievement.color} flex items-center justify-center group-hover:scale-110 transition-transform relative`}>
+                    <achievement.icon className="w-7 h-7 text-white" />
+                    {achievement.completed && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                    {!achievement.completed && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center">
+                        <Lock className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <Badge variant="outline" className="border-white/20 text-white/60 text-xs">
+                    +{achievement.xpReward} XP
+                  </Badge>
+                </div>
+                
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-bold text-white text-lg">{achievement.title}</h3>
+                    <p className="text-white/60 text-sm">{achievement.description}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/60">Progress</span>
+                      <span className="text-white/60">{achievement.progress}%</span>
+                    </div>
+                    <div className="w-full bg-white/10 rounded-full h-2">
+                      <div 
+                        className={`h-2 ${achievement.color} rounded-full transition-all duration-1000`}
+                        style={{width: `${achievement.progress}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Avatar Selection Modal */}
