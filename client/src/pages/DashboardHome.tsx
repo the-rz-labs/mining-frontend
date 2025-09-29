@@ -130,12 +130,6 @@ export default function DashboardHome() {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-2 sm:mb-3">Mining Dashboard</h1>
             <p className="text-white/70 text-sm sm:text-base lg:text-lg">Monitor your cryptocurrency mining operations</p>
           </div>
-          <div className="flex items-center gap-4 animate-slide-in-right">
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-3 sm:px-4 py-2 shadow-lg">
-              <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
-              <span className="text-xs sm:text-sm text-white/80 font-medium">1 Miner Active</span>
-            </div>
-          </div>
         </div>
 
 
