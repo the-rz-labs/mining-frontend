@@ -111,48 +111,6 @@ function StatusCard({ title, status, icon: Icon, color }: {
 }
 
 
-// Mining earnings display
-function EarningsDisplay() {
-  return (
-    <Card className="border border-white/10 bg-gradient-to-br from-neon-purple/20 to-mining-orange/20 backdrop-blur-xl shadow-xl relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-mining-orange/10 animate-pulse"></div>
-      <CardContent className="p-8 relative">
-        <div className="text-center space-y-6">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-r from-neon-purple/30 to-mining-orange/30 rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
-            <Coins className="w-12 h-12 text-white" />
-          </div>
-          <div>
-            <p className="text-neon-green text-sm font-bold tracking-wider uppercase">Total Earnings</p>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent mb-2 animate-pulse-glow">${miningStats.totalProfit.toFixed(2)}</h1>
-            <p className="text-white/70 text-sm">From mining operations</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="bg-white/10 rounded-lg p-4">
-              <p className="text-3xl font-bold text-white">{miningStats.totalMiners}</p>
-              <p className="text-white/60 text-xs uppercase font-medium">Total Miners</p>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4">
-              <p className="text-3xl font-bold text-neon-green">{miningStats.activeMiners}</p>
-              <p className="text-white/60 text-xs uppercase font-medium">Active Now</p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-white/80">Daily Earnings</span>
-              <span className="text-neon-green font-bold">${miningStats.dailyEarnings}</span>
-            </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-white/80">Weekly Earnings</span>
-              <span className="text-mining-orange font-bold">${miningStats.weeklyEarnings}</span>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function DashboardHome() {
   return (
@@ -180,10 +138,6 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {/* Earnings Overview */}
-        <div className="animate-fade-in">
-          <EarningsDisplay />
-        </div>
 
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -206,7 +160,7 @@ export default function DashboardHome() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-white/60">Balance</p>
+                    <p className="text-sm text-white/60">Wallet Balance</p>
                     <p className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent" data-testid="balance-mgc">{miningStats.mgcBalance}</p>
                   </div>
                 </div>
@@ -238,7 +192,7 @@ export default function DashboardHome() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-white/60">Balance</p>
+                    <p className="text-sm text-white/60">Wallet Balance</p>
                     <p className="text-2xl font-bold bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent" data-testid="balance-rz">{miningStats.rzBalance}</p>
                   </div>
                 </div>
@@ -255,26 +209,22 @@ export default function DashboardHome() {
               </CardContent>
             </Card>
 
-            {/* Quick Stats */}
+            {/* Total Earnings Display */}
             <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-green/20 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-neon-green/10 to-emerald-600/5"></div>
               <CardContent className="p-6 relative">
                 <h3 className="font-semibold text-white mb-4 flex items-center">
-                  <Activity className="w-5 h-5 mr-2 text-neon-green" />
-                  Mining Statistics
+                  <Trophy className="w-5 h-5 mr-2 text-neon-green" />
+                  Total Earnings
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70">Hash Rate</span>
-                    <span className="text-white font-bold">{miningStats.hashRate}</span>
+                  <div className="flex items-center justify-between py-3 border-b border-white/10">
+                    <span className="text-white/70 font-medium">MGC Earned</span>
+                    <span className="text-neon-purple font-bold text-lg">154.789 MGC</span>
                   </div>
-                  <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70">Uptime</span>
-                    <span className="text-neon-green font-bold">{miningStats.uptime}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-white/70">Power Usage</span>
-                    <span className="text-white font-bold">{miningStats.power}</span>
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-white/70 font-medium">RZ Earned</span>
+                    <span className="text-mining-orange font-bold text-lg">89.456 RZ</span>
                   </div>
                 </div>
               </CardContent>
