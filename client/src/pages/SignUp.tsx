@@ -432,24 +432,22 @@ export default function SignUp() {
           {step === 4 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 mx-auto backdrop-blur-sm border border-white/10 overflow-hidden">
-                  {selectedAvatar ? (
-                    <Avatar className="w-full h-full">
-                      <AvatarImage 
-                        src={selectedAvatar} 
-                        alt="Your profile avatar" 
-                        className="object-cover w-full h-full"
-                      />
-                      <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white">
-                        <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
-                      </AvatarFallback>
-                    </Avatar>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                {selectedAvatar ? (
+                  <Avatar className="w-28 h-28 mx-auto border-2 border-neon-green/50 shadow-lg shadow-neon-green/20">
+                    <AvatarImage 
+                      src={selectedAvatar} 
+                      alt="Your profile avatar" 
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white">
                       <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
-                    </div>
-                  )}
-                </div>
+                    </AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <div className="w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center border-2 border-white/20">
+                    <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
+                  </div>
+                )}
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">Almost there!</p>
                   <p className="text-white font-medium">Complete your mining account</p>
