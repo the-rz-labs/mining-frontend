@@ -32,15 +32,6 @@ const mockMinersData: MinerData[] = [
     rate: 1.2,
     tokensEarned: 0.000124, // Low decimals for real-time visibility
     workingTime: '2h 15m'
-  },
-  {
-    id: 'rz-miner-1', 
-    token: 'RZ',
-    plan: 'Standard RZ Plan',
-    status: 'active',
-    rate: 1.1,
-    tokensEarned: 0.000089, // Low decimals for real-time visibility
-    workingTime: '1h 42m'
   }
 ];
 
@@ -119,7 +110,7 @@ export function ActiveMiners() {
         </div>
         <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-4 py-2 shadow-lg">
           <Activity className="w-4 h-4 text-neon-green animate-pulse" />
-          <span className="text-white/80 font-medium">{activeMiners.length} Miners Online</span>
+          <span className="text-white/80 font-medium">{activeMiners.length} Miner Online</span>
         </div>
       </div>
 
@@ -143,8 +134,8 @@ export function ActiveMiners() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 h-full">
                   
                   {/* Video Section */}
-                  <div className="relative h-full">
-                    <div className="h-full relative overflow-hidden rounded-l-lg">
+                  <div className="relative">
+                    <div className="aspect-video lg:h-full relative overflow-hidden lg:rounded-l-lg rounded-t-lg lg:rounded-t-none">
                       <video 
                         src={getMinerVideo(miner.token)}
                         autoPlay
@@ -193,7 +184,7 @@ export function ActiveMiners() {
                   </div>
 
                   {/* Stats Section */}
-                  <div className="p-6 space-y-6 flex flex-col justify-between h-full">
+                  <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold text-white flex items-center">
                         <span className={`w-3 h-3 rounded-full mr-3 ${
@@ -228,40 +219,33 @@ export function ActiveMiners() {
                         <span className="text-white font-bold text-lg">{miner.rate}%</span>
                       </div>
 
-                      <div className={`relative overflow-hidden rounded-xl p-4 ${
+                      <div className={`rounded-xl p-4 ${
                         miner.token === 'MGC' 
-                          ? 'bg-gradient-to-br from-neon-purple/10 via-purple-500/5 to-neon-purple/10' 
-                          : 'bg-gradient-to-br from-mining-orange/10 via-orange-500/5 to-mining-orange/10'
-                      } backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500`}>
-                        {/* Modern glow effect */}
-                        <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${
-                          miner.token === 'MGC' 
-                            ? 'from-neon-purple/20 to-purple-400/20' 
-                            : 'from-mining-orange/20 to-orange-400/20'
-                        } opacity-50 blur-xl`}></div>
-                        
-                        <div className="relative flex items-center justify-between">
+                          ? 'bg-white/10 border-2 border-neon-purple/30' 
+                          : 'bg-white/10 border-2 border-mining-orange/30'
+                      } backdrop-blur-sm transition-all duration-300`}>
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <Coins className={`w-7 h-7 ${
+                            <Coins className={`w-6 h-6 ${
                               miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
-                            } drop-shadow-lg animate-pulse-glow`} />
-                            <span className="text-white font-bold text-xl">Live Earnings</span>
+                            }`} />
+                            <span className="text-white font-semibold text-lg">Live Earnings</span>
                           </div>
                           <div className="text-right">
-                            <div className={`text-3xl font-black ${
+                            <div className={`text-2xl font-bold ${
                               miner.token === 'MGC' 
-                                ? 'bg-gradient-to-r from-neon-purple via-purple-300 to-purple-400 bg-clip-text text-transparent' 
-                                : 'bg-gradient-to-r from-mining-orange via-orange-300 to-orange-400 bg-clip-text text-transparent'
-                            } drop-shadow-lg animate-pulse-glow`}>
+                                ? 'text-neon-purple' 
+                                : 'text-mining-orange'
+                            }`}>
                               {miner.tokensEarned.toFixed(6)} {miner.token}
                             </div>
-                            <div className="text-sm text-neon-green font-bold uppercase tracking-wider">+Realtime</div>
+                            <div className="text-sm text-neon-green font-medium">+Realtime</div>
                           </div>
                         </div>
                       </div>
                       
                       {/* Action Buttons */}
-                      <div className="grid grid-cols-2 gap-3 mt-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 sm:mt-6">
                         <Button
                           onClick={() => toggleMinerStatus(miner.id)}
                           className={`h-12 font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] ${

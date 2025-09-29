@@ -27,8 +27,8 @@ import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Area, Area
 // Mock mining data
 const miningStats = {
   totalProfit: 54.00,
-  totalMiners: 2,
-  activeMiners: 2,
+  totalMiners: 1,
+  activeMiners: 1,
   hashRate: "2.45 TH/s",
   hashRateChange: 12.5,
   power: "1,420 W",
@@ -114,7 +114,7 @@ function StatusCard({ title, status, icon: Icon, color }: {
 
 export default function DashboardHome() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-4 sm:p-6 relative overflow-hidden">
       {/* Cyberpunk Background Effects */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute -top-10 -right-10 w-96 h-96 bg-gradient-to-r from-neon-purple/20 to-neon-green/20 rounded-full blur-3xl animate-float opacity-60"></div>
@@ -125,25 +125,25 @@ export default function DashboardHome() {
       <div className="max-w-7xl mx-auto space-y-8 relative z-10">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div className="animate-slide-in-left">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-3">Mining Dashboard</h1>
-            <p className="text-white/70 text-lg">Monitor your cryptocurrency mining operations</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent mb-2 sm:mb-3">Mining Dashboard</h1>
+            <p className="text-white/70 text-sm sm:text-base lg:text-lg">Monitor your cryptocurrency mining operations</p>
           </div>
           <div className="flex items-center gap-4 animate-slide-in-right">
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-4 py-2 shadow-lg">
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-3 sm:px-4 py-2 shadow-lg">
               <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
-              <span className="text-sm text-white/80 font-medium">2 Miners Active</span>
+              <span className="text-xs sm:text-sm text-white/80 font-medium">1 Miner Active</span>
             </div>
           </div>
         </div>
 
 
         {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           
-          {/* Left Column - Wallet Balances */}
-          <div className="xl:col-span-1 space-y-6 animate-slide-in-left">
+          {/* Token Balance Cards */}
+          <div className="lg:col-span-1 space-y-4 animate-slide-in-left">
             
             {/* MGC Balance */}
             <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-purple/20 relative overflow-hidden">
@@ -231,8 +231,8 @@ export default function DashboardHome() {
             </Card>
           </div>
 
-          {/* Right Column - Active Miners */}
-          <div className="xl:col-span-2 animate-slide-in-right">
+          {/* Active Miners Section */}
+          <div className="lg:col-span-3 animate-slide-in-right">
             <ActiveMiners />
           </div>
         </div>
