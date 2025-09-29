@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
 import { useAppKit } from "@reown/appkit/react";
@@ -431,8 +432,23 @@ export default function SignUp() {
           {step === 4 && (
             <div className="space-y-8">
               <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 flex items-center justify-center mx-auto backdrop-blur-sm border border-white/10">
-                  <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-purple/20 mx-auto backdrop-blur-sm border border-white/10 overflow-hidden">
+                  {selectedAvatar ? (
+                    <Avatar className="w-full h-full">
+                      <AvatarImage 
+                        src={selectedAvatar} 
+                        alt="Your profile avatar" 
+                        className="object-cover w-full h-full"
+                      />
+                      <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white">
+                        <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Users className="w-8 h-8 text-neon-green animate-pulse-glow" />
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2 animate-slide-in-left animate-stagger-1">
                   <p className="text-white/60">Almost there!</p>
