@@ -156,122 +156,120 @@ function EarningsDisplay() {
 
 export default function DashboardHome() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-8">
-      {/* Modern Header */}
-      <div className="max-w-7xl mx-auto mb-12">
-        <div className="text-center space-y-4">
-          <h1 className="text-6xl font-black bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent animate-pulse-glow">
-            Mining Dashboard
-          </h1>
-          <p className="text-2xl text-white/80 font-light">
-            Real-time cryptocurrency mining operations
-          </p>
-        </div>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="max-w-7xl mx-auto space-y-16">
+    <div className="min-h-screen bg-slate-950 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
         
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-white mb-2">Mining Dashboard</h1>
+            <p className="text-slate-400">Monitor your cryptocurrency mining operations</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-lg px-4 py-2">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-slate-300">2 Miners Active</span>
+            </div>
+          </div>
+        </div>
+
         {/* Earnings Overview */}
-        <div className="text-center">
-          <EarningsDisplay />
-        </div>
+        <EarningsDisplay />
 
-        {/* Wallet Balances */}
-        <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-mining-orange to-neon-green bg-clip-text text-transparent mb-4">
-              Wallet Balance
-            </h2>
-            <p className="text-xl text-white/80">Your cryptocurrency holdings</p>
-          </div>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* MGC Token Balance */}
-            <Card className="border-2 border-neon-purple/30 bg-gradient-to-br from-neon-purple/20 to-purple-600/10 backdrop-blur-xl hover:border-neon-purple/60 transition-all duration-500 shadow-2xl hover:shadow-neon-purple/20 relative overflow-hidden transform hover:scale-105">
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-purple-600/5 animate-pulse"></div>
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-neon-purple/30 to-transparent rounded-full -translate-y-20 translate-x-20"></div>
-              
-              <CardHeader className="relative pb-6">
-                <CardTitle className="flex items-center justify-center text-white">
-                  <div className="text-center space-y-3">
-                    <div className="w-20 h-20 bg-gradient-to-r from-neon-purple to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-2xl border-4 border-white/20">
-                      <Coins className="w-10 h-10 text-white" />
+          {/* Left Column - Wallet Balances */}
+          <div className="xl:col-span-1 space-y-6">
+            
+            {/* MGC Balance */}
+            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 hover:border-slate-700 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Coins className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <span className="text-3xl font-bold block">MGC Token</span>
-                      <p className="text-purple-300 text-lg font-medium">Premium Mining Coin</p>
+                      <h3 className="font-medium text-white">MGC Token</h3>
+                      <p className="text-sm text-slate-400">Premium Mining</p>
                     </div>
                   </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative pb-8">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <span className="text-6xl font-black bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent animate-pulse-glow" data-testid="balance-mgc">
-                      {miningStats.mgcBalance}
-                    </span>
-                    <p className="text-purple-300 text-2xl font-bold mt-3">MGC</p>
+                  <div className="text-right">
+                    <p className="text-sm text-slate-400">Balance</p>
+                    <p className="text-xl font-semibold text-white" data-testid="balance-mgc">{miningStats.mgcBalance}</p>
                   </div>
-                  <div className="bg-white/15 rounded-xl p-6 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/90 font-medium">Daily Mining Rate</span>
-                      <span className="text-neon-purple font-bold text-lg">+12.3 MGC</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/90 font-medium">Value (USD)</span>
-                      <span className="text-white font-bold text-xl">$2,468.90</span>
-                    </div>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">USD Value</span>
+                    <span className="text-white font-medium">$2,468.90</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Daily Rate</span>
+                    <span className="text-emerald-400 font-medium">+12.3 MGC</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* RZ Token Balance */}
-            <Card className="border-2 border-mining-orange/30 bg-gradient-to-br from-mining-orange/20 to-orange-600/10 backdrop-blur-xl hover:border-mining-orange/60 transition-all duration-500 shadow-2xl hover:shadow-mining-orange/20 relative overflow-hidden transform hover:scale-105">
-              <div className="absolute inset-0 bg-gradient-to-br from-mining-orange/10 to-orange-600/5 animate-pulse"></div>
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-mining-orange/30 to-transparent rounded-full -translate-y-20 translate-x-20"></div>
-              
-              <CardHeader className="relative pb-6">
-                <CardTitle className="flex items-center justify-center text-white">
-                  <div className="text-center space-y-3">
-                    <div className="w-20 h-20 bg-gradient-to-r from-mining-orange to-orange-600 rounded-full flex items-center justify-center mx-auto shadow-2xl border-4 border-white/20">
-                      <Coins className="w-10 h-10 text-white" />
+            {/* RZ Balance */}
+            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 hover:border-slate-700 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                      <Coins className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <span className="text-3xl font-bold block">RZ Token</span>
-                      <p className="text-orange-300 text-lg font-medium">Reward Zone Coin</p>
+                      <h3 className="font-medium text-white">RZ Token</h3>
+                      <p className="text-sm text-slate-400">Reward Zone</p>
                     </div>
                   </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative pb-8">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <span className="text-6xl font-black bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent animate-pulse-glow" data-testid="balance-rz">
-                      {miningStats.rzBalance}
-                    </span>
-                    <p className="text-orange-300 text-2xl font-bold mt-3">RZ</p>
+                  <div className="text-right">
+                    <p className="text-sm text-slate-400">Balance</p>
+                    <p className="text-xl font-semibold text-white" data-testid="balance-rz">{miningStats.rzBalance}</p>
                   </div>
-                  <div className="bg-white/15 rounded-xl p-6 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/90 font-medium">Staking APY</span>
-                      <span className="text-mining-orange font-bold text-lg">+5.2%</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/90 font-medium">Value (USD)</span>
-                      <span className="text-white font-bold text-xl">$17,802.46</span>
-                    </div>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">USD Value</span>
+                    <span className="text-white font-medium">$17,802.46</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-400">Staking APY</span>
+                    <span className="text-emerald-400 font-medium">+5.2%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Stats */}
+            <Card className="bg-slate-900/50 backdrop-blur-sm border border-slate-800">
+              <CardContent className="p-6">
+                <h3 className="font-medium text-white mb-4">Mining Statistics</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Hash Rate</span>
+                    <span className="text-white font-medium">{miningStats.hashRate}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Uptime</span>
+                    <span className="text-emerald-400 font-medium">{miningStats.uptime}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Power Usage</span>
+                    <span className="text-white font-medium">{miningStats.power}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </div>
 
-        {/* Active Miners Section */}
-        <div className="space-y-8">
-          <ActiveMiners />
+          {/* Right Column - Active Miners */}
+          <div className="xl:col-span-2">
+            <ActiveMiners />
+          </div>
         </div>
         
       </div>
