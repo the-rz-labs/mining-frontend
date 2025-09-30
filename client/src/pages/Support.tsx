@@ -10,15 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare } from "lucide-react";
 
-// Mock user data - same as profile
-const mockUserData = {
-  username: "CryptoMiner_Pro",
-  email: "admin@gmail.com"
-};
-
 const supportSchema = z.object({
-  username: z.string().min(2, "Username must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
   subject: z.string().min(5, "Subject must be at least 5 characters"),
   category: z.string().min(1, "Please select a category"),
   message: z.string().min(10, "Message must be at least 10 characters"),
@@ -33,8 +25,6 @@ export default function Support() {
   const form = useForm<SupportForm>({
     resolver: zodResolver(supportSchema),
     defaultValues: {
-      username: mockUserData.username,
-      email: mockUserData.email,
       subject: "",
       category: "",
       message: "",
@@ -51,11 +41,7 @@ export default function Support() {
       description: "We've received your message and will respond within 24 hours.",
     });
     
-    // Reset only the editable fields
-    form.setValue("subject", "");
-    form.setValue("category", "");
-    form.setValue("message", "");
-    form.setValue("priority", "");
+    form.reset();
   };
 
   return (
@@ -84,47 +70,6 @@ export default function Support() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white/80">Username</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled
-                          className="bg-white/10 border-white/20 text-white/80 cursor-not-allowed"
-                          data-testid="input-support-username"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white/80">Email Address</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="email"
-                          disabled
-                          className="bg-white/10 border-white/20 text-white/80 cursor-not-allowed"
-                          data-testid="input-support-email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <FormField
                 control={form.control}
                 name="subject"
