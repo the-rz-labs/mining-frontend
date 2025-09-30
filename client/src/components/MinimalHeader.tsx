@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Bell, Settings, Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle } from "lucide-react";
+import { Bell, Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 const navigationItems = [
   { title: "Dashboard", href: "/app", icon: Home },
@@ -17,6 +18,7 @@ const navigationItems = [
 export function MinimalHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { address, isConnected } = useAppKitAccount();
 
   return (
     <>
@@ -42,9 +44,7 @@ export function MinimalHeader() {
           <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/5">
             <Bell className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/5">
-            <Settings className="w-5 h-5" />
-          </Button>
+          <appkit-account-button />
         </div>
       </header>
 
