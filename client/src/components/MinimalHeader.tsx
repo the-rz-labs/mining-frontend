@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bell, Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
 import { useAppKitAccount } from "@reown/appkit/react";
+import { queryClient } from "@/lib/queryClient";
 
 const navigationItems = [
   { title: "Dashboard", href: "/app", icon: Home },
@@ -17,8 +18,24 @@ const navigationItems = [
 
 export function MinimalHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { address, isConnected } = useAppKitAccount();
+  const prevConnectedRef = useRef<boolean>(false);
+
+  // Handle wallet disconnect - clear cache and logout
+  useEffect(() => {
+    // If was connected and now disconnected
+    if (prevConnectedRef.current && !isConnected) {
+      // Clear all query cache
+      queryClient.clear();
+      
+      // Redirect to home page
+      navigate("/");
+    }
+    
+    // Update the ref for next render
+    prevConnectedRef.current = isConnected;
+  }, [isConnected, navigate]);
 
   return (
     <>
