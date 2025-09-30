@@ -216,7 +216,7 @@ export default function Profile() {
         </div>
         
         {/* Action Buttons */}
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-3">
           <Button 
             variant="outline" 
             className="bg-white/5 border-white/20 text-white hover:bg-white/10"
