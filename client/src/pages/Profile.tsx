@@ -141,9 +141,9 @@ const stats = [
     progress: 70
   },
   {
-    title: "Daily Earnings",
-    value: "142.3",
-    subtitle: "MGC + RZ",
+    title: "Bonus Rate",
+    value: "0.5%",
+    subtitle: "Earnings Boost",
     icon: TrendingUp,
     color: "from-green-500 to-emerald-500",
     progress: 92
