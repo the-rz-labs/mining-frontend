@@ -6,23 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { 
   Users, 
-  Share, 
   Copy, 
-  DollarSign,
   TrendingUp,
-  Gift,
-  Calendar,
-  Award,
-  ExternalLink
+  Percent,
+  Link2,
+  Twitter,
+  Send,
+  MessageCircle
 } from "lucide-react";
+import { SiWhatsapp, SiFacebook, SiTelegram } from "react-icons/si";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock referral data matching the template
+// Mock referral data
 const referralStats = {
   totalReferrals: 5,
   activeReferrals: 3,
-  totalEarnings: 175.84,
-  thisMonth: 45.20
+  bonusRate: 0.05 // 5 * 0.01%
 };
 
 const referralList = [
@@ -30,80 +29,49 @@ const referralList = [
     id: "1",
     username: "Just Larry",
     joinDate: "03.10.2023",
-    earnings: 17.84,
     status: "Active",
     avatar: "",
-    level: 24
+    bonusContribution: 0.01
   },
   {
     id: "2", 
     username: "Space Monday",
     joinDate: "30.09.2023",
-    earnings: 15.36,
     status: "Active", 
     avatar: "",
-    level: 109
+    bonusContribution: 0.01
   },
   {
     id: "3",
     username: "Elen Flash",
     joinDate: "05.11.2021",
-    earnings: 7.00,
     status: "Inactive",
     avatar: "",
-    level: 9
+    bonusContribution: 0
   },
   {
     id: "4",
     username: "Sweet Botbert 21",
     joinDate: "03.10.2020",
-    earnings: 4.10,
     status: "Active",
     avatar: "",
-    level: 17
+    bonusContribution: 0.01
   },
   {
     id: "5",
     username: "John Boi :)",
     joinDate: "03.10.2019",
-    earnings: 17.84,
     status: "Active",
     avatar: "",
-    level: 24
+    bonusContribution: 0.01
   }
 ];
-
-function ReferralStatsCard({ title, value, icon: Icon, color, suffix = "" }: {
-  title: string;
-  value: string | number;
-  icon: any;
-  color: string;
-  suffix?: string;
-}) {
-  return (
-    <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg hover:border-white/20 transition-all duration-300">
-      <CardContent className="p-6">
-        <div className="flex items-center space-x-4">
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center border ${color}`}>
-            <Icon className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-white/60 text-sm font-medium">{title}</p>
-            <p className="text-2xl font-bold text-white">
-              {value}{suffix}
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
   return (
     <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200">
       <div className="flex items-center space-x-4">
-        <Avatar className="w-10 h-10 border border-white/20">
+        <Avatar className="w-10 h-10 border-2 border-neon-purple/30">
           <AvatarImage src={referral.avatar} alt={referral.username} />
           <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-sm font-bold">
             {referral.username.slice(0, 2).toUpperCase()}
@@ -111,30 +79,25 @@ function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
         </Avatar>
         <div>
           <p className="text-white font-medium">{referral.username}</p>
-          <p className="text-white/60 text-sm">{referral.level}</p>
+          <p className="text-white/60 text-sm">{referral.joinDate}</p>
         </div>
       </div>
       
-      <div className="flex items-center space-x-6 text-sm">
+      <div className="flex items-center space-x-6">
         <div className="text-center">
-          <p className="text-white/60">Registration Date</p>
-          <p className="text-white">{referral.joinDate}</p>
+          <p className="text-white/60 text-sm mb-1">Bonus Rate</p>
+          <p className="text-neon-green font-bold">+{referral.bonusContribution}%</p>
         </div>
-        <div className="text-center">
-          <p className="text-white/60">Referral Income</p>
-          <p className="text-neon-green font-medium">${referral.earnings.toFixed(2)}</p>
-        </div>
-        <div className="text-center">
-          <Badge 
-            className={`${
-              referral.status === 'Active' 
-                ? 'bg-neon-green/20 text-neon-green border-neon-green/50' 
-                : 'bg-white/10 text-white/60 border-white/20'
-            }`}
-          >
-            {referral.status}
-          </Badge>
-        </div>
+        <Badge 
+          className={`${
+            referral.status === 'Active' 
+              ? 'bg-neon-green/20 text-neon-green border-neon-green/50' 
+              : 'bg-white/10 text-white/60 border-white/20'
+          }`}
+          data-testid={`badge-status-${referral.id}`}
+        >
+          {referral.status}
+        </Badge>
       </div>
     </div>
   );
@@ -142,87 +105,118 @@ function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
 
 export default function Referrals() {
   const [referralCode] = useState("CRYPTO2024MINE");
+  const referralLink = `https://ranking-mining.com/ref/${referralCode}`;
   const { toast } = useToast();
   
-  const copyReferralLink = () => {
-    const link = `https://ranking-mining.com/ref/${referralCode}`;
-    navigator.clipboard.writeText(link);
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
     toast({
-      title: "Referral link copied!",
-      description: "Share this link with your friends to earn rewards.",
+      title: `${label} copied!`,
+      description: "Share this with your friends to earn rewards.",
     });
   };
+
+  const shareMessage = `🚀 Join me on Ranking Mining Platform! Mine MGC & RZ tokens and earn passive income. Use my referral link to get started: ${referralLink}`;
+
+  const socialShareLinks = [
+    {
+      name: "Twitter",
+      icon: Twitter,
+      color: "hover:bg-[#1DA1F2]/20 hover:text-[#1DA1F2]",
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`,
+      testId: "button-share-twitter"
+    },
+    {
+      name: "WhatsApp",
+      icon: SiWhatsapp,
+      color: "hover:bg-[#25D366]/20 hover:text-[#25D366]",
+      url: `https://wa.me/?text=${encodeURIComponent(shareMessage)}`,
+      testId: "button-share-whatsapp"
+    },
+    {
+      name: "Telegram",
+      icon: SiTelegram,
+      color: "hover:bg-[#0088cc]/20 hover:text-[#0088cc]",
+      url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('🚀 Join me on Ranking Mining Platform!')}`,
+      testId: "button-share-telegram"
+    },
+    {
+      name: "Facebook",
+      icon: SiFacebook,
+      color: "hover:bg-[#1877F2]/20 hover:text-[#1877F2]",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`,
+      testId: "button-share-facebook"
+    }
+  ];
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-neon-purple to-neon-green bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple via-neon-green to-mining-orange bg-clip-text text-transparent">
           Referral Program
         </h1>
-        <p className="text-white/60">
-          Invite friends and earn rewards for every successful referral
+        <p className="text-white/70 text-lg">
+          Invite friends and boost your mining rate by +0.01% per active referral
         </p>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <ReferralStatsCard
-          title="Total Referrals"
-          value={referralStats.totalReferrals}
-          icon={Users}
-          color="bg-neon-purple/20 text-neon-purple border-neon-purple/50"
-          data-testid="stat-total-referrals"
-        />
-        <ReferralStatsCard
-          title="Active Referrals"
-          value={referralStats.activeReferrals}
-          icon={TrendingUp}
-          color="bg-neon-green/20 text-neon-green border-neon-green/50"
-          data-testid="stat-active-referrals"
-        />
-        <ReferralStatsCard
-          title="Total Earnings"
-          value={referralStats.totalEarnings.toFixed(2)}
-          icon={DollarSign}
-          color="bg-mining-orange/20 text-mining-orange border-mining-orange/50"
-          suffix=" MGC"
-          data-testid="stat-total-earnings"
-        />
-        <ReferralStatsCard
-          title="This Month"
-          value={referralStats.thisMonth.toFixed(2)}
-          icon={Calendar}
-          color="bg-blue-500/20 text-blue-400 border-blue-500/50"
-          suffix=" MGC"
-          data-testid="stat-month-earnings"
-        />
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Referral Link Section */}
+        {/* Left Column - Referral Link & Social Share */}
         <div className="lg:col-span-1 space-y-6">
+          {/* Bonus Rate Card */}
+          <Card className="border border-neon-green/30 bg-gradient-to-br from-neon-green/20 via-white/5 to-white/5 backdrop-blur-xl shadow-xl">
+            <CardContent className="p-6">
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 mx-auto rounded-full bg-neon-green/20 border-2 border-neon-green/50 flex items-center justify-center">
+                  <Percent className="w-8 h-8 text-neon-green" />
+                </div>
+                <div>
+                  <p className="text-white/60 text-sm font-medium mb-1">Your Referral Bonus</p>
+                  <p className="text-5xl font-bold text-neon-green" data-testid="text-bonus-rate">
+                    +{referralStats.bonusRate.toFixed(2)}%
+                  </p>
+                  <p className="text-white/50 text-sm mt-2">
+                    Applied to all mining operations
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-white/10">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Total Referrals:</span>
+                    <span className="text-white font-semibold">{referralStats.totalReferrals}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm mt-2">
+                    <span className="text-white/60">Active Referrals:</span>
+                    <span className="text-neon-green font-semibold">{referralStats.activeReferrals}</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Referral Link Card */}
           <Card className="border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2 text-white">
-                <Share className="w-5 h-5 text-neon-green" />
-                <span>Your Referral Link</span>
+                <Link2 className="w-5 h-5 text-neon-purple" />
+                <span>Your Referral Info</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Referral Code */}
               <div className="space-y-2">
-                <label className="text-white/70 text-sm">Referral Code</label>
+                <label className="text-white/70 text-sm font-medium">Referral Code</label>
                 <div className="flex space-x-2">
                   <Input 
                     value={referralCode}
                     readOnly
-                    className="bg-white/5 border-white/20 text-white"
+                    className="bg-white/5 border-white/20 text-white font-mono"
                     data-testid="input-referral-code"
                   />
                   <Button 
                     size="icon" 
-                    onClick={copyReferralLink}
-                    className="bg-neon-green hover:bg-neon-green/80"
+                    onClick={() => copyToClipboard(referralCode, "Referral code")}
+                    className="bg-neon-purple hover:bg-neon-purple/80"
                     data-testid="button-copy-code"
                   >
                     <Copy className="w-4 h-4" />
@@ -230,51 +224,96 @@ export default function Referrals() {
                 </div>
               </div>
               
-              <Button 
-                className="w-full bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold"
-                onClick={copyReferralLink}
-                data-testid="button-share-link"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Share Referral Link
-              </Button>
+              {/* Referral Link */}
+              <div className="space-y-2">
+                <label className="text-white/70 text-sm font-medium">Referral Link</label>
+                <div className="flex space-x-2">
+                  <Input 
+                    value={referralLink}
+                    readOnly
+                    className="bg-white/5 border-white/20 text-white text-sm"
+                    data-testid="input-referral-link"
+                  />
+                  <Button 
+                    size="icon" 
+                    onClick={() => copyToClipboard(referralLink, "Referral link")}
+                    className="bg-neon-green hover:bg-neon-green/80"
+                    data-testid="button-copy-link"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Referral Rewards */}
-          <Card className="border border-white/10 bg-gradient-to-br from-mining-orange/10 to-yellow-500/10 backdrop-blur-xl shadow-xl">
+          {/* Social Share Card */}
+          <Card className="border border-white/10 bg-gradient-to-br from-neon-purple/10 to-white/5 backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2 text-white">
-                <Gift className="w-5 h-5 text-mining-orange" />
-                <span>Referral Rewards</span>
+                <Send className="w-5 h-5 text-neon-purple" />
+                <span>Share on Social Media</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                  <span className="text-white/80">Friend joins</span>
-                  <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50">
-                    10 MGC
-                  </Badge>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {socialShareLinks.map((social) => (
+                  <Button
+                    key={social.name}
+                    variant="outline"
+                    className={`bg-white/5 border-white/20 text-white transition-all duration-300 ${social.color}`}
+                    onClick={() => window.open(social.url, '_blank')}
+                    data-testid={social.testId}
+                  >
+                    <social.icon className="w-4 h-4 mr-2" />
+                    {social.name}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* How It Works */}
+          <Card className="border border-mining-orange/30 bg-gradient-to-br from-mining-orange/10 to-white/5 backdrop-blur-xl shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-white">
+                <TrendingUp className="w-5 h-5 text-mining-orange" />
+                <span>How It Works</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 rounded-full bg-neon-purple/20 border border-neon-purple/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-neon-purple text-xs font-bold">1</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                  <span className="text-white/80">First mining session</span>
-                  <Badge className="bg-neon-purple/20 text-neon-purple border-neon-purple/50">
-                    25 MGC
-                  </Badge>
+                <div>
+                  <p className="text-white font-medium">Share Your Link</p>
+                  <p className="text-white/60 text-sm">Send your referral link to friends</p>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                  <span className="text-white/80">Monthly bonus (per active referral)</span>
-                  <Badge className="bg-mining-orange/20 text-mining-orange border-mining-orange/50">
-                    5 MGC
-                  </Badge>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-neon-green text-xs font-bold">2</span>
+                </div>
+                <div>
+                  <p className="text-white font-medium">They Join & Mine</p>
+                  <p className="text-white/60 text-sm">Your friend starts mining with their account</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 rounded-full bg-mining-orange/20 border border-mining-orange/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-mining-orange text-xs font-bold">3</span>
+                </div>
+                <div>
+                  <p className="text-white font-medium">Earn +0.01% Bonus</p>
+                  <p className="text-white/60 text-sm">Get permanent rate boost for each active referral</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Referrals List */}
+        {/* Right Column - Referrals List */}
         <div className="lg:col-span-2">
           <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
             <CardHeader>
@@ -295,14 +334,6 @@ export default function Referrals() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {/* Table Header */}
-                <div className="grid grid-cols-12 gap-4 p-3 bg-white/5 rounded-lg text-white/60 text-sm font-medium">
-                  <div className="col-span-4">REFERRALS</div>
-                  <div className="col-span-2">STATUS</div>
-                  <div className="col-span-3">REGISTRATION DATE</div>
-                  <div className="col-span-3">REFERRAL INCOME</div>
-                </div>
-                
                 {/* Referral List */}
                 <div className="space-y-2">
                   {referralList.map((referral) => (
@@ -314,7 +345,7 @@ export default function Referrals() {
                   <div className="text-center py-12 text-white/60">
                     <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
                     <p className="text-lg font-medium mb-2">No referrals yet</p>
-                    <p className="text-sm">Start sharing your referral link to earn rewards!</p>
+                    <p className="text-sm">Start sharing your referral link to boost your mining rate!</p>
                   </div>
                 )}
               </div>
