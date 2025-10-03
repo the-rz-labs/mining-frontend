@@ -1,19 +1,76 @@
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Cpu, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Cpu } from "lucide-react";
 import MiningPlanCard, { type MiningPlan } from "./MiningPlanCard";
-
-const BASE_URL = "https://coinmaining.game";
 
 interface MiningPlansSectionProps {
   onStartMining?: (plan: MiningPlan) => void;
+}
+
+interface ApiPlan {
+  id: number;
+  name: string;
+  power: number;
+  price: number;
+  token_details: Array<{
+    id: number;
+    symbol: string;
+    name: string;
+  }>;
+  image: string;
+  monthly_reward_percent: string;
+  video_url: string;
+}
+
+interface ApiResponse {
+  count: number;
+  results: ApiPlan[];
 }
 
 export default function MiningPlansSection({ onStartMining }: MiningPlansSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fetch mining plans from API
+  const { data: apiResponse, isLoading, error } = useQuery<ApiResponse>({
+    queryKey: ['/api/plans'],
+    queryFn: async () => {
+      const response = await fetch('http://api.coinmaining.game/api/plans/plans/');
+      if (!response.ok) {
+        throw new Error('Failed to fetch mining plans');
+      }
+      return response.json();
+    }
+  });
+
+  // Transform API data to MiningPlan format
+  const allPlans: MiningPlan[] = apiResponse?.results.map((plan) => {
+    const token = plan.token_details[0]?.symbol as "MGC" | "RZ";
+    const monthlyRewardPercent = parseFloat(plan.monthly_reward_percent);
+    const dailyRewardAmount = (plan.price * monthlyRewardPercent / 100 / 30).toFixed(2);
+    
+    return {
+      id: plan.id.toString(),
+      name: plan.name,
+      token: token,
+      hashRate: `${plan.power} TH/s`,
+      minInvestment: plan.price,
+      dailyReward: `${dailyRewardAmount} ${token}`,
+      image: plan.image,
+      roiPercentage: monthlyRewardPercent
+    };
+  }) || [];
+
+  // Separate MGC and RZ plans
+  const mgcPlans = allPlans.filter(p => p.token === "MGC");
+  const rzPlans = allPlans.filter(p => p.token === "RZ");
+
+  // Find top ROI
+  const topROI = allPlans.length > 0 ? Math.max(...allPlans.map(p => p.roiPercentage)) : 0;
+  const topMGC = mgcPlans.length > 0 ? Math.max(...mgcPlans.map(p => p.roiPercentage)) : 0;
 
   // Get dynamic card width for responsive scrolling
   const getCardWidth = () => {
@@ -25,123 +82,9 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
     return rect.width + gap;
   };
 
-  // todo: remove mock functionality - replace with real mining plan data
-  const mgcPlans: MiningPlan[] = [
-    {
-      id: "mgc-starter",
-      name: "MGC Basic",
-      token: "MGC",
-      hashRate: "50 MH/s", 
-      minInvestment: 1000,
-      dailyReward: "12.5 MGC",
-      image: `${BASE_URL}/images/1mgc.webp`,
-      roiPercentage: 1
-    },
-    {
-      id: "mgc-pro",
-      name: "MGC Standard",
-      token: "MGC",
-      hashRate: "150 MH/s",
-      minInvestment: 5000,
-      dailyReward: "45.2 MGC", 
-      image: `${BASE_URL}/images/2mgc.webp`,
-      popular: true,
-      roiPercentage: 1.1
-    },
-    {
-      id: "mgc-elite",
-      name: "MGC Advanced",
-      token: "MGC",
-      hashRate: "300 MH/s",
-      minInvestment: 12000,
-      dailyReward: "95.8 MGC",
-      image: `${BASE_URL}/images/3mgc.webp`,
-      roiPercentage: 1.2
-    },
-    {
-      id: "mgc-ultimate",
-      name: "MGC Expert",
-      token: "MGC", 
-      hashRate: "500 MH/s",
-      minInvestment: 25000,
-      dailyReward: "168.5 MGC",
-      image: `${BASE_URL}/images/4mgc.webp`,
-      roiPercentage: 1.3
-    },
-    {
-      id: "mgc-enterprise",
-      name: "MGC Titan",
-      token: "MGC",
-      hashRate: "1000 MH/s",
-      minInvestment: 50000,
-      dailyReward: "350.0 MGC",
-      image: `${BASE_URL}/images/5mgc.webp`,
-      roiPercentage: 1.4
-    }
-  ];
-
-  const rzPlans: MiningPlan[] = [
-    {
-      id: "rz-basic",
-      name: "RZ Basic",
-      token: "RZ",
-      hashRate: "75 MH/s",
-      minInvestment: 2000,
-      dailyReward: "18.3 RZ",
-      image: `${BASE_URL}/images/1rz.webp`,
-      roiPercentage: 1
-    },
-    {
-      id: "rz-advanced",
-      name: "RZ Standard", 
-      token: "RZ",
-      hashRate: "200 MH/s",
-      minInvestment: 8000,
-      dailyReward: "52.1 RZ",
-      image: `${BASE_URL}/images/2rz.webp`,
-      popular: true,
-      roiPercentage: 1.1
-    },
-    {
-      id: "rz-professional",
-      name: "RZ Advanced",
-      token: "RZ", 
-      hashRate: "400 MH/s",
-      minInvestment: 18000,
-      dailyReward: "110.4 RZ",
-      image: `${BASE_URL}/images/3rz.webp`,
-      roiPercentage: 1.2
-    },
-    {
-      id: "rz-master",
-      name: "RZ Expert",
-      token: "RZ",
-      hashRate: "750 MH/s", 
-      minInvestment: 35000,
-      dailyReward: "215.8 RZ",
-      image: `${BASE_URL}/images/4rz.webp`,
-      roiPercentage: 1.3
-    },
-    {
-      id: "rz-titan",
-      name: "RZ Titan",
-      token: "RZ",
-      hashRate: "1500 MH/s",
-      minInvestment: 75000, 
-      dailyReward: "450.0 RZ",
-      image: `${BASE_URL}/images/5rz.webp`,
-      roiPercentage: 1.4
-    }
-  ];
-
-  // Combine all plans and identify top ROI
-  const allPlans = [...mgcPlans, ...rzPlans];
-  const topROI = Math.max(...allPlans.map(p => p.roiPercentage));
-  const topMGC = Math.max(...mgcPlans.map(p => p.roiPercentage));
-
   // Auto-scroll effect
   useEffect(() => {
-    if (isPaused || !scrollRef.current) return;
+    if (isPaused || !scrollRef.current || allPlans.length === 0) return;
 
     const interval = setInterval(() => {
       const container = scrollRef.current;
@@ -189,6 +132,33 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
       container.scrollBy({ left: cardWidth, behavior: 'smooth' });
     }
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section id="plans" className="py-20 bg-gradient-to-b from-card/30 to-background" data-testid="mining-plans-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin mx-auto"></div>
+            <p className="text-muted-foreground mt-4">Loading mining plans...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section id="plans" className="py-20 bg-gradient-to-b from-card/30 to-background" data-testid="mining-plans-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-red-500">
+            <p>Failed to load mining plans. Please try again later.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="plans" className="py-20 bg-gradient-to-b from-card/30 to-background" data-testid="mining-plans-section">

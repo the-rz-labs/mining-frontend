@@ -453,6 +453,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for mining plans API to avoid CORS
+  app.get("/api/plans", async (req, res) => {
+    try {
+      const response = await fetch('http://api.coinmaining.game/api/plans/plans/');
+      if (!response.ok) {
+        throw new Error('Failed to fetch mining plans from external API');
+      }
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Mining plans proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch mining plans" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
