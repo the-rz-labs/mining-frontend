@@ -1,74 +1,19 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Cpu, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Cpu, Zap } from "lucide-react";
 import MiningPlanCard, { type MiningPlan } from "./MiningPlanCard";
+
+const BASE_URL = "https://coinmaining.game";
 
 interface MiningPlansSectionProps {
   onStartMining?: (plan: MiningPlan) => void;
-}
-
-interface ApiPlan {
-  id: number;
-  name: string;
-  level: number;
-  power: number;
-  price: number;
-  tokens: number[];
-  token_details: Array<{
-    id: number;
-    symbol: string;
-    name: string;
-  }>;
-  image: string;
-  monthly_reward_percent: string;
-  video_url: string;
-}
-
-interface ApiResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: ApiPlan[];
 }
 
 export default function MiningPlansSection({ onStartMining }: MiningPlansSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Fetch mining plans from API via backend proxy
-  const { data: apiResponse, isLoading, error } = useQuery<ApiResponse>({
-    queryKey: ['/api/plans/plans']
-  });
-
-  // Transform API data to MiningPlan format
-  const allPlans: MiningPlan[] = apiResponse?.results.map((apiPlan) => {
-    const tokenSymbol = apiPlan.token_details[0]?.symbol as "MGC" | "RZ";
-    const monthlyRewardPercent = parseFloat(apiPlan.monthly_reward_percent);
-    
-    // Calculate daily reward based on price and monthly reward percent
-    const monthlyReward = (apiPlan.price * monthlyRewardPercent) / 100;
-    const dailyReward = (monthlyReward / 30).toFixed(2);
-
-    return {
-      id: apiPlan.id.toString(),
-      name: apiPlan.name,
-      token: tokenSymbol,
-      hashRate: `${apiPlan.power} MH/s`,
-      minInvestment: apiPlan.price,
-      dailyReward: `${dailyReward} ${tokenSymbol}`,
-      image: apiPlan.image,
-      roiPercentage: monthlyRewardPercent,
-      popular: apiPlan.level === 2 // Mark level 2 as popular
-    };
-  }) || [];
-
-  // Calculate top ROI plans
-  const topROI = allPlans.length > 0 ? Math.max(...allPlans.map(p => p.roiPercentage)) : 0;
-  const mgcPlans = allPlans.filter(p => p.token === "MGC");
-  const topMGC = mgcPlans.length > 0 ? Math.max(...mgcPlans.map(p => p.roiPercentage)) : 0;
 
   // Get dynamic card width for responsive scrolling
   const getCardWidth = () => {
@@ -80,9 +25,123 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
     return rect.width + gap;
   };
 
+  // todo: remove mock functionality - replace with real mining plan data
+  const mgcPlans: MiningPlan[] = [
+    {
+      id: "mgc-starter",
+      name: "MGC Basic",
+      token: "MGC",
+      hashRate: "50 MH/s", 
+      minInvestment: 1000,
+      dailyReward: "12.5 MGC",
+      image: `${BASE_URL}/images/1mgc.webp`,
+      roiPercentage: 1
+    },
+    {
+      id: "mgc-pro",
+      name: "MGC Standard",
+      token: "MGC",
+      hashRate: "150 MH/s",
+      minInvestment: 5000,
+      dailyReward: "45.2 MGC", 
+      image: `${BASE_URL}/images/2mgc.webp`,
+      popular: true,
+      roiPercentage: 1.1
+    },
+    {
+      id: "mgc-elite",
+      name: "MGC Advanced",
+      token: "MGC",
+      hashRate: "300 MH/s",
+      minInvestment: 12000,
+      dailyReward: "95.8 MGC",
+      image: `${BASE_URL}/images/3mgc.webp`,
+      roiPercentage: 1.2
+    },
+    {
+      id: "mgc-ultimate",
+      name: "MGC Expert",
+      token: "MGC", 
+      hashRate: "500 MH/s",
+      minInvestment: 25000,
+      dailyReward: "168.5 MGC",
+      image: `${BASE_URL}/images/4mgc.webp`,
+      roiPercentage: 1.3
+    },
+    {
+      id: "mgc-enterprise",
+      name: "MGC Titan",
+      token: "MGC",
+      hashRate: "1000 MH/s",
+      minInvestment: 50000,
+      dailyReward: "350.0 MGC",
+      image: `${BASE_URL}/images/5mgc.webp`,
+      roiPercentage: 1.4
+    }
+  ];
+
+  const rzPlans: MiningPlan[] = [
+    {
+      id: "rz-basic",
+      name: "RZ Basic",
+      token: "RZ",
+      hashRate: "75 MH/s",
+      minInvestment: 2000,
+      dailyReward: "18.3 RZ",
+      image: `${BASE_URL}/images/1rz.webp`,
+      roiPercentage: 1
+    },
+    {
+      id: "rz-advanced",
+      name: "RZ Standard", 
+      token: "RZ",
+      hashRate: "200 MH/s",
+      minInvestment: 8000,
+      dailyReward: "52.1 RZ",
+      image: `${BASE_URL}/images/2rz.webp`,
+      popular: true,
+      roiPercentage: 1.1
+    },
+    {
+      id: "rz-professional",
+      name: "RZ Advanced",
+      token: "RZ", 
+      hashRate: "400 MH/s",
+      minInvestment: 18000,
+      dailyReward: "110.4 RZ",
+      image: `${BASE_URL}/images/3rz.webp`,
+      roiPercentage: 1.2
+    },
+    {
+      id: "rz-master",
+      name: "RZ Expert",
+      token: "RZ",
+      hashRate: "750 MH/s", 
+      minInvestment: 35000,
+      dailyReward: "215.8 RZ",
+      image: `${BASE_URL}/images/4rz.webp`,
+      roiPercentage: 1.3
+    },
+    {
+      id: "rz-titan",
+      name: "RZ Titan",
+      token: "RZ",
+      hashRate: "1500 MH/s",
+      minInvestment: 75000, 
+      dailyReward: "450.0 RZ",
+      image: `${BASE_URL}/images/5rz.webp`,
+      roiPercentage: 1.4
+    }
+  ];
+
+  // Combine all plans and identify top ROI
+  const allPlans = [...mgcPlans, ...rzPlans];
+  const topROI = Math.max(...allPlans.map(p => p.roiPercentage));
+  const topMGC = Math.max(...mgcPlans.map(p => p.roiPercentage));
+
   // Auto-scroll effect
   useEffect(() => {
-    if (isPaused || !scrollRef.current || allPlans.length === 0) return;
+    if (isPaused || !scrollRef.current) return;
 
     const interval = setInterval(() => {
       const container = scrollRef.current;
@@ -150,103 +209,80 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
           </p>
 
           {/* Scroll Controls */}
-          {!isLoading && allPlans.length > 0 && (
-            <div className="flex justify-center items-center space-x-4 mb-8">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={scrollLeft}
-                data-testid="scroll-left"
-                aria-label="Scroll left through mining plans"
-                className="rounded-full border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-              
-              <div className="flex items-center space-x-4">
-                <Badge variant="outline" className="text-neon-purple border-neon-purple/30">
-                  MGC Plans
-                </Badge>
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-green"></div>
-                <Badge variant="outline" className="text-neon-green border-neon-green/30">
-                  RZ Plans
-                </Badge>
-              </div>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={scrollRight}
-                data-testid="scroll-right"
-                aria-label="Scroll right through mining plans"
-                className="rounded-full border-neon-green/30 text-neon-green hover:bg-neon-green/10"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </Button>
+          <div className="flex justify-center items-center space-x-4 mb-8">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollLeft}
+              data-testid="scroll-left"
+              aria-label="Scroll left through mining plans"
+              className="rounded-full border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <Badge variant="outline" className="text-neon-purple border-neon-purple/30">
+                MGC Plans
+              </Badge>
+              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-green"></div>
+              <Badge variant="outline" className="text-neon-green border-neon-green/30">
+                RZ Plans
+              </Badge>
             </div>
-          )}
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={scrollRight}
+              data-testid="scroll-right"
+              aria-label="Scroll right through mining plans"
+              className="rounded-full border-neon-green/30 text-neon-green hover:bg-neon-green/10"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center space-y-4">
-              <Loader2 className="w-12 h-12 text-neon-purple animate-spin mx-auto" />
-              <p className="text-white/60">Loading mining plans...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center space-y-4">
-              <p className="text-red-400">Failed to load mining plans. Please try again later.</p>
-            </div>
-          </div>
-        )}
-
         {/* Mining Plans Carousel */}
-        {!isLoading && !error && allPlans.length > 0 && (
-          <div className="relative max-w-7xl mx-auto">
-            {/* Left fade */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
-            
-            {/* Right fade */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+        <div className="relative max-w-7xl mx-auto">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+          
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
 
-            {/* Scrollable container */}
-            <div
-              ref={scrollRef}
-              className="flex overflow-x-auto scrollbar-hide gap-6 py-6 px-12 snap-x snap-mandatory scroll-smooth"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              data-testid="plans-carousel"
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-              }}
-            >
-              {allPlans.map((plan, index) => (
-                <div
-                  key={plan.id}
-                  className="flex-shrink-0 snap-start w-[360px] sm:w-[380px] md:w-[390px] xl:w-[400px]"
-                  data-plan-index={index}
-                >
-                  <MiningPlanCard
-                    plan={plan}
-                    highlightTop={plan.roiPercentage === topROI}
-                    highlightTopMGC={plan.token === "MGC" && plan.roiPercentage === topMGC}
-                    onStartMining={(plan) => {
-                      console.log(`Starting mining for ${plan.name}`);
-                      onStartMining?.(plan);
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
+          {/* Scrollable container */}
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto scrollbar-hide gap-6 py-6 px-12 snap-x snap-mandatory scroll-smooth"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-testid="plans-carousel"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {allPlans.map((plan, index) => (
+              <div
+                key={plan.id}
+                className="flex-shrink-0 snap-start w-[360px] sm:w-[380px] md:w-[390px] xl:w-[400px]"
+                data-plan-index={index}
+              >
+                <MiningPlanCard
+                  plan={plan}
+                  highlightTop={plan.roiPercentage === topROI}
+                  highlightTopMGC={plan.token === "MGC" && plan.roiPercentage === topMGC}
+                  onStartMining={(plan) => {
+                    console.log(`Starting mining for ${plan.name}`);
+                    onStartMining?.(plan);
+                  }}
+                />
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
       </div>
     </section>
