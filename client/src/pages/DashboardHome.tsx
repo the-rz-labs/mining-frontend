@@ -199,9 +199,9 @@ export default function DashboardHome() {
     ? formatUnits(rzBalance as bigint, Number(rzDecimals)) 
     : '0.00';
 
-  // Format to 2 decimal places for display
-  const displayMGCBalance = parseFloat(formattedMGCBalance).toFixed(2);
-  const displayRZBalance = parseFloat(formattedRZBalance).toFixed(2);
+  // Format to 1 decimal place for display
+  const displayMGCBalance = parseFloat(formattedMGCBalance).toFixed(1);
+  const displayRZBalance = parseFloat(formattedRZBalance).toFixed(1);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-4 sm:p-6 relative overflow-hidden">
@@ -239,7 +239,7 @@ export default function DashboardHome() {
                       <Coins className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white">MGC Token</h3>
+                      <h3 className="font-semibold text-white">MGC</h3>
                     </div>
                   </div>
                   <div className="text-right">
@@ -260,7 +260,7 @@ export default function DashboardHome() {
                       <Coins className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white">RZ Token</h3>
+                      <h3 className="font-semibold text-white">RZ</h3>
                     </div>
                   </div>
                   <div className="text-right">
