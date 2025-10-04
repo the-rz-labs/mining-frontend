@@ -3,10 +3,19 @@
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
 ## Recent Updates (October 4, 2025)
+- **Wallet Authentication API Integration**: Integrated external wallet authentication API
+  - Backend proxy routes for nonce generation, signup, and login
+  - SignIn page now fetches nonce from `POST /api/wallets/nonce` and authenticates via `POST /api/auth/wallet-login`
+  - SignUp page uses same nonce flow and registers via `POST /api/auth/wallet-signup`
+  - Proper error handling for wallet-not-found (404) and wallet-already-registered (409) scenarios
+  - All API calls proxied through backend to avoid CORS and use HTTPS
+  
 - **HTTPS API Integration**: Fixed Mixed Content error by updating API proxy to use HTTPS
   - Backend proxy now fetches from `https://api.coinmaining.game/api/plans/plans/`
   - Frontend uses default TanStack Query behavior with backend proxy at `/api/plans`
   - Successfully loading live mining plans data from external API
+  
+- **UI Enhancement**: Updated mining plan cards to show token type (MGC/RZ) instead of $ for minimum investment
 
 ## Previous Updates (September 30, 2025)
 - **Wallet Authentication**: Integrated Reown AppKit for Web3 wallet-based authentication
