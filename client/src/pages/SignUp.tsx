@@ -178,7 +178,6 @@ export default function SignUp() {
           address: walletAddress,
           signature: signature,
           nonce_id: nonceId,
-          provider: 'metamask',
           email: data.email,
           username: data.username,
           avatar_key: avatarKey,

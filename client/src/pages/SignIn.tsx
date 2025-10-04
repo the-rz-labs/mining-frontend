@@ -110,8 +110,7 @@ export default function SignIn() {
         body: JSON.stringify({
           address: walletAddress,
           signature: signature,
-          nonce_id: nonceId,
-          provider: 'metamask'
+          nonce_id: nonceId
         })
       });
       
