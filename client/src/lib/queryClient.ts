@@ -42,9 +42,7 @@ export const getQueryFn: <T>(options: {
     // Get the auth token from localStorage
     const token = localStorage.getItem('auth_token');
     
-    const headers: HeadersInit = {
-      credentials: "include",
-    };
+    const headers: HeadersInit = {};
     
     // Add Authorization header if token exists
     if (token) {
