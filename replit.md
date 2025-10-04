@@ -15,7 +15,7 @@ This is a futuristic cryptocurrency mining platform called "Ranking" that offers
   - Backend proxy route at `/api/users/me` calling `https://api.coinmaining.game/api/users/me/`
   - Requires Authorization header with Bearer token for authentication
   - Profile page now displays real user data: username, email, avatar
-  - Avatar URLs constructed from API avatar key: `https://coinmaining.game/profile_pictures/{avatar_key}.png`
+  - Avatar URLs constructed from API avatar key: `https://coinmaining.game/profiles/{avatar_key}`
   - Stats dynamically updated: Active Miners (stakes count), Referrals (active_referrals), Bonus Rate (calculated from referrals)
   - Removed username edit functionality as requested
   - Badges display kept but not yet integrated with API data

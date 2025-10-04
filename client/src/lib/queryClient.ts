@@ -48,9 +48,6 @@ export const getQueryFn: <T>(options: {
     // Add Authorization header if token exists
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
-      console.log('Adding auth token to request:', queryKey.join("/"));
-    } else {
-      console.log('No auth token found in localStorage');
     }
     
     const res = await fetch(queryKey.join("/") as string, {
