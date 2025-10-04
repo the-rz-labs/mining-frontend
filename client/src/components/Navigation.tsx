@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import Logo from "./Logo";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 interface NavigationProps {
   // No auth props needed - using navigation instead
@@ -11,6 +12,7 @@ interface NavigationProps {
 export default function Navigation({ }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { isConnected } = useAppKitAccount();
   
   const handleHashNavigation = (href: string) => {
     if (location === '/') {
@@ -79,12 +81,12 @@ export default function Navigation({ }: NavigationProps) {
 
           {/* Desktop Auth Button */}
           <div className="hidden lg:flex items-center">
-            <Link href="/sign-up">
+            <Link href={isConnected ? "/dashboard" : "/sign-up"}>
               <Button
-                data-testid="button-sign-up"
+                data-testid={isConnected ? "button-dashboard" : "button-sign-up"}
                 className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-medium rounded-full px-8 py-2 text-sm transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
               >
-                Start Mining
+                {isConnected ? "Dashboard" : "Start Mining"}
               </Button>
             </Link>
           </div>
@@ -144,13 +146,13 @@ export default function Navigation({ }: NavigationProps) {
               )
             ))}
             <div className="pt-4 border-t border-gray-800 mt-4">
-              <Link href="/sign-up">
+              <Link href={isConnected ? "/dashboard" : "/sign-up"}>
                 <Button
-                  data-testid="mobile-button-sign-up"
+                  data-testid={isConnected ? "mobile-button-dashboard" : "mobile-button-sign-up"}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white font-medium rounded-full h-12"
                 >
-                  Start Mining
+                  {isConnected ? "Dashboard" : "Start Mining"}
                 </Button>
               </Link>
             </div>

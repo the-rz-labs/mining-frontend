@@ -205,7 +205,7 @@ export default function SignUp() {
         title: "Registration Successful!",
         description: `Welcome to Mining!`
       });
-      navigate("/");
+      navigate("/dashboard");
     },
     onError: (error: any) => {
       toast({
