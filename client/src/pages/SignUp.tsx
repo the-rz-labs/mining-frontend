@@ -65,20 +65,24 @@ export default function SignUp() {
     }
   }, []);
 
-  // Mock API function to fetch nonce
+  // Fetch nonce from API
   const fetchNonce = async (walletAddress: string) => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/nonce', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ wallet_address: walletAddress })
-      // });
-      // const data = await response.json();
+      const response = await fetch('/api/wallets/nonce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: walletAddress })
+      });
       
-      // Mock nonce for now
-      const mockNonce = `Please sign this message to verify your wallet ownership. Nonce: ${Date.now()}`;
-      setNonce(mockNonce);
+      if (!response.ok) {
+        throw new Error('Failed to fetch nonce');
+      }
+      
+      const data = await response.json();
+      // API returns { id: nonce_id, message: "message to sign" }
+      setNonce(data.message);
+      // Store nonce_id for later use
+      (window as any).__nonce_id = data.id;
       setStep(2);
       
       toast({
@@ -86,6 +90,7 @@ export default function SignUp() {
         description: "Please sign the message to verify ownership.",
       });
     } catch (error) {
+      console.error("Fetch nonce error:", error);
       toast({
         title: "Error",
         description: "Failed to fetch nonce. Please try again.",
@@ -155,39 +160,50 @@ export default function SignUp() {
   // Final registration mutation
   const finalRegistrationMutation = useMutation({
     mutationFn: async (data: FinalRegistrationForm) => {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     username: data.username,
-      //     email: data.email,
-      //     wallet_address: walletAddress,
-      //     signature: signature,
-      //     avatar_id: data.avatar_id,
-      //     invite_code: data.invite_code,
-      //     nonce: nonce
-      //   })
-      // });
-      // return response.json();
+      const nonceId = (window as any).__nonce_id;
+      
+      if (!nonceId) {
+        throw new Error('Nonce ID not found');
+      }
 
-      // Mock successful registration
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      return {
-        success: true,
-        user: {
-          id: "mock-user-id",
-          username: data.username,
+      // Map avatar URL to avatar_key (the API expects one of 4 avatar keys)
+      // Since we're using avatar URLs, we'll use the avatar_id as the key
+      // The API documentation shows avatar_key is an enum with 4 options
+      const avatarKey = data.avatar_id.split('/').pop()?.split('.')[0] || 'avatar1';
+
+      const response = await fetch('/api/auth/wallet-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address: walletAddress,
+          signature: signature,
+          nonce_id: nonceId,
+          provider: 'metamask',
           email: data.email,
-          wallet_address: walletAddress,
-          avatar_id: data.avatar_id
+          username: data.username,
+          avatar_key: avatarKey,
+          invite: data.invite_code
+        })
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error codes
+        if (response.status === 200) {
+          throw new Error('Wallet already connected to another account');
+        } else if (response.status === 409) {
+          throw new Error('This wallet is already registered');
         }
-      };
+        throw new Error(responseData.error || 'Registration failed');
+      }
+
+      return responseData;
     },
     onSuccess: (data) => {
       toast({
         title: "Registration Successful!",
-        description: `Welcome to Mining, ${data.user.username}!`
+        description: `Welcome to Mining!`
       });
       navigate("/");
     },
