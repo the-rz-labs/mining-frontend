@@ -42,16 +42,20 @@ export const getQueryFn: <T>(options: {
     // Get the auth token from localStorage
     const token = localStorage.getItem('auth_token');
     
-    const headers: HeadersInit = {};
+    // Build headers object
+    const headers: Record<string, string> = {};
     
     // Add Authorization header if token exists
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+      console.log('Adding auth token to request:', queryKey.join("/"));
+    } else {
+      console.log('No auth token found in localStorage');
     }
     
     const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
-      headers,
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
