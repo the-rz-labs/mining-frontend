@@ -81,9 +81,9 @@ export default function Navigation({ }: NavigationProps) {
 
           {/* Desktop Auth Button */}
           <div className="hidden lg:flex items-center">
-            <Link href={isConnected ? "/dashboard" : "/sign-up"}>
+            <Link href={isConnected ? "/app" : "/sign-up"}>
               <Button
-                data-testid={isConnected ? "button-dashboard" : "button-sign-up"}
+                data-testid={isConnected ? "button-app" : "button-sign-up"}
                 className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-medium rounded-full px-8 py-2 text-sm transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
               >
                 {isConnected ? "Dashboard" : "Start Mining"}
@@ -146,9 +146,9 @@ export default function Navigation({ }: NavigationProps) {
               )
             ))}
             <div className="pt-4 border-t border-gray-800 mt-4">
-              <Link href={isConnected ? "/dashboard" : "/sign-up"}>
+              <Link href={isConnected ? "/app" : "/sign-up"}>
                 <Button
-                  data-testid={isConnected ? "mobile-button-dashboard" : "mobile-button-sign-up"}
+                  data-testid={isConnected ? "mobile-button-app" : "mobile-button-sign-up"}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white font-medium rounded-full h-12"
                 >

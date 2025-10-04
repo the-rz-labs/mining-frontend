@@ -138,7 +138,7 @@ export default function SignIn() {
         title: "Welcome back!",
         description: `Successfully authenticated with wallet ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
       });
-      navigate("/dashboard");
+      navigate("/app");
     } catch (error: any) {
       setIsWalletAuthenticating(false);
       toast({
