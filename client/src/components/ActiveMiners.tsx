@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Pause, 
@@ -10,7 +12,8 @@ import {
   Coins,
   Activity,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from "lucide-react";
 
 interface MinerData {
@@ -69,8 +72,156 @@ function convertApiMinerToMinerData(apiMiner: ApiMiner): MinerData {
   };
 }
 
-export function ActiveMiners() {
+interface AvailableMiner {
+  id: number;
+  tokens: Array<{
+    symbol: string;
+    name: string;
+  }>;
+  name: string;
+  staked_amount: string;
+  power: number;
+  is_online: boolean;
+  created_at: string;
+}
+
+interface AvailableMinersResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: AvailableMiner[];
+}
+
+interface LaunchMinerModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  mgcBalance: string;
+  rzBalance: string;
+}
+
+function LaunchMinerModal({ isOpen, onClose, mgcBalance, rzBalance }: LaunchMinerModalProps) {
+  const { data: minersData } = useQuery<AvailableMinersResponse>({
+    queryKey: ['/api/miners'],
+    enabled: isOpen
+  });
+
+  const mgcMiners = minersData?.results.filter(m => 
+    m.tokens.some(t => t.symbol.toUpperCase() === 'MGC')
+  ) || [];
+
+  const rzMiners = minersData?.results.filter(m => 
+    m.tokens.some(t => t.symbol.toUpperCase() === 'RZ')
+  ) || [];
+
+  const handleStartMiner = (minerId: number, tokenSymbol: string) => {
+    // TODO: Implement miner start logic
+    console.log(`Starting miner ${minerId} for ${tokenSymbol}`);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border border-white/10">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent">
+            Launch Mining Operations
+          </DialogTitle>
+          <DialogDescription className="text-white/70">
+            Select a miner to start earning rewards. Check your balance before launching.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Tabs defaultValue="mgc" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+            <TabsTrigger 
+              value="mgc" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-neon-purple data-[state=active]:to-purple-600 data-[state=active]:text-white"
+            >
+              <Coins className="w-4 h-4 mr-2" />
+              MGC Miners
+              <span className="ml-2 text-xs opacity-70">Balance: {mgcBalance}</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="rz"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-mining-orange data-[state=active]:to-orange-600 data-[state=active]:text-white"
+            >
+              <Coins className="w-4 h-4 mr-2" />
+              RZ Miners
+              <span className="ml-2 text-xs opacity-70">Balance: {rzBalance}</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="mgc" className="space-y-4 mt-6">
+            {mgcMiners.length === 0 ? (
+              <div className="text-center py-8 text-white/60">No MGC miners available</div>
+            ) : (
+              mgcMiners.map(miner => (
+                <Card key={miner.id} className="border border-white/10 bg-white/5 hover:bg-white/10 transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-neon-purple to-purple-600 rounded-lg flex items-center justify-center">
+                          <Zap className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white">{miner.name}</h4>
+                          <p className="text-sm text-white/60">Power: {miner.power} TH/s</p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleStartMiner(miner.id, 'MGC')}
+                        className="bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/80 hover:to-purple-500 text-white"
+                        data-testid={`button-start-miner-${miner.id}`}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Start Mining
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="rz" className="space-y-4 mt-6">
+            {rzMiners.length === 0 ? (
+              <div className="text-center py-8 text-white/60">No RZ miners available</div>
+            ) : (
+              rzMiners.map(miner => (
+                <Card key={miner.id} className="border border-white/10 bg-white/5 hover:bg-white/10 transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-mining-orange to-orange-600 rounded-lg flex items-center justify-center">
+                          <Zap className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white">{miner.name}</h4>
+                          <p className="text-sm text-white/60">Power: {miner.power} TH/s</p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleStartMiner(miner.id, 'RZ')}
+                        className="bg-gradient-to-r from-mining-orange to-orange-600 hover:from-mining-orange/80 hover:to-orange-500 text-white"
+                        data-testid={`button-start-miner-${miner.id}`}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Start Mining
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rzBalance: string }) {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isLaunchModalOpen, setIsLaunchModalOpen] = useState(false);
   
   // Fetch miners data from API
   const { data: apiMiners, isLoading, error } = useQuery<ApiMiner[]>({
@@ -384,18 +535,26 @@ export function ActiveMiners() {
               <Activity className="w-10 h-10 text-white/60 animate-pulse-glow" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white mb-3">No Active Mining Operations</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">No Active Miners</h3>
               <p className="text-white/70 text-lg">
                 Start your mining rigs to begin earning rewards
               </p>
             </div>
             <Button 
+              onClick={() => setIsLaunchModalOpen(true)}
               className="bg-gradient-to-r from-neon-purple to-neon-green hover:from-neon-purple/80 hover:to-neon-green/80 text-white font-semibold px-8 py-3 rounded-xl shadow-lg shadow-neon-purple/20 hover:shadow-neon-purple/40 transition-all duration-300 hover:scale-[1.02]"
               data-testid="button-start-mining"
             >
               <Play className="w-5 h-5 mr-2" />
               Launch Mining Operations
             </Button>
+            
+            <LaunchMinerModal 
+              isOpen={isLaunchModalOpen} 
+              onClose={() => setIsLaunchModalOpen(false)}
+              mgcBalance={mgcBalance}
+              rzBalance={rzBalance}
+            />
           </CardContent>
         </Card>
       )}

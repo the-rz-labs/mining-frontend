@@ -648,6 +648,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for available miners list
+  app.get("/api/miners", async (req, res) => {
+    try {
+      const response = await fetch('https://api.coinmaining.game/api/api/miners/miners/', {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch available miners');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Available miners proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch available miners" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

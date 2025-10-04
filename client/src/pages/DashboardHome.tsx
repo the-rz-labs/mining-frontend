@@ -295,7 +295,7 @@ export default function DashboardHome() {
 
           {/* Active Miners Section */}
           <div className="lg:col-span-3 animate-slide-in-right">
-            <ActiveMiners />
+            <ActiveMiners mgcBalance={displayMGCBalance} rzBalance={displayRZBalance} />
           </div>
         </div>
         
