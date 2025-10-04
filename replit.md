@@ -3,6 +3,18 @@
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
 ## Recent Updates (October 4, 2025)
+- **Wagmi Token Balance Integration**: Integrated wagmi for real-time wallet token balances
+  - MGC Token: `0xa5b2324c9d9EBa3Bf7A392bEf64F56cC3061D1a8` (BSC)
+  - RZ Token: `0x1B1052b305a30a9F4d77B53e0d09772a920c5A23` (BSC)
+  - Uses `useReadContract` with ERC20 ABI to fetch balanceOf for connected wallet
+  - Displays real-time wallet balances formatted to 2 decimal places
+  - USD value cards removed, showing only token balances
+  
+- **Earnings Overview Simplified**: Streamlined earnings card to show only essential data
+  - Removed MGC Claimed, MGC Pending, and RZ Available fields
+  - Now displays only "Total MGC" and "Total RZ" earned from miners
+  - Values calculated from miners API data with 6 decimal precision
+  
 - **Miners Dashboard API Integration**: Integrated miners/stakes API for real-time mining operations display
   - Backend proxy route at `/api/stakes/miners` calling `https://api.coinmaining.game/api/api/stakes/staked-miner-dashboard-get/`
   - Dashboard fetches and displays real user miners with auto-refresh every 5 seconds

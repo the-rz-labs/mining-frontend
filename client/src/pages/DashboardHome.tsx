@@ -4,6 +4,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useAccount, useReadContract } from 'wagmi';
+import { formatUnits } from 'viem';
+import { useQuery } from "@tanstack/react-query";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -24,21 +27,27 @@ import {
 } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Area, AreaChart } from "recharts";
 
-// Mock mining data
-const miningStats = {
-  totalProfit: 54.00,
-  totalMiners: 1,
-  activeMiners: 1,
-  hashRate: "2.45 TH/s",
-  hashRateChange: 12.5,
-  power: "1,420 W",
-  uptime: "99.8%",
-  mgcBalance: "1,234.56",
-  rzBalance: "8,901.23",
-  minerStatus: "Active",
-  dailyEarnings: 142.50,
-  weeklyEarnings: 985.30
-};
+// Token addresses
+const MGC_TOKEN_ADDRESS = '0xa5b2324c9d9EBa3Bf7A392bEf64F56cC3061D1a8';
+const RZ_TOKEN_ADDRESS = '0x1B1052b305a30a9F4d77B53e0d09772a920c5A23';
+
+// ERC20 ABI for balanceOf function
+const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [{ name: '_owner', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: 'balance', type: 'uint256' }],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', type: 'uint8' }],
+    type: 'function',
+  },
+] as const;
 
 
 
@@ -112,7 +121,70 @@ function StatusCard({ title, status, icon: Icon, color }: {
 
 
 
+interface ApiMiner {
+  id: number;
+  stake_date: string;
+  claim_date: string | null;
+  miner: {
+    id: number;
+    name: string;
+    token: string;
+    image: string;
+  };
+  plan: {
+    id: number;
+    name: string;
+    token: string;
+    rate: string;
+  };
+  current_amount: string;
+  reward_calc: string;
+  claimable: boolean;
+  status: string;
+}
+
 export default function DashboardHome() {
+  const { address, isConnected } = useAccount();
+  
+  // Fetch MGC token balance
+  const { data: mgcBalance } = useReadContract({
+    address: MGC_TOKEN_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+  });
+
+  // Fetch RZ token balance
+  const { data: rzBalance } = useReadContract({
+    address: RZ_TOKEN_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+  });
+
+  // Fetch miners data for total earnings
+  const { data: apiMiners } = useQuery<ApiMiner[]>({
+    queryKey: ['/api/stakes/miners'],
+    refetchInterval: 5000
+  });
+
+  // Calculate total earned MGC and RZ from miners
+  const totalEarnedMGC = apiMiners
+    ?.filter(m => m.plan.token.toUpperCase() === 'MGC')
+    .reduce((sum, m) => sum + parseFloat(m.current_amount), 0) || 0;
+
+  const totalEarnedRZ = apiMiners
+    ?.filter(m => m.plan.token.toUpperCase() === 'RZ')
+    .reduce((sum, m) => sum + parseFloat(m.current_amount), 0) || 0;
+
+  // Format token balances (assuming 18 decimals)
+  const formattedMGCBalance = mgcBalance ? formatUnits(mgcBalance as bigint, 18) : '0.00';
+  const formattedRZBalance = rzBalance ? formatUnits(rzBalance as bigint, 18) : '0.00';
+
+  // Format to 2 decimal places for display
+  const displayMGCBalance = parseFloat(formattedMGCBalance).toFixed(2);
+  const displayRZBalance = parseFloat(formattedRZBalance).toFixed(2);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 p-4 sm:p-6 relative overflow-hidden">
       {/* Cyberpunk Background Effects */}
@@ -154,13 +226,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-white/60">Wallet Balance</p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent" data-testid="balance-mgc">{miningStats.mgcBalance}</p>
-                  </div>
-                </div>
-                <div className="bg-white/10 rounded-xl p-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-white/70">USD Value</span>
-                    <span className="text-white font-bold">$2,468.90</span>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent" data-testid="balance-mgc">{displayMGCBalance}</p>
                   </div>
                 </div>
               </CardContent>
@@ -181,13 +247,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-white/60">Wallet Balance</p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent" data-testid="balance-rz">{miningStats.rzBalance}</p>
-                  </div>
-                </div>
-                <div className="bg-white/10 rounded-xl p-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-white/70">USD Value</span>
-                    <span className="text-white font-bold">$17,802.46</span>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent" data-testid="balance-rz">{displayRZBalance}</p>
                   </div>
                 </div>
               </CardContent>
@@ -199,24 +259,16 @@ export default function DashboardHome() {
               <CardContent className="p-6 relative">
                 <h3 className="font-semibold text-white mb-4 flex items-center">
                   <Trophy className="w-5 h-5 mr-2 text-neon-green" />
-                  Earnings Overview
+                  Total Earned
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">MGC Earned</span>
-                    <span className="text-neon-purple font-bold text-lg">154.789 MGC</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">MGC Claimed</span>
-                    <span className="text-blue-400 font-bold text-lg">89.456 MGC</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">MGC Pending</span>
-                    <span className="text-mining-orange font-bold text-lg">65.333 MGC</span>
+                    <span className="text-white/70 font-medium">Total MGC</span>
+                    <span className="text-neon-purple font-bold text-lg" data-testid="total-earned-mgc">{totalEarnedMGC.toFixed(6)} MGC</span>
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-white/70 font-medium">RZ Available</span>
-                    <span className="text-mining-orange font-bold text-lg">0.000 RZ</span>
+                    <span className="text-white/70 font-medium">Total RZ</span>
+                    <span className="text-mining-orange font-bold text-lg" data-testid="total-earned-rz">{totalEarnedRZ.toFixed(6)} RZ</span>
                   </div>
                 </div>
               </CardContent>
