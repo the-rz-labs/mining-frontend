@@ -36,14 +36,7 @@ export default function MiningPlansSection({ onStartMining }: MiningPlansSection
 
   // Fetch mining plans from API
   const { data: apiResponse, isLoading, error } = useQuery<ApiResponse>({
-    queryKey: ['/api/plans'],
-    queryFn: async () => {
-      const response = await fetch('http://api.coinmaining.game/api/plans/plans/');
-      if (!response.ok) {
-        throw new Error('Failed to fetch mining plans');
-      }
-      return response.json();
-    }
+    queryKey: ['/api/plans']
   });
 
   // Transform API data to MiningPlan format
