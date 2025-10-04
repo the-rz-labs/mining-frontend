@@ -654,11 +654,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await fetch('https://api.coinmaining.game/api/api/miners/miners/', {
         method: 'GET',
         headers: { 
-          'Content-Type': 'application/json'
+          'accept': 'application/json',
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
         }
       });
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Available miners API error:", response.status, errorText);
         throw new Error('Failed to fetch available miners');
       }
       
