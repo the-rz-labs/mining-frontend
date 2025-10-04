@@ -193,39 +193,51 @@ export default function Profile() {
   const bonusRate = activeReferrals * 0.01; // Each referral adds 0.01%
   const totalStakes = profileData.stakes.length;
 
-  // Dynamic stats based on API data
+  // Maximum values for stats
+  const MAX_MINING_POWER = 1000;
+  const MAX_ACTIVE_MINERS = 2;
+  const MAX_REFERRALS = 50;
+  const MAX_BONUS_RATE = 1.5;
+
+  // Current values (will be replaced by API data in the future)
+  const currentMiningPower = 0; // TODO: Get from API
+  const currentActiveMiners = totalStakes;
+  const currentReferrals = activeReferrals;
+  const currentBonusRate = bonusRate;
+
+  // Dynamic stats based on API data with calculated progress percentages
   const stats = [
     {
       title: "Mining Power",
-      value: "2,847.5",
+      value: currentMiningPower.toLocaleString(),
       subtitle: "TH/s",
       icon: Zap,
       color: "from-orange-500 to-red-500",
-      progress: 85
+      progress: Math.min((currentMiningPower / MAX_MINING_POWER) * 100, 100)
     },
     {
       title: "Active Miners", 
-      value: totalStakes.toString(),
+      value: currentActiveMiners.toString(),
       subtitle: "All Online",
       icon: Activity,
       color: "from-purple-500 to-pink-500",
-      progress: 100
+      progress: Math.min((currentActiveMiners / MAX_ACTIVE_MINERS) * 100, 100)
     },
     {
       title: "Referrals",
-      value: activeReferrals.toString(),
+      value: currentReferrals.toString(),
       subtitle: "Growing",
       icon: Users,
       color: "from-blue-500 to-cyan-500",
-      progress: 70
+      progress: Math.min((currentReferrals / MAX_REFERRALS) * 100, 100)
     },
     {
       title: "Bonus Rate",
-      value: `${bonusRate.toFixed(2)}%`,
+      value: `${currentBonusRate.toFixed(2)}%`,
       subtitle: "Earnings Boost",
       icon: TrendingUp,
       color: "from-green-500 to-emerald-500",
-      progress: 92
+      progress: Math.min((currentBonusRate / MAX_BONUS_RATE) * 100, 100)
     }
   ];
 
