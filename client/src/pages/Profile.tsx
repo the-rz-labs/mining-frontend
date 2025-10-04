@@ -7,7 +7,6 @@ import {
   Coins,
   Rocket,
   Diamond,
-  Edit3,
   Camera,
   Activity,
   Users,
@@ -23,19 +22,44 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { AvatarSelection, getRandomAvatar } from "@/components/AvatarSelection";
+import { AvatarSelection } from "@/components/AvatarSelection";
+import { useQuery } from "@tanstack/react-query";
 
 const BASE_URL = "https://coinmaining.game";
 
-// Profile data
-const mockMinerProfile = {
-  id: "1",
-  username: "CryptoMiner_Pro",
-  email: "admin@gmail.com",
-  miningPower: 2847.5,
-  totalMiners: 3,
-  referralCount: 7,
-  dailyEarnings: 142.3
+// Type definitions for API response
+interface UserProfileResponse {
+  user: {
+    id: number;
+    email: string;
+    username: string;
+    display_name: string | null;
+    avatar: string;
+  };
+  wallet: {
+    connected: boolean;
+    provider: string;
+    address: string;
+  };
+  stakes: any[];
+  withdrawable_total: string;
+  withdrawable_per_token: Record<string, any>;
+  recent_transactions: any[];
+  explainers: {
+    referral: {
+      active_referrals: number;
+      per_active_bp: number;
+    };
+    badges: {
+      total_badge_bonus_bp: number;
+    };
+  };
+  badges: any[];
+}
+
+// Helper function to get avatar URL from avatar key
+const getAvatarUrl = (avatarKey: string): string => {
+  return `https://coinmaining.game/profile_pictures/${avatarKey}.png`;
 };
 
 // Circular achievement badges (GitHub style)
@@ -114,48 +138,17 @@ const circularBadges = [
   }
 ];
 
-// Stats data
-const stats = [
-  {
-    title: "Mining Power",
-    value: "2,847.5",
-    subtitle: "TH/s",
-    icon: Zap,
-    color: "from-orange-500 to-red-500",
-    progress: 85
-  },
-  {
-    title: "Active Miners", 
-    value: "3",
-    subtitle: "All Online",
-    icon: Activity,
-    color: "from-purple-500 to-pink-500",
-    progress: 100
-  },
-  {
-    title: "Referrals",
-    value: "7",
-    subtitle: "Growing",
-    icon: Users,
-    color: "from-blue-500 to-cyan-500",
-    progress: 70
-  },
-  {
-    title: "Bonus Rate",
-    value: "0.5%",
-    subtitle: "Earnings Boost",
-    icon: TrendingUp,
-    color: "from-green-500 to-emerald-500",
-    progress: 92
-  }
-];
 
 export default function Profile() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [showAvatarEdit, setShowAvatarEdit] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(getRandomAvatar());
-  
+
+  // Fetch user profile from API
+  const { data: profileData, isLoading } = useQuery<UserProfileResponse>({
+    queryKey: ['/api/users/me'],
+  });
+
   const handleLogout = () => {
     toast({
       title: "Logged out successfully",
@@ -165,7 +158,6 @@ export default function Profile() {
   };
 
   const handleAvatarSelect = (avatar: string) => {
-    setSelectedAvatar(avatar);
     setShowAvatarEdit(false);
     toast({
       title: "Avatar Updated! ✨",
@@ -173,7 +165,69 @@ export default function Profile() {
     });
   };
 
-  const profile = mockMinerProfile;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-12 p-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-white/60">Loading profile...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle no data
+  if (!profileData) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-12 p-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-white/60">Unable to load profile data</div>
+        </div>
+      </div>
+    );
+  }
+
+  const profile = profileData.user;
+  const avatarUrl = getAvatarUrl(profile.avatar);
+  const activeReferrals = profileData.explainers.referral.active_referrals;
+  const bonusRate = activeReferrals * 0.01; // Each referral adds 0.01%
+  const totalStakes = profileData.stakes.length;
+
+  // Dynamic stats based on API data
+  const stats = [
+    {
+      title: "Mining Power",
+      value: "2,847.5",
+      subtitle: "TH/s",
+      icon: Zap,
+      color: "from-orange-500 to-red-500",
+      progress: 85
+    },
+    {
+      title: "Active Miners", 
+      value: totalStakes.toString(),
+      subtitle: "All Online",
+      icon: Activity,
+      color: "from-purple-500 to-pink-500",
+      progress: 100
+    },
+    {
+      title: "Referrals",
+      value: activeReferrals.toString(),
+      subtitle: "Growing",
+      icon: Users,
+      color: "from-blue-500 to-cyan-500",
+      progress: 70
+    },
+    {
+      title: "Bonus Rate",
+      value: `${bonusRate.toFixed(2)}%`,
+      subtitle: "Earnings Boost",
+      icon: TrendingUp,
+      color: "from-green-500 to-emerald-500",
+      progress: 92
+    }
+  ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 p-6">
@@ -184,7 +238,7 @@ export default function Profile() {
           {/* Avatar on left */}
           <div className="relative">
             <Avatar className="w-32 h-32 border-4 border-white/20 shadow-2xl">
-              <AvatarImage src={selectedAvatar || ""} alt="Profile" />
+              <AvatarImage src={avatarUrl} alt="Profile" />
               <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-white text-3xl font-bold">
                 {profile.username.slice(0, 2).toUpperCase()}
               </AvatarFallback>
@@ -203,14 +257,9 @@ export default function Profile() {
           
           {/* Profile Info on right */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-bold text-white" data-testid="text-username">
-                {profile.username}
-              </h1>
-              <Button size="icon" variant="ghost" className="w-8 h-8 text-white/60 hover:text-white hover:bg-white/10">
-                <Edit3 className="w-5 h-5" />
-              </Button>
-            </div>
+            <h1 className="text-3xl font-bold text-white" data-testid="text-username">
+              {profile.username}
+            </h1>
             <p className="text-white/60 text-lg">{profile.email}</p>
           </div>
         </div>
@@ -304,7 +353,7 @@ export default function Profile() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <AvatarSelection 
-              selectedAvatar={selectedAvatar}
+              selectedAvatar={avatarUrl}
               onAvatarSelect={handleAvatarSelect}
             />
             <div className="mt-4 text-center">

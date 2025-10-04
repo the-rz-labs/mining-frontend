@@ -569,6 +569,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for user profile data
+  app.get("/api/users/me", async (req, res) => {
+    try {
+      const response = await fetch('https://api.coinmaining.game/api/users/me/', {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("User profile API error:", response.status, errorText);
+        throw new Error('Failed to fetch user profile from external API');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("User profile proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch user profile" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
