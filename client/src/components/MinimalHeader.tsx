@@ -29,6 +29,9 @@ export function MinimalHeader() {
       // Clear all query cache
       queryClient.clear();
       
+      // Clear auth token from localStorage
+      localStorage.removeItem('auth_token');
+      
       // Redirect to home page
       navigate("/");
     }

@@ -572,16 +572,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy route for user profile data
   app.get("/api/users/me", async (req, res) => {
     try {
+      // Get the Authorization header from the request
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
       const response = await fetch('https://api.coinmaining.game/api/users/me/', {
         method: 'GET',
         headers: { 
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
         }
       });
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error("User profile API error:", response.status, errorText);
+        
+        if (response.status === 401) {
+          return res.status(401).json({ error: "Unauthorized" });
+        }
+        
         throw new Error('Failed to fetch user profile from external API');
       }
       

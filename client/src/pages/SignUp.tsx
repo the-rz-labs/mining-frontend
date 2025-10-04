@@ -201,6 +201,11 @@ export default function SignUp() {
       return responseData;
     },
     onSuccess: (data) => {
+      // Store the JWT token from the response
+      if (data.access) {
+        localStorage.setItem('auth_token', data.access);
+      }
+      
       toast({
         title: "Registration Successful!",
         description: `Welcome to Mining!`

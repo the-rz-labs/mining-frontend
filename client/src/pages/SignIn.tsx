@@ -133,6 +133,11 @@ export default function SignIn() {
         throw new Error(data.error || 'Authentication failed');
       }
 
+      // Store the JWT token from the response
+      if (data.access) {
+        localStorage.setItem('auth_token', data.access);
+      }
+
       setIsWalletAuthenticating(false);
       toast({
         title: "Welcome back!",
