@@ -3,8 +3,15 @@
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
 ## Recent Updates (October 4, 2025)
+- **Route Protection**: Implemented authentication guards for protected routes
+  - Created `ProtectedRoute` wrapper component in App.tsx
+  - All `/app/*` routes now require valid JWT token in localStorage
+  - Unauthenticated users automatically redirected to `/sign-in` page
+  - Protection applies to: Dashboard, Profile, Referrals, Giveaways, Support, FAQ, and Achievements pages
+  
 - **Launch Miner Modal**: Implemented miner selection and launch functionality
-  - Added backend proxy route at `/api/miners` calling `https://api.coinmaining.game/api/api/miners/miners/`
+  - Added backend proxy route at `/api/miners` with Authorization header forwarding
+  - Fixed 401 Unauthorized errors by including JWT token in API requests
   - Created modal dialog with tabs for MGC and RZ miners
   - Displays user's wallet balance in each tab for reference
   - Shows available miners with power ratings (TH/s)

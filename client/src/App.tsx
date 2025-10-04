@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -21,6 +21,24 @@ import Contact from "@/pages/Contact";
 import AboutUs from "@/pages/AboutUs";
 import NotFound from "@/pages/not-found";
 
+// Protected Route Component
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const [, setLocation] = useLocation();
+  const token = localStorage.getItem('auth_token');
+
+  useEffect(() => {
+    if (!token) {
+      setLocation('/sign-in');
+    }
+  }, [token, setLocation]);
+
+  if (!token) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
 function Router() {
   return (
     <Switch>
@@ -31,41 +49,55 @@ function Router() {
       <Route path="/sign-in" component={SignIn} />
       <Route path="/forgot-password" component={ForgotPassword} />
       
-      {/* App routes with top navigation layout */}
+      {/* App routes with top navigation layout - Protected */}
       <Route path="/app/profile">
-        <AppLayout>
-          <Profile />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <Profile />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app/referrals">
-        <AppLayout>
-          <Referrals />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <Referrals />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app/giveaways">
-        <AppLayout>
-          <Giveaways />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <Giveaways />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app/support">
-        <AppLayout>
-          <Support />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <Support />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app/faq">
-        <AppLayout>
-          <FAQ />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <FAQ />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app/achievements">
-        <AppLayout>
-          <Achievements />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <Achievements />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/app">
-        <AppLayout>
-          <DashboardHome />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <DashboardHome />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       
       {/* Fallback to 404 */}
