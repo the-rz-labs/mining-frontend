@@ -28,26 +28,31 @@ export default function SignIn() {
     }
   }, [isConnected, address]);
 
-  // Mock API function to fetch nonce for authentication
+  // Fetch nonce for authentication
   const fetchNonceForAuth = async (walletAddress: string) => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/nonce', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ wallet_address: walletAddress })
-      // });
-      // const data = await response.json();
+      const response = await fetch('/api/wallets/nonce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: walletAddress })
+      });
       
-      // Mock nonce for now
-      const mockNonce = `Please sign this message to authenticate your account. Nonce: ${Date.now()}`;
-      setNonce(mockNonce);
+      if (!response.ok) {
+        throw new Error('Failed to fetch nonce');
+      }
+      
+      const data = await response.json();
+      // API returns { id: nonce_id, message: "message to sign" }
+      setNonce(data.message);
+      // Store nonce_id for later use
+      (window as any).__nonce_id = data.id;
       
       toast({
         title: "Wallet Connected!",
         description: "Please sign the message to authenticate.",
       });
     } catch (error) {
+      console.error("Fetch nonce error:", error);
       toast({
         title: "Error",
         description: "Failed to fetch authentication nonce. Please try again.",
@@ -93,25 +98,40 @@ export default function SignIn() {
   // Authenticate with wallet credentials
   const authenticateWithWallet = async (walletAddress: string, signature: string, nonce: string) => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/wallet-login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     wallet_address: walletAddress,
-      //     signature: signature,
-      //     nonce: nonce
-      //   })
-      // });
-      // const data = await response.json();
+      const nonceId = (window as any).__nonce_id;
+      
+      if (!nonceId) {
+        throw new Error('Nonce ID not found');
+      }
 
-      // Mock successful authentication
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const mockUser = {
-        id: "wallet-user-123",
-        username: `User_${walletAddress.slice(2, 8)}`,
-        wallet_address: walletAddress,
-      };
+      const response = await fetch('/api/auth/wallet-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address: walletAddress,
+          signature: signature,
+          nonce_id: nonceId,
+          provider: 'metamask'
+        })
+      });
+      
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error codes
+        if (response.status === 404) {
+          setIsWalletAuthenticating(false);
+          toast({
+            title: "Wallet Not Found",
+            description: "This wallet is not registered. Please sign up first.",
+            variant: "destructive"
+          });
+          // Optionally redirect to signup
+          setTimeout(() => navigate("/sign-up"), 2000);
+          return;
+        }
+        throw new Error(data.error || 'Authentication failed');
+      }
 
       setIsWalletAuthenticating(false);
       toast({
@@ -119,11 +139,11 @@ export default function SignIn() {
         description: `Successfully authenticated with wallet ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
       });
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       setIsWalletAuthenticating(false);
       toast({
         title: "Authentication Failed",
-        description: "Failed to authenticate with wallet. Please try again.",
+        description: error.message || "Failed to authenticate with wallet. Please try again.",
         variant: "destructive"
       });
     }
