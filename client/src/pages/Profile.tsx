@@ -59,7 +59,7 @@ interface UserProfileResponse {
 
 // Helper function to get avatar URL from avatar key
 const getAvatarUrl = (avatarKey: string): string => {
-  return `https://coinmaining.game/profiles/${avatarKey}`;
+  return `https://coinmaining.game/profiles/${avatarKey}.jpeg`;
 };
 
 // Circular achievement badges (GitHub style)
