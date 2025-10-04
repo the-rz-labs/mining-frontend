@@ -166,19 +166,35 @@ export default function Miners() {
           const userBalance = tokenSymbol === 'MGC' ? mgcBalance : rzBalance;
           const canAfford = userBalance >= plan.price;
           const isMGC = tokenSymbol === 'MGC';
+          
+          // Determine if this is a premium/high-power miner (level 4+)
+          const isPremium = plan.level >= 4;
+          const isElite = plan.level >= 5;
 
           return (
             <Card
               key={plan.id}
               className={`group relative overflow-hidden transition-all duration-300 ${
                 canAfford
-                  ? `border-2 ${isMGC ? 'border-neon-purple/50 hover:border-neon-purple' : 'border-mining-orange/50 hover:border-mining-orange'} bg-gradient-to-br ${isMGC ? 'from-purple-900/30' : 'from-orange-900/30'} to-slate-900/60 hover:scale-[1.02] shadow-lg ${isMGC ? 'hover:shadow-neon-purple/30' : 'hover:shadow-mining-orange/30'}`
+                  ? `${isElite ? 'border-[3px]' : isPremium ? 'border-[2.5px]' : 'border-2'} ${
+                      isMGC 
+                        ? `border-neon-purple/${isElite ? '70' : isPremium ? '60' : '50'} hover:border-neon-purple ${isElite ? 'shadow-2xl shadow-neon-purple/40' : isPremium ? 'shadow-xl shadow-neon-purple/30' : 'shadow-lg shadow-neon-purple/20'}` 
+                        : `border-mining-orange/${isElite ? '70' : isPremium ? '60' : '50'} hover:border-mining-orange ${isElite ? 'shadow-2xl shadow-mining-orange/40' : isPremium ? 'shadow-xl shadow-mining-orange/30' : 'shadow-lg shadow-mining-orange/20'}`
+                    } bg-gradient-to-br ${isMGC ? 'from-purple-900/30' : 'from-orange-900/30'} to-slate-900/60 hover:scale-[${isElite ? '1.03' : isPremium ? '1.025' : '1.02'}] ${
+                      isMGC 
+                        ? isElite ? 'hover:shadow-neon-purple/50' : isPremium ? 'hover:shadow-neon-purple/40' : 'hover:shadow-neon-purple/30'
+                        : isElite ? 'hover:shadow-mining-orange/50' : isPremium ? 'hover:shadow-mining-orange/40' : 'hover:shadow-mining-orange/30'
+                    }`
                   : 'border border-white/10 bg-white/5 opacity-60 cursor-not-allowed'
               }`}
               data-testid={`card-plan-${plan.id}`}
             >
+              {/* Enhanced Glow Effect for Premium Miners */}
+              {canAfford && isElite && (
+                <div className={`absolute inset-0 bg-gradient-to-br ${isMGC ? 'from-neon-purple/20 via-neon-purple/10' : 'from-mining-orange/20 via-mining-orange/10'} to-transparent animate-pulse`}></div>
+              )}
               {/* Background Glow Effect */}
-              {canAfford && (
+              {canAfford && !isElite && (
                 <div className={`absolute inset-0 bg-gradient-to-br ${isMGC ? 'from-neon-purple/10' : 'from-mining-orange/10'} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
               )}
 
@@ -190,7 +206,7 @@ export default function Miners() {
                     alt={plan.name}
                     className={`w-full h-full object-cover ${canAfford ? 'group-hover:scale-110' : ''} transition-transform duration-500`}
                   />
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 flex gap-2">
                     <Badge
                       className={`${
                         isMGC
@@ -200,6 +216,16 @@ export default function Miners() {
                     >
                       {tokenSymbol}
                     </Badge>
+                    {isElite && canAfford && (
+                      <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 text-xs font-bold animate-pulse">
+                        ⚡ ELITE
+                      </Badge>
+                    )}
+                    {isPremium && !isElite && canAfford && (
+                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 text-xs font-bold">
+                        ★ PREMIUM
+                      </Badge>
+                    )}
                   </div>
                   {!canAfford && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
