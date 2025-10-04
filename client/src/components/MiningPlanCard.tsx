@@ -129,7 +129,7 @@ export default function MiningPlanCard({ plan, highlightTop = false, highlightTo
               <span className="text-sm text-muted-foreground">Min Investment</span>
             </div>
             <span className="font-bold text-foreground">
-              ${plan.minInvestment.toLocaleString()}
+              {plan.minInvestment.toLocaleString()} {plan.token}
             </span>
           </div>
 
