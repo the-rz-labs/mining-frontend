@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Pause, 
   Play, 
@@ -12,77 +13,82 @@ import {
   TrendingUp
 } from "lucide-react";
 
-
 interface MinerData {
   id: string;
   token: 'MGC' | 'RZ';
   plan: string;
   status: 'active' | 'paused' | 'inactive';
-  rate: number; // Rate percentage like 1.1%
+  rate: number;
   tokensEarned: number;
-  workingTime: string; // Time it's been working
+  workingTime: string;
 }
 
-const mockMinersData: MinerData[] = [
-  {
-    id: 'mgc-miner-1',
-    token: 'MGC',
-    plan: 'Premium MGC Plan',
-    status: 'active',
-    rate: 1.2,
-    tokensEarned: 0.000124, // Low decimals for real-time visibility
-    workingTime: '2h 15m'
-  }
-];
+interface ApiMiner {
+  id: number;
+  stake_date: string;
+  claim_date: string | null;
+  miner: {
+    id: number;
+    name: string;
+    token: string;
+    image: string;
+  };
+  plan: {
+    id: number;
+    name: string;
+    token: string;
+    rate: string;
+  };
+  current_amount: string;
+  reward_calc: string;
+  claimable: boolean;
+  status: string;
+}
+
+// Convert API miner data to component format
+function convertApiMinerToMinerData(apiMiner: ApiMiner): MinerData {
+  const token = apiMiner.plan.token.toUpperCase() as 'MGC' | 'RZ';
+  const status = apiMiner.status.toLowerCase() === 'active' ? 'active' : 'paused';
+  
+  // Calculate working time from stake_date
+  const stakeDate = new Date(apiMiner.stake_date);
+  const now = new Date();
+  const elapsedMs = now.getTime() - stakeDate.getTime();
+  const hours = Math.floor(elapsedMs / (1000 * 60 * 60));
+  const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
+  const workingTime = `${hours}h ${minutes}m`;
+  
+  return {
+    id: apiMiner.id.toString(),
+    token,
+    plan: apiMiner.plan.name,
+    status,
+    rate: parseFloat(apiMiner.plan.rate),
+    tokensEarned: parseFloat(apiMiner.current_amount),
+    workingTime
+  };
+}
 
 export function ActiveMiners() {
-  const [miners, setMiners] = useState<MinerData[]>(mockMinersData);
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Fetch miners data from API
+  const { data: apiMiners, isLoading, error } = useQuery<ApiMiner[]>({
+    queryKey: ['/api/stakes/miners'],
+    refetchInterval: 5000 // Refresh every 5 seconds for live updates
+  });
 
-  // Real-time simulation for active miners with 1% monthly ratio for 50 tokens
+  // Convert API data to component format
+  const miners = apiMiners?.map(convertApiMinerToMinerData) || [];
+
+  // Update current time for display purposes
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-      
-      setMiners(prev => prev.map(miner => {
-        if (miner.status === 'active') {
-          // 1% monthly ratio for 50 tokens = 0.5 tokens per month
-          // Per second: 0.5 / (30 * 24 * 60 * 60) = 0.000000193 tokens per second
-          // Scale by miner rate percentage
-          const baseTokensPerSecond = 0.5 / (30 * 24 * 60 * 60);
-          const tokensIncrement = baseTokensPerSecond * (miner.rate / 1.0); // Scale by rate
-          const newTokensEarned = miner.tokensEarned + tokensIncrement;
-          
-          // Update working time (simplified simulation)
-          const startTime = new Date();
-          startTime.setHours(startTime.getHours() - 2); // Simulate 2 hours ago start
-          const elapsedMs = new Date().getTime() - startTime.getTime();
-          const hours = Math.floor(elapsedMs / (1000 * 60 * 60));
-          const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
-          const newWorkingTime = `${hours}h ${minutes}m`;
-          
-          return {
-            ...miner,
-            tokensEarned: Math.round(newTokensEarned * 1000000) / 1000000, // Show 6 decimals for visibility
-            workingTime: newWorkingTime
-          };
-        }
-        return miner;
-      }));
-    }, 1000);
+    }, 60000); // Update every minute
     
     return () => clearInterval(timer);
   }, []);
-
-  const toggleMinerStatus = (minerId: string) => {
-    setMiners(prev => prev.map(miner => {
-      if (miner.id === minerId) {
-        const newStatus = miner.status === 'active' ? 'paused' : 'active';
-        return { ...miner, status: newStatus };
-      }
-      return miner;
-    }));
-  };
 
   const getMinerVideo = (token: 'MGC' | 'RZ') => {
     const BASE_URL = "https://coinmaining.game";
@@ -95,6 +101,19 @@ export function ActiveMiners() {
 
   const activeMiners = miners.filter(m => m.status === 'active');
   const inactiveMiners = miners.filter(m => m.status !== 'active');
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
+          <CardContent className="p-12 text-center">
+            <div className="text-white/60">Loading miners...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -217,29 +236,18 @@ export function ActiveMiners() {
                       {/* Action Buttons */}
                       <div className="grid grid-cols-1 gap-3 mt-4">
                         <Button
-                          onClick={() => toggleMinerStatus(miner.id)}
-                          className={`h-12 font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] ${
-                            miner.status === 'active'
-                              ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white shadow-lg shadow-red-500/30'
-                              : 'bg-gradient-to-r from-neon-green to-green-500 hover:from-neon-green/80 hover:to-green-400 text-white shadow-lg shadow-neon-green/30'
-                          }`}
+                          className="h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02]"
                           data-testid={`button-stop-claim-${miner.token.toLowerCase()}`}
                         >
-                          {miner.status === 'active' ? (
-                            <>Stop & Claim</>
-                          ) : (
-                            <>Start Mining</>
-                          )}
+                          Stop & Claim
                         </Button>
                         
-                        {miner.status === 'active' && (
-                          <Button
-                            className="h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
-                            data-testid={`button-claim-${miner.token.toLowerCase()}`}
-                          >
-                            Claim Now
-                          </Button>
-                        )}
+                        <Button
+                          className="h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
+                          data-testid={`button-claim-${miner.token.toLowerCase()}`}
+                        >
+                          Claim Now
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -347,29 +355,18 @@ export function ActiveMiners() {
                       {/* Action Buttons - Desktop */}
                       <div className="space-y-3 mt-6">
                         <Button
-                          onClick={() => toggleMinerStatus(miner.id)}
-                          className={`w-full h-12 font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] ${
-                            miner.status === 'active'
-                              ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white shadow-lg shadow-red-500/30'
-                              : 'bg-gradient-to-r from-neon-green to-green-500 hover:from-neon-green/80 hover:to-green-400 text-white shadow-lg shadow-neon-green/30'
-                          }`}
+                          className="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02]"
                           data-testid={`button-stop-claim-${miner.token.toLowerCase()}`}
                         >
-                          {miner.status === 'active' ? (
-                            <>Stop & Claim</>
-                          ) : (
-                            <>Start Mining</>
-                          )}
+                          Stop & Claim
                         </Button>
                         
-                        {miner.status === 'active' && (
-                          <Button
-                            className="w-full h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
-                            data-testid={`button-claim-${miner.token.toLowerCase()}`}
-                          >
-                            Claim Now
-                          </Button>
-                        )}
+                        <Button
+                          className="w-full h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
+                          data-testid={`button-claim-${miner.token.toLowerCase()}`}
+                        >
+                          Claim Now
+                        </Button>
                       </div>
                     </div>
                   </div>

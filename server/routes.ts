@@ -606,6 +606,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for user miners/stakes data
+  app.get("/api/stakes/miners", async (req, res) => {
+    try {
+      // Get the Authorization header from the request
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/api/stakes/staked-miner-dashboard-get/', {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Miners API error:", response.status, errorText);
+        
+        if (response.status === 401) {
+          return res.status(401).json({ error: "Unauthorized" });
+        }
+        
+        // 404 means no miners found - return empty array instead of error
+        if (response.status === 404) {
+          return res.json([]);
+        }
+        
+        throw new Error('Failed to fetch miners from external API');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Miners proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch miners" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
