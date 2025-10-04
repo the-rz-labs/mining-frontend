@@ -5,8 +5,11 @@ This is a futuristic cryptocurrency mining platform called "Ranking" that offers
 ## Recent Updates (October 4, 2025)
 - **Wallet Authentication API Integration**: Integrated external wallet authentication API
   - Backend proxy routes for nonce generation, signup, and login
-  - SignIn page now fetches nonce from `POST /api/wallets/nonce` and authenticates via `POST /api/auth/wallet-login`
+  - Signup endpoint: `https://api.coinmaining.game/api/users/auth/wallet_signup/`
+  - Login endpoint: `https://api.coinmaining.game/api/users/auth/wallet_login/`
+  - SignIn page fetches nonce from `POST /api/wallets/nonce` and authenticates via `POST /api/auth/wallet-login`
   - SignUp page uses same nonce flow and registers via `POST /api/auth/wallet-signup`
+  - Provider parameter removed from both signup and login requests
   - Proper error handling for wallet-not-found (404) and wallet-already-registered (409) scenarios
   - All API calls proxied through backend to avoid CORS and use HTTPS
   

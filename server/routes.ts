@@ -487,20 +487,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Wallet signup
   app.post("/api/auth/wallet-signup", async (req, res) => {
     try {
-      const { address, signature, nonce_id, provider, email, username, avatar_key, invite } = req.body;
+      const { address, signature, nonce_id, email, username, avatar_key, invite } = req.body;
       
       if (!address || !signature || !nonce_id || !email || !username || !avatar_key) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/users/auth/wallet_signup/', {
+      const response = await fetch('https://api.coinmaining.game/api/users/auth/wallet_signup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           address,
           signature,
           nonce_id,
-          provider: provider || 'metamask',
           email,
           username,
           avatar_key,
@@ -525,20 +524,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Wallet login
   app.post("/api/auth/wallet-login", async (req, res) => {
     try {
-      const { address, signature, nonce_id, provider } = req.body;
+      const { address, signature, nonce_id } = req.body;
       
       if (!address || !signature || !nonce_id) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/users/auth/wallet_login/', {
+      const response = await fetch('https://api.coinmaining.game/api/users/auth/wallet_login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           address,
           signature,
-          nonce_id,
-          provider: provider || 'metamask'
+          nonce_id
         })
       });
       
