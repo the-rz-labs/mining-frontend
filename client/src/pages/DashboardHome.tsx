@@ -146,6 +146,20 @@ interface ApiMiner {
 export default function DashboardHome() {
   const { address, isConnected } = useAccount();
   
+  // Fetch MGC token decimals
+  const { data: mgcDecimals } = useReadContract({
+    address: MGC_TOKEN_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'decimals',
+  });
+
+  // Fetch RZ token decimals
+  const { data: rzDecimals } = useReadContract({
+    address: RZ_TOKEN_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'decimals',
+  });
+  
   // Fetch MGC token balance
   const { data: mgcBalance } = useReadContract({
     address: MGC_TOKEN_ADDRESS as `0x${string}`,
@@ -177,9 +191,13 @@ export default function DashboardHome() {
     ?.filter(m => m.plan.token.toUpperCase() === 'RZ')
     .reduce((sum, m) => sum + parseFloat(m.current_amount), 0) || 0;
 
-  // Format token balances (assuming 18 decimals)
-  const formattedMGCBalance = mgcBalance ? formatUnits(mgcBalance as bigint, 18) : '0.00';
-  const formattedRZBalance = rzBalance ? formatUnits(rzBalance as bigint, 18) : '0.00';
+  // Format token balances using actual decimals from contracts
+  const formattedMGCBalance = mgcBalance && mgcDecimals !== undefined
+    ? formatUnits(mgcBalance as bigint, Number(mgcDecimals)) 
+    : '0.00';
+  const formattedRZBalance = rzBalance && rzDecimals !== undefined
+    ? formatUnits(rzBalance as bigint, Number(rzDecimals)) 
+    : '0.00';
 
   // Format to 2 decimal places for display
   const displayMGCBalance = parseFloat(formattedMGCBalance).toFixed(2);
