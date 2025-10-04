@@ -1,4 +1,4 @@
-import { Home, User, HelpCircle, MessageSquare, Users, Gift, Trophy } from "lucide-react";
+import { Home, User, HelpCircle, MessageSquare, Users, Gift, Trophy, Zap } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
@@ -10,6 +10,12 @@ const navigationItems = [
     href: "/app",
     icon: Home,
     testId: "link-nav-dashboard",
+  },
+  {
+    title: "Miners",
+    href: "/app/miners",
+    icon: Zap,
+    testId: "link-nav-miners",
   },
   {
     title: "Profile", 
