@@ -651,11 +651,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy route for available miners list
   app.get("/api/miners", async (req, res) => {
     try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
       const response = await fetch('https://api.coinmaining.game/api/api/miners/miners/', {
         method: 'GET',
         headers: { 
           'accept': 'application/json',
-          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW',
+          'Authorization': authHeader
         }
       });
       

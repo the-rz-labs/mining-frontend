@@ -100,18 +100,24 @@ interface LaunchMinerModalProps {
 }
 
 function LaunchMinerModal({ isOpen, onClose, mgcBalance, rzBalance }: LaunchMinerModalProps) {
-  const { data: minersData } = useQuery<AvailableMinersResponse>({
+  const { data: minersData, isLoading: isLoadingMiners } = useQuery<AvailableMinersResponse>({
     queryKey: ['/api/miners'],
     enabled: isOpen
   });
 
-  const mgcMiners = minersData?.results.filter(m => 
+  console.log('Miners data:', minersData);
+  console.log('Is loading:', isLoadingMiners);
+
+  const mgcMiners = minersData?.results?.filter(m => 
     m.tokens.some(t => t.symbol.toUpperCase() === 'MGC')
   ) || [];
 
-  const rzMiners = minersData?.results.filter(m => 
+  const rzMiners = minersData?.results?.filter(m => 
     m.tokens.some(t => t.symbol.toUpperCase() === 'RZ')
   ) || [];
+
+  console.log('MGC Miners:', mgcMiners);
+  console.log('RZ Miners:', rzMiners);
 
   const handleStartMiner = (minerId: number, tokenSymbol: string) => {
     // TODO: Implement miner start logic
