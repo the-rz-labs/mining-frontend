@@ -453,6 +453,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Wallet Authentication Proxy Routes
+  
+  // Get nonce for wallet authentication
+  app.post("/api/wallets/nonce", async (req, res) => {
+    try {
+      const { address } = req.body;
+      
+      if (!address) {
+        return res.status(400).json({ error: "Wallet address is required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/api/wallets/wallet/metamask/nonce/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Nonce API error:", response.status, errorText);
+        throw new Error('Failed to fetch nonce from API');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Wallet nonce proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch nonce for wallet authentication" });
+    }
+  });
+
+  // Wallet signup
+  app.post("/api/auth/wallet-signup", async (req, res) => {
+    try {
+      const { address, signature, nonce_id, provider, email, username, avatar_key, invite } = req.body;
+      
+      if (!address || !signature || !nonce_id || !email || !username || !avatar_key) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/api/users/auth/wallet_signup/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address,
+          signature,
+          nonce_id,
+          provider: provider || 'metamask',
+          email,
+          username,
+          avatar_key,
+          invite
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Wallet signup API error:", response.status, data);
+        return res.status(response.status).json(data);
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Wallet signup proxy error:", error);
+      res.status(500).json({ error: "Failed to complete wallet signup" });
+    }
+  });
+
+  // Wallet login
+  app.post("/api/auth/wallet-login", async (req, res) => {
+    try {
+      const { address, signature, nonce_id, provider } = req.body;
+      
+      if (!address || !signature || !nonce_id) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/api/users/auth/wallet_login/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address,
+          signature,
+          nonce_id,
+          provider: provider || 'metamask'
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Wallet login API error:", response.status, data);
+        return res.status(response.status).json(data);
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Wallet login proxy error:", error);
+      res.status(500).json({ error: "Failed to complete wallet login" });
+    }
+  });
+
   // Proxy route for mining plans API to avoid CORS
   app.get("/api/plans", async (req, res) => {
     try {
