@@ -31,6 +31,8 @@ interface MinerData {
   workingTime: string;
   power: number;
   earningPerSecond: number;
+  planLevel: number;
+  videoUrl?: string;
 }
 
 interface ApiMinerResponse {
@@ -82,7 +84,8 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
     workingTime,
     power: apiMiner.power,
-    earningPerSecond: parseFloat(apiMiner.earning_per_second)
+    earningPerSecond: parseFloat(apiMiner.earning_per_second),
+    planLevel: apiMiner.plan_level
   };
 }
 
@@ -107,17 +110,19 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     return () => clearInterval(timer);
   }, []);
 
-  const getMinerVideo = (token: string) => {
-    const BASE_URL = "https://coinmaining.game";
+  // Fetch plan details with video URLs for each miner
+  const planQueries = miners.map(miner => 
+    useQuery<{ video_url: string }>({
+      queryKey: ['/api/plans', miner.planLevel],
+      enabled: !!miner.planLevel,
+    })
+  );
 
-    if (token === 'MGC') {
-      return `${BASE_URL}/miners_vid/1mgc-vido.mp4`;
-    }
-    return `${BASE_URL}/miners_vid/1rz-video.mp4`;
-  };
-
-  // Show all miners (both online and offline)
-  const activeMiners = miners;
+  // Merge video URLs into miner data
+  const activeMiners = miners.map((miner, index) => ({
+    ...miner,
+    videoUrl: planQueries[index].data?.video_url
+  }));
 
   // Show loading state
   if (isLoading) {
@@ -157,13 +162,15 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                   {/* Video Section - Mobile */}
                   <div className="relative">
                     <div className="aspect-video relative overflow-hidden rounded-t-lg">
-                      <video 
-                        src={getMinerVideo(miner.token)}
-                        autoPlay
-                        loop
-                        muted
-                        className="w-full h-full object-cover"
-                      />
+                      {miner.videoUrl && (
+                        <video 
+                          src={miner.videoUrl}
+                          autoPlay
+                          loop
+                          muted
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                       
                       {/* Status overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40">
@@ -329,13 +336,15 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                     {/* Video Section - Desktop */}
                     <div className="col-span-3 relative">
                       <div className="h-full relative overflow-hidden rounded-l-lg">
-                        <video 
-                          src={getMinerVideo(miner.token)}
-                          autoPlay
-                          loop
-                          muted
-                          className="w-full h-full object-cover"
-                        />
+                        {miner.videoUrl && (
+                          <video 
+                            src={miner.videoUrl}
+                            autoPlay
+                            loop
+                            muted
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                         
                         {/* Status overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40">

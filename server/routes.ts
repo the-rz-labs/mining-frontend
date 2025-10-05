@@ -569,6 +569,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for individual plan details
+  app.get("/api/plans/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const authHeader = req.headers.authorization;
+      
+      const headers: HeadersInit = {
+        'accept': 'application/json'
+      };
+      
+      if (authHeader) {
+        headers['Authorization'] = authHeader;
+      }
+      
+      const response = await fetch(`https://api.coinmaining.game/api/plans/plans/${id}/`, {
+        headers
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch plan details from external API');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Plan details proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch plan details" });
+    }
+  });
+
   // Proxy route for user profile data
   app.get("/api/users/me", async (req, res) => {
     try {
