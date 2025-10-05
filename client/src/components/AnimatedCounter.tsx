@@ -5,20 +5,49 @@ interface AnimatedCounterProps {
   decimals?: number;
   duration?: number;
   className?: string;
+  earningPerSecond?: number;
+  isOnline?: boolean;
 }
 
 export function AnimatedCounter({ 
   value, 
   decimals = 6, 
   duration = 1000,
-  className = '' 
+  className = '',
+  earningPerSecond = 0,
+  isOnline = true
 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(value);
+  const [isIncreasing, setIsIncreasing] = useState(false);
   const animationRef = useRef<number>();
   const startTimeRef = useRef<number>();
   const startValueRef = useRef(value);
+  const lastValueRef = useRef(value);
+  const tickIntervalRef = useRef<NodeJS.Timeout>();
 
+  // Real-time ticking for online miners
   useEffect(() => {
+    if (isOnline && earningPerSecond > 0) {
+      tickIntervalRef.current = setInterval(() => {
+        setDisplayValue(prev => prev + earningPerSecond);
+      }, 1000);
+
+      return () => {
+        if (tickIntervalRef.current) {
+          clearInterval(tickIntervalRef.current);
+        }
+      };
+    }
+  }, [earningPerSecond, isOnline]);
+
+  // Smooth animation when API updates
+  useEffect(() => {
+    if (value !== lastValueRef.current) {
+      setIsIncreasing(true);
+      setTimeout(() => setIsIncreasing(false), 600);
+    }
+    
+    lastValueRef.current = value;
     startValueRef.current = displayValue;
     startTimeRef.current = Date.now();
 
@@ -48,7 +77,7 @@ export function AnimatedCounter({
   }, [value, duration]);
 
   return (
-    <span className={className}>
+    <span className={`${className} ${isIncreasing ? 'animate-glow-pulse' : ''} transition-all duration-300`}>
       {displayValue.toFixed(decimals)}
     </span>
   );

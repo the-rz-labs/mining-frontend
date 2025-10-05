@@ -21,6 +21,7 @@ interface MinerData {
   tokensEarned: number;
   workingTime: string;
   power: number;
+  earningPerSecond: number;
 }
 
 interface ApiMinerResponse {
@@ -59,7 +60,8 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     rate: apiMiner.rate_percent,
     tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
     workingTime,
-    power: apiMiner.power
+    power: apiMiner.power,
+    earningPerSecond: parseFloat(apiMiner.earning_per_second)
   };
 }
 
@@ -202,31 +204,58 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         <span className="text-white font-bold">{miner.rate}%</span>
                       </div>
 
-                      <div className={`rounded-xl p-3 ${
+                      <div className={`rounded-xl p-4 relative overflow-hidden ${
                         miner.token === 'MGC' 
-                          ? 'bg-white/10 border-2 border-neon-purple/30' 
-                          : 'bg-white/10 border-2 border-mining-orange/30'
-                      } backdrop-blur-sm`}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Coins className={`w-5 h-5 ${
-                              miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
-                            }`} />
-                            <span className="text-white font-semibold">Live Earnings</span>
+                          ? 'bg-gradient-to-br from-purple-900/40 to-purple-600/20 border-2 border-neon-purple/50' 
+                          : 'bg-gradient-to-br from-orange-900/40 to-orange-600/20 border-2 border-mining-orange/50'
+                      } backdrop-blur-sm shadow-lg ${
+                        miner.status ? 'animate-pulse-glow' : ''
+                      }`}>
+                        {/* Animated background particles for online miners */}
+                        {miner.status && (
+                          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className={`absolute w-2 h-2 rounded-full ${
+                              miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                            } opacity-60 animate-float`} style={{ top: '20%', left: '10%', animationDelay: '0s' }}></div>
+                            <div className={`absolute w-1 h-1 rounded-full ${
+                              miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                            } opacity-40 animate-float`} style={{ top: '60%', left: '80%', animationDelay: '1s' }}></div>
+                            <div className={`absolute w-1.5 h-1.5 rounded-full ${
+                              miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                            } opacity-50 animate-float`} style={{ top: '40%', left: '90%', animationDelay: '2s' }}></div>
                           </div>
+                        )}
+                        
+                        <div className="relative z-10">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <Coins className={`w-5 h-5 ${
+                                miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
+                              } ${miner.status ? 'animate-pulse' : ''}`} />
+                              <span className="text-white font-bold">Live Earnings</span>
+                            </div>
+                            {miner.status && miner.earningPerSecond > 0 && (
+                              <div className="text-xs text-neon-green font-medium bg-neon-green/10 px-2 py-1 rounded-full border border-neon-green/30 animate-pulse">
+                                +{(miner.earningPerSecond * 60).toFixed(8)}/min
+                              </div>
+                            )}
+                          </div>
+                          
                           <div className="text-right">
-                            <div className={`text-lg font-bold ${
+                            <div className={`text-2xl font-bold mb-1 ${
                               miner.token === 'MGC' 
                                 ? 'text-neon-purple' 
                                 : 'text-mining-orange'
-                            } transition-all duration-300`}>
+                            } drop-shadow-[0_0_8px_currentColor]`}>
                               <AnimatedCounter 
                                 value={miner.tokensEarned} 
-                                decimals={6}
+                                decimals={8}
                                 duration={800}
-                              /> {miner.token}
+                                earningPerSecond={miner.status ? miner.earningPerSecond : 0}
+                                isOnline={miner.status}
+                              />
                             </div>
-                            <div className="text-xs text-neon-green font-medium animate-pulse">+Live</div>
+                            <div className="text-sm text-white/80 font-medium">{miner.token}</div>
                           </div>
                         </div>
                       </div>
@@ -326,30 +355,54 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                           <span className="text-white font-bold">{miner.rate}%</span>
                         </div>
 
-                        <div className={`rounded-lg p-4 ${
+                        <div className={`rounded-lg p-4 relative overflow-hidden ${
                           miner.token === 'MGC' 
-                            ? 'bg-white/10 border border-neon-purple/30' 
-                            : 'bg-white/10 border border-mining-orange/30'
-                        } backdrop-blur-sm`}>
-                          <div className="text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
+                            ? 'bg-gradient-to-br from-purple-900/40 to-purple-600/20 border-2 border-neon-purple/50' 
+                            : 'bg-gradient-to-br from-orange-900/40 to-orange-600/20 border-2 border-mining-orange/50'
+                        } backdrop-blur-sm shadow-lg ${
+                          miner.status ? 'animate-pulse-glow' : ''
+                        }`}>
+                          {/* Animated background particles for online miners */}
+                          {miner.status && (
+                            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                              <div className={`absolute w-2 h-2 rounded-full ${
+                                miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                              } opacity-60 animate-float`} style={{ top: '15%', left: '15%', animationDelay: '0s' }}></div>
+                              <div className={`absolute w-1 h-1 rounded-full ${
+                                miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                              } opacity-40 animate-float`} style={{ top: '70%', left: '85%', animationDelay: '1.5s' }}></div>
+                              <div className={`absolute w-1.5 h-1.5 rounded-full ${
+                                miner.token === 'MGC' ? 'bg-neon-purple' : 'bg-mining-orange'
+                              } opacity-50 animate-float`} style={{ top: '45%', left: '10%', animationDelay: '2.5s' }}></div>
+                            </div>
+                          )}
+                          
+                          <div className="text-center relative z-10">
+                            <div className="flex items-center justify-center gap-2 mb-3">
                               <Coins className={`w-5 h-5 ${
                                 miner.token === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'
-                              }`} />
-                              <span className="text-white font-medium">Live Earnings</span>
+                              } ${miner.status ? 'animate-pulse' : ''}`} />
+                              <span className="text-white font-bold">Live Earnings</span>
                             </div>
-                            <div className={`text-xl font-bold ${
+                            {miner.status && miner.earningPerSecond > 0 && (
+                              <div className="text-xs text-neon-green font-medium bg-neon-green/10 px-2 py-1 rounded-full border border-neon-green/30 mb-2 inline-block animate-pulse">
+                                +{(miner.earningPerSecond * 60).toFixed(8)}/min
+                              </div>
+                            )}
+                            <div className={`text-2xl font-bold mb-1 ${
                               miner.token === 'MGC' 
                                 ? 'text-neon-purple' 
                                 : 'text-mining-orange'
-                            } mb-1 transition-all duration-300`}>
+                            } drop-shadow-[0_0_8px_currentColor]`}>
                               <AnimatedCounter 
                                 value={miner.tokensEarned} 
-                                decimals={6}
+                                decimals={8}
                                 duration={800}
-                              /> {miner.token}
+                                earningPerSecond={miner.status ? miner.earningPerSecond : 0}
+                                isOnline={miner.status}
+                              />
                             </div>
-                            <div className="text-xs text-neon-green font-medium animate-pulse">+Live Updates</div>
+                            <div className="text-sm text-white/80 font-medium">{miner.token}</div>
                           </div>
                         </div>
                       </div>
