@@ -2,18 +2,30 @@
 
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
-## Recent Updates (October 4, 2025)
-- **Miners Page**: Created dedicated Miners page for launching mining operations
-  - New route at `/app/miners` added to navigation sidebar with Zap icon
-  - Replaced modal approach with full page experience
-  - Dashboard "Launch Mining Operations" button now navigates to Miners page
-  - Displays wallet balance for MGC and RZ tokens at top of each tab
-  - Shows all available miners from `/api/miners` endpoint
-  - Filters miners based on user's token balance (shows "Insufficient Balance" if can't afford)
-  - Miners display required balance, power rating (TH/s), and affordability status
-  - Visual distinction between affordable (highlighted) and unaffordable (dimmed) miners
-  - Backend proxy forwards Authorization header for authenticated access
+## Recent Updates (October 5, 2025)
+- **Enhanced Miners Page Design**: Complete redesign with modern, unified grid layout
+  - Unified grid view displaying all 10 mining plans (MGC + RZ) together, no separate tabs
+  - Fetches from `/api/plans` endpoint using `https://api.coinmaining.game/api/api/plans/plans/`
+  - Responsive grid: 1-4 columns adapting to screen size
+  - Live wallet balances displayed in prominent cards at top (MGC purple, RZ orange)
+  - Tier-based visual hierarchy:
+    - Elite miners (level 5+): 3px borders, pulsing glow effects, ⚡ ELITE badge with animation
+    - Premium miners (level 4): 2.5px borders, enhanced shadows, ★ PREMIUM badge
+    - Standard miners: 2px borders with basic styling
+  - Beautiful hover effects: scale animations, shadow intensification, image zoom
+  - Monthly reward percentage displayed with trend icon
+  - Real miner images from API with glass morphism cards
   
+- **Deploy Miner Functionality**: Implemented stake/deploy API integration
+  - Backend proxy route at `/api/stakes/stake` calling `https://api.coinmaining.game/api/api/stakes/stake/`
+  - Mutation sends `{ miner: plan.id, amount: plan.price, token: token.id }` to API
+  - "Deploy Miner" button with loading state (spinner + "Deploying..." text)
+  - Success toast notification: "Miner Deployed Successfully!"
+  - Error handling with descriptive toast messages
+  - Auto-refresh after deployment: invalidates stakes/miners and profile queries
+  - Token IDs extracted from plan.token_details[0].id (MGC=1, RZ=2)
+
+## Previous Updates (October 4, 2025)
 - **Route Protection**: Implemented authentication guards for protected routes
   - Created `ProtectedRoute` wrapper component in App.tsx
   - All `/app/*` routes now require valid JWT token in localStorage

@@ -679,6 +679,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for deploying/staking a miner
+  app.post("/api/stakes/stake", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const { miner, amount, token } = req.body;
+
+      if (!miner || !amount || !token) {
+        return res.status(400).json({ error: "Missing required fields: miner, amount, token" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/api/stakes/stake/', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({
+          miner,
+          amount,
+          token
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Stake miner API error:", response.status, data);
+        return res.status(response.status).json(data);
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Stake miner proxy error:", error);
+      res.status(500).json({ error: "Failed to deploy miner" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

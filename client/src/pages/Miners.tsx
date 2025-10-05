@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Loader2, Zap, TrendingUp } from "lucide-react";
 import { useReadContract, useAccount } from "wagmi";
 import { formatUnits } from "viem";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface TokenDetail {
   id: number;
@@ -54,6 +56,7 @@ const RZ_TOKEN_ADDRESS = "0x1B1052b305a30a9F4d77B53e0d09772a920c5A23";
 
 export default function Miners() {
   const { address } = useAccount();
+  const { toast } = useToast();
 
   // Fetch MGC balance
   const { data: mgcBalanceData } = useReadContract({
@@ -100,9 +103,45 @@ export default function Miners() {
     queryKey: ['/api/plans'],
   });
 
-  const handleStartMiner = (planId: number, tokenSymbol: string) => {
-    // TODO: Implement miner start logic
-    console.log(`Starting plan ${planId} for ${tokenSymbol}`);
+  // Deploy miner mutation
+  const deployMinerMutation = useMutation({
+    mutationFn: async ({ miner, amount, token }: { miner: number; amount: string; token: number }) => {
+      return await apiRequest('POST', '/api/stakes/stake', { miner, amount, token });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Miner Deployed Successfully!",
+        description: "Your miner is now active and earning rewards.",
+      });
+      // Invalidate related queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/stakes/miners'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/me'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Deployment Failed",
+        description: error.message || "Failed to deploy miner. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleStartMiner = (plan: Plan) => {
+    const tokenId = plan.token_details[0]?.id;
+    if (!tokenId) {
+      toast({
+        title: "Error",
+        description: "Invalid token information",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    deployMinerMutation.mutate({
+      miner: plan.id,
+      amount: plan.price.toString(),
+      token: tokenId,
+    });
   };
 
   if (isLoading) {
@@ -267,8 +306,8 @@ export default function Miners() {
 
                   {/* Action Button */}
                   <Button
-                    onClick={() => handleStartMiner(plan.id, tokenSymbol)}
-                    disabled={!canAfford}
+                    onClick={() => handleStartMiner(plan)}
+                    disabled={!canAfford || deployMinerMutation.isPending}
                     className={`w-full ${
                       canAfford
                         ? `${isMGC 
@@ -279,8 +318,17 @@ export default function Miners() {
                     } font-semibold py-6 transition-all duration-300`}
                     data-testid={`button-start-plan-${plan.id}`}
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    {canAfford ? 'Deploy Miner' : 'Locked'}
+                    {deployMinerMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Deploying...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 mr-2" />
+                        {canAfford ? 'Deploy Miner' : 'Locked'}
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
