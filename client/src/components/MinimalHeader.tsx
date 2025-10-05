@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle } from "lucide-react";
+import { Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
@@ -61,10 +61,7 @@ export function MinimalHeader() {
 
         {/* Right side with user actions */}
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/5">
-            <Bell className="w-5 h-5" />
-          </Button>
-          <appkit-account-button />
+          <appkit-account-button balance="hide" />
         </div>
       </header>
 
