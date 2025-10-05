@@ -17,7 +17,16 @@ interface MinerData {
   name: string;
   token: string;
   status: boolean;
-  rate: number;
+  baseRate: number;
+  effectiveRate: number;
+  bonusMultiplier: number;
+  bonusBreakdown: {
+    referral_active_count: number;
+    referral_bonus_bp: number;
+    badge_bonus_bp: number;
+    total_bonus_bp: number;
+    cap_bp: number;
+  };
   tokensEarned: number;
   workingTime: string;
   power: number;
@@ -37,7 +46,16 @@ interface ApiMinerResponse {
     symbol: string;
     decimals: number;
     staked_amount: string;
-    rate_percent: number;
+    base_rate_percent: string;
+    effective_rate_percent: string;
+    bonus_multiplier: string;
+    bonus_breakdown: {
+      referral_active_count: number;
+      referral_bonus_bp: number;
+      badge_bonus_bp: number;
+      total_bonus_bp: number;
+      cap_bp: number;
+    };
     earning_per_second: string;
     active_since: string;
     seconds_active: number;
@@ -57,7 +75,10 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     name: apiMiner.miner_name,
     token: apiMiner.symbol,
     status: apiMiner.is_online,
-    rate: apiMiner.rate_percent,
+    baseRate: parseFloat(apiMiner.base_rate_percent),
+    effectiveRate: parseFloat(apiMiner.effective_rate_percent),
+    bonusMultiplier: parseFloat(apiMiner.bonus_multiplier),
+    bonusBreakdown: apiMiner.bonus_breakdown,
     tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
     workingTime,
     power: apiMiner.power,
@@ -159,7 +180,14 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         
                         <div className="absolute bottom-4 left-4">
                           <div className="text-white">
-                            <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{miner.rate}% Rate</div>
+                            <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                              {miner.effectiveRate}% Rate
+                              {miner.bonusMultiplier > 1 && (
+                                <span className="ml-2 text-xs text-neon-green">
+                                  +{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%
+                                </span>
+                              )}
+                            </div>
                             <div className="text-sm text-white/80 font-medium">Active Mining</div>
                           </div>
                         </div>
@@ -201,7 +229,21 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                           <TrendingUp className="w-4 h-4 text-neon-purple" />
                           <span className="text-white/80 font-medium">Mining Rate</span>
                         </div>
-                        <span className="text-white font-bold">{miner.rate}%</span>
+                        <div className="text-right">
+                          {miner.bonusMultiplier > 1 ? (
+                            <>
+                              <div className="text-white font-bold">
+                                {miner.effectiveRate}%
+                                <span className="ml-1 text-xs text-neon-green">
+                                  (+{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%)
+                                </span>
+                              </div>
+                              <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
+                            </>
+                          ) : (
+                            <span className="text-white font-bold">{miner.baseRate}%</span>
+                          )}
+                        </div>
                       </div>
 
                       <div className={`rounded-xl p-4 relative overflow-hidden ${
@@ -310,7 +352,14 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                           
                           <div className="absolute bottom-6 left-6">
                             <div className="text-white">
-                              <div className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{miner.rate}% Mining Rate</div>
+                              <div className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                {miner.effectiveRate}% Mining Rate
+                                {miner.bonusMultiplier > 1 && (
+                                  <span className="ml-2 text-sm text-neon-green">
+                                    +{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%
+                                  </span>
+                                )}
+                              </div>
                               <div className="text-white/80 font-medium">Live Performance</div>
                             </div>
                           </div>
@@ -352,7 +401,21 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                             <TrendingUp className="w-4 h-4 text-neon-purple" />
                             <span className="text-white/80 font-medium">Mining Rate</span>
                           </div>
-                          <span className="text-white font-bold">{miner.rate}%</span>
+                          <div className="text-right">
+                            {miner.bonusMultiplier > 1 ? (
+                              <>
+                                <div className="text-white font-bold">
+                                  {miner.effectiveRate}%
+                                  <span className="ml-1 text-xs text-neon-green">
+                                    (+{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%)
+                                  </span>
+                                </div>
+                                <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
+                              </>
+                            ) : (
+                              <span className="text-white font-bold">{miner.baseRate}%</span>
+                            )}
+                          </div>
                         </div>
 
                         <div className={`rounded-lg p-4 relative overflow-hidden ${
