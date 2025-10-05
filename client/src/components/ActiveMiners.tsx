@@ -1,72 +1,64 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { 
-  Pause, 
   Play, 
   Activity,
   Clock,
   TrendingUp,
-  Zap
+  Coins
 } from "lucide-react";
 
 interface MinerData {
-  id: string;
-  token: 'MGC' | 'RZ';
-  plan: string;
-  status: 'active' | 'paused' | 'inactive';
+  id: number;
+  name: string;
+  token: string;
+  status: boolean;
   rate: number;
   tokensEarned: number;
   workingTime: string;
+  power: number;
 }
 
-interface ApiMiner {
-  id: number;
-  stake_date: string;
-  claim_date: string | null;
-  miner: {
-    id: number;
-    name: string;
-    token: string;
-    image: string;
-  };
-  plan: {
-    id: number;
-    name: string;
-    token: string;
-    rate: string;
-  };
-  current_amount: string;
-  reward_calc: string;
-  claimable: boolean;
-  status: string;
+interface ApiMinerResponse {
+  total_power: number;
+  total_staked: string;
+  active_miners: number;
+  miners: {
+    miner_id: number;
+    miner_name: string;
+    is_online: boolean;
+    plan_level: number;
+    power: number;
+    symbol: string;
+    decimals: number;
+    staked_amount: string;
+    rate_percent: number;
+    earning_per_second: string;
+    active_since: string;
+    seconds_active: number;
+    accrued_reward_until_now: string;
+  }[];
 }
 
 // Convert API miner data to component format
-function convertApiMinerToMinerData(apiMiner: ApiMiner): MinerData {
-  const token = apiMiner.plan.token.toUpperCase() as 'MGC' | 'RZ';
-  const status = apiMiner.status.toLowerCase() === 'active' ? 'active' : 'paused';
-  
-  // Calculate working time from stake_date
-  const stakeDate = new Date(apiMiner.stake_date);
-  const now = new Date();
-  const elapsedMs = now.getTime() - stakeDate.getTime();
-  const hours = Math.floor(elapsedMs / (1000 * 60 * 60));
-  const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
+function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): MinerData {
+  // Calculate working time from seconds_active
+  const hours = Math.floor(apiMiner.seconds_active / 3600);
+  const minutes = Math.floor((apiMiner.seconds_active % 3600) / 60);
   const workingTime = `${hours}h ${minutes}m`;
   
   return {
-    id: apiMiner.id.toString(),
-    token,
-    plan: apiMiner.plan.name,
-    status,
-    rate: parseFloat(apiMiner.plan.rate),
-    tokensEarned: parseFloat(apiMiner.current_amount),
-    workingTime
+    id: apiMiner.miner_id,
+    name: apiMiner.miner_name,
+    token: apiMiner.symbol,
+    status: apiMiner.is_online,
+    rate: apiMiner.rate_percent,
+    tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
+    workingTime,
+    power: apiMiner.power
   };
 }
 
@@ -74,13 +66,13 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
   const [currentTime, setCurrentTime] = useState(new Date());
   
   // Fetch miners data from API
-  const { data: apiMiners, isLoading, error } = useQuery<ApiMiner[]>({
+  const { data: apiResponse, isLoading } = useQuery<ApiMinerResponse>({
     queryKey: ['/api/stakes/miners'],
     refetchInterval: 5000 // Refresh every 5 seconds for live updates
   });
 
   // Convert API data to component format
-  const miners = apiMiners?.map(convertApiMinerToMinerData) || [];
+  const miners = apiResponse?.miners?.map(convertApiMinerToMinerData) || [];
 
   // Update current time for display purposes
   useEffect(() => {
@@ -91,7 +83,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     return () => clearInterval(timer);
   }, []);
 
-  const getMinerVideo = (token: 'MGC' | 'RZ') => {
+  const getMinerVideo = (token: string) => {
     const BASE_URL = "https://coinmaining.game";
 
     if (token === 'MGC') {
@@ -100,8 +92,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     return `${BASE_URL}/miners_vid/1rz-video.mp4`;
   };
 
-  const activeMiners = miners.filter(m => m.status === 'active');
-  const inactiveMiners = miners.filter(m => m.status !== 'active');
+  const activeMiners = miners.filter(m => m.status);
 
   // Show loading state
   if (isLoading) {
@@ -178,16 +169,16 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold text-white flex items-center">
                         <span className={`w-3 h-3 rounded-full mr-3 ${
-                          miner.status === 'active' ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-white/40'
+                          miner.status ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-white/40'
                         }`}></span>
-                        {miner.token} Mining Rig
+                        {miner.name}
                       </h3>
                       <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        miner.status === 'active' 
+                        miner.status 
                           ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
                           : 'bg-white/10 text-white/60 border border-white/20'
                       }`}>
-                        {miner.status === 'active' ? 'ACTIVE' : 'PAUSED'}
+                        {miner.status ? 'ACTIVE' : 'PAUSED'}
                       </div>
                     </div>
 
@@ -298,16 +289,16 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-xl font-bold text-white flex items-center">
                           <span className={`w-3 h-3 rounded-full mr-3 ${
-                            miner.status === 'active' ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-white/40'
+                            miner.status ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-white/40'
                           }`}></span>
-                          {miner.token} Mining Rig
+                          {miner.name}
                         </h3>
                         <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          miner.status === 'active' 
+                          miner.status 
                             ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
                             : 'bg-white/10 text-white/60 border border-white/20'
                         }`}>
-                          {miner.status === 'active' ? 'ACTIVE' : 'PAUSED'}
+                          {miner.status ? 'ACTIVE' : 'PAUSED'}
                         </div>
                       </div>
 

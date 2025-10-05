@@ -121,26 +121,25 @@ function StatusCard({ title, status, icon: Icon, color }: {
 
 
 
-interface ApiMiner {
-  id: number;
-  stake_date: string;
-  claim_date: string | null;
-  miner: {
-    id: number;
-    name: string;
-    token: string;
-    image: string;
-  };
-  plan: {
-    id: number;
-    name: string;
-    token: string;
-    rate: string;
-  };
-  current_amount: string;
-  reward_calc: string;
-  claimable: boolean;
-  status: string;
+interface ApiMinerResponse {
+  total_power: number;
+  total_staked: string;
+  active_miners: number;
+  miners: {
+    miner_id: number;
+    miner_name: string;
+    is_online: boolean;
+    plan_level: number;
+    power: number;
+    symbol: string;
+    decimals: number;
+    staked_amount: string;
+    rate_percent: number;
+    earning_per_second: string;
+    active_since: string;
+    seconds_active: number;
+    accrued_reward_until_now: string;
+  }[];
 }
 
 export default function DashboardHome() {
@@ -177,19 +176,19 @@ export default function DashboardHome() {
   });
 
   // Fetch miners data for total earnings
-  const { data: apiMiners } = useQuery<ApiMiner[]>({
+  const { data: apiMinersResponse } = useQuery<ApiMinerResponse>({
     queryKey: ['/api/stakes/miners'],
     refetchInterval: 5000
   });
 
   // Calculate total earned MGC and RZ from miners
-  const totalEarnedMGC = apiMiners
-    ?.filter(m => m.plan.token.toUpperCase() === 'MGC')
-    .reduce((sum, m) => sum + parseFloat(m.current_amount), 0) || 0;
+  const totalEarnedMGC = apiMinersResponse?.miners
+    ?.filter(m => m.symbol.toUpperCase() === 'MGC')
+    .reduce((sum, m) => sum + parseFloat(m.accrued_reward_until_now), 0) || 0;
 
-  const totalEarnedRZ = apiMiners
-    ?.filter(m => m.plan.token.toUpperCase() === 'RZ')
-    .reduce((sum, m) => sum + parseFloat(m.current_amount), 0) || 0;
+  const totalEarnedRZ = apiMinersResponse?.miners
+    ?.filter(m => m.symbol.toUpperCase() === 'RZ')
+    .reduce((sum, m) => sum + parseFloat(m.accrued_reward_until_now), 0) || 0;
 
   // Format token balances using actual decimals from contracts
   const formattedMGCBalance = mgcBalance && mgcDecimals !== undefined
