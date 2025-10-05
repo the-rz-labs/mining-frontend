@@ -110,18 +110,36 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch plan details with video URLs for each miner
-  const planQueries = miners.map(miner => 
-    useQuery<{ video_url: string }>({
-      queryKey: ['/api/plans', miner.planLevel],
-      enabled: !!miner.planLevel,
-    })
-  );
+  // Get unique plan levels to fetch
+  const uniquePlanLevels = Array.from(new Set(miners.map(m => m.planLevel)));
+  
+  // Fetch all plan details at once
+  const { data: plansData } = useQuery<Record<number, { video_url: string }>>({
+    queryKey: ['/api/plans/batch', uniquePlanLevels],
+    queryFn: async () => {
+      const planPromises = uniquePlanLevels.map(level =>
+        fetch(`/api/plans/${level}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+          }
+        }).then(res => res.json())
+      );
+      
+      const results = await Promise.all(planPromises);
+      
+      // Create a map of level -> plan data
+      return uniquePlanLevels.reduce((acc, level, index) => {
+        acc[level] = results[index];
+        return acc;
+      }, {} as Record<number, { video_url: string }>);
+    },
+    enabled: uniquePlanLevels.length > 0
+  });
 
   // Merge video URLs into miner data
-  const activeMiners = miners.map((miner, index) => ({
+  const activeMiners = miners.map(miner => ({
     ...miner,
-    videoUrl: planQueries[index].data?.video_url
+    videoUrl: plansData?.[miner.planLevel]?.video_url
   }));
 
   // Show loading state
