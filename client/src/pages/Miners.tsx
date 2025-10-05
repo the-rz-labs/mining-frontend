@@ -294,7 +294,7 @@ export default function Miners() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10 px-2">
       {/* Header */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/20 via-transparent to-mining-orange/20 blur-3xl"></div>
@@ -309,7 +309,7 @@ export default function Miners() {
       </div>
 
       {/* Wallet Balances */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         <Card className="border border-neon-purple/30 bg-gradient-to-br from-purple-900/20 to-slate-900/40 backdrop-blur-xl">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -340,8 +340,8 @@ export default function Miners() {
       </div>
 
       {/* Token-Separated Mining Plans */}
-      <Tabs defaultValue="mgc" className="w-full">
-        <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-slate-900/80 border border-white/10 p-1" data-testid="tabs-token-selector">
+      <Tabs defaultValue="mgc" className="w-full mt-12">
+        <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2 bg-slate-900/80 border border-white/10 p-1.5 mb-2" data-testid="tabs-token-selector">
           <TabsTrigger 
             value="mgc" 
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-neon-purple data-[state=active]:to-purple-600 data-[state=active]:text-white text-white/60 font-semibold transition-all duration-300"
@@ -361,8 +361,8 @@ export default function Miners() {
         </TabsList>
 
         {/* MGC Miners Tab */}
-        <TabsContent value="mgc" className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <TabsContent value="mgc" className="mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
             {mgcPlans.map((plan) => renderPlanCard(plan))}
           </div>
           {mgcPlans.length === 0 && (
@@ -375,8 +375,8 @@ export default function Miners() {
         </TabsContent>
 
         {/* RZ Miners Tab */}
-        <TabsContent value="rz" className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <TabsContent value="rz" className="mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
             {rzPlans.map((plan) => renderPlanCard(plan))}
           </div>
           {rzPlans.length === 0 && (
