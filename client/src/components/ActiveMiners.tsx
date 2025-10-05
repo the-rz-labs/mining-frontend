@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { 
   Play, 
   Activity,
@@ -217,10 +218,14 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                               miner.token === 'MGC' 
                                 ? 'text-neon-purple' 
                                 : 'text-mining-orange'
-                            }`}>
-                              {miner.tokensEarned.toFixed(6)} {miner.token}
+                            } transition-all duration-300`}>
+                              <AnimatedCounter 
+                                value={miner.tokensEarned} 
+                                decimals={6}
+                                duration={800}
+                              /> {miner.token}
                             </div>
-                            <div className="text-xs text-neon-green font-medium">+Realtime</div>
+                            <div className="text-xs text-neon-green font-medium animate-pulse">+Live</div>
                           </div>
                         </div>
                       </div>
@@ -336,10 +341,14 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                               miner.token === 'MGC' 
                                 ? 'text-neon-purple' 
                                 : 'text-mining-orange'
-                            } mb-1`}>
-                              {miner.tokensEarned.toFixed(6)} {miner.token}
+                            } mb-1 transition-all duration-300`}>
+                              <AnimatedCounter 
+                                value={miner.tokensEarned} 
+                                decimals={6}
+                                duration={800}
+                              /> {miner.token}
                             </div>
-                            <div className="text-xs text-neon-green font-medium">+Realtime Updates</div>
+                            <div className="text-xs text-neon-green font-medium animate-pulse">+Live Updates</div>
                           </div>
                         </div>
                       </div>
