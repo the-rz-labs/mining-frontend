@@ -5,7 +5,7 @@ This is a futuristic cryptocurrency mining platform called "Ranking" that offers
 ## Recent Updates (October 5, 2025)
 - **Enhanced Miners Page Design**: Complete redesign with modern, unified grid layout
   - Unified grid view displaying all 10 mining plans (MGC + RZ) together, no separate tabs
-  - Fetches from `/api/plans` endpoint using `https://api.coinmaining.game/api/api/plans/plans/`
+  - Fetches from `/api/plans` endpoint using `https://api.coinmaining.game/api/plans/plans/`
   - Responsive grid: 1-4 columns adapting to screen size
   - Live wallet balances displayed in prominent cards at top (MGC purple, RZ orange)
   - Tier-based visual hierarchy:
@@ -17,7 +17,7 @@ This is a futuristic cryptocurrency mining platform called "Ranking" that offers
   - Real miner images from API with glass morphism cards
   
 - **Deploy Miner Functionality**: Implemented stake/deploy API integration
-  - Backend proxy route at `/api/stakes/stake` calling `https://api.coinmaining.game/api/api/stakes/stake/`
+  - Backend proxy route at `/api/stakes/stake` calling `https://api.coinmaining.game/api/stakes/stake/`
   - Mutation sends `{ miner: plan.id, amount: plan.price, token: token.id }` to API
   - "Deploy Miner" button with loading state (spinner + "Deploying..." text)
   - Success toast notification: "Miner Deployed Successfully!"
@@ -46,7 +46,7 @@ This is a futuristic cryptocurrency mining platform called "Ranking" that offers
   - Values calculated from miners API data with 6 decimal precision
   
 - **Miners Dashboard API Integration**: Integrated miners/stakes API for real-time mining operations display
-  - Backend proxy route at `/api/stakes/miners` calling `https://api.coinmaining.game/api/api/stakes/staked-miner-dashboard-get/`
+  - Backend proxy route at `/api/stakes/miners` calling `https://api.coinmaining.game/api/stakes/staked-miner-dashboard-get/`
   - Dashboard fetches and displays real user miners with auto-refresh every 5 seconds
   - Shows live earnings, mining rate, working time, and miner status (MGC/RZ)
   - Handles empty state gracefully when user has no active miners (404 returns empty array)

@@ -464,7 +464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Wallet address is required" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/wallets/wallet/metamask/nonce/', {
+      const response = await fetch('https://api.coinmaining.game/api/wallets/wallet/metamask/nonce/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address })
@@ -616,7 +616,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Authorization header required" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/stakes/staked-miner-dashboard-get/', {
+      const response = await fetch('https://api.coinmaining.game/api/stakes/staked-miner-dashboard-get/', {
         method: 'GET',
         headers: { 
           'Content-Type': 'application/json',
@@ -656,7 +656,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Authorization header required" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/miners/miners/', {
+      const response = await fetch('https://api.coinmaining.game/api/miners/miners/', {
         method: 'GET',
         headers: { 
           'accept': 'application/json',
@@ -694,7 +694,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields: miner, amount, token" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/api/stakes/stake/', {
+      const response = await fetch('https://api.coinmaining.game/api/stakes/stake/', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
