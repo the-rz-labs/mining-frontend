@@ -93,7 +93,8 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     return `${BASE_URL}/miners_vid/1rz-video.mp4`;
   };
 
-  const activeMiners = miners.filter(m => m.status);
+  // Show all miners (both online and offline)
+  const activeMiners = miners;
 
   // Show loading state
   if (isLoading) {
@@ -177,9 +178,9 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                       <div className={`px-3 py-1 rounded-full text-xs font-bold ${
                         miner.status 
                           ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
-                          : 'bg-white/10 text-white/60 border border-white/20'
+                          : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
                       }`}>
-                        {miner.status ? 'ACTIVE' : 'PAUSED'}
+                        {miner.status ? 'ONLINE' : 'OFFLINE'}
                       </div>
                     </div>
 
@@ -301,9 +302,9 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         <div className={`px-3 py-1 rounded-full text-xs font-bold ${
                           miner.status 
                             ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
-                            : 'bg-white/10 text-white/60 border border-white/20'
+                            : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
                         }`}>
-                          {miner.status ? 'ACTIVE' : 'PAUSED'}
+                          {miner.status ? 'ONLINE' : 'OFFLINE'}
                         </div>
                       </div>
 
