@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import Logo from "./Logo";
 import { useAppKitAccount } from "@reown/appkit/react";
 
@@ -34,6 +35,12 @@ export default function Navigation({ }: NavigationProps) {
     { name: "Tokens", href: "#tokens", isRoute: false },
     { name: "Boost Rewards", href: "#referral", isRoute: false },
     { name: "Contact", href: "/contact", isRoute: true },
+    { name: "Home", href: "#home", isRoute: false },
+    { name: "Live Stats", href: "#stats", isRoute: false },
+    { name: "Mining Plans", href: "#plans", isRoute: false },
+    { name: "Tokens", href: "#tokens", isRoute: false },
+    { name: "Boost Rewards", href: "#referral", isRoute: false },
+    { name: "Contact", href: "/contact", isRoute: true },
   ];
 
   return (
@@ -47,12 +54,39 @@ export default function Navigation({ }: NavigationProps) {
                 <Logo />
               </div>
             </Link>
+            <Link href="/">
+              <div className="cursor-pointer">
+                <Logo />
+              </div>
+            </Link>
           </div>
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:flex flex-1 justify-center">
             <div className="flex items-center space-x-12">
               {navItems.map((item) => (
+                item.isRoute ? (
+                  <Link key={item.name} href={item.href}>
+                    <span
+                      data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                      className="text-white/80 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)] cursor-pointer"
+                    >
+                      {item.name}
+                    </span>
+                  </Link>
+                ) : (
+                  <span
+                    key={item.name}
+                    data-testid={`nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                    className="text-white/80 hover:text-white transition-all duration-300 text-base font-medium relative group hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)] cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleHashNavigation(item.href);
+                    }}
+                  >
+                    {item.name}
+                  </span>
+                )
                 item.isRoute ? (
                   <Link key={item.name} href={item.href}>
                     <span
@@ -118,6 +152,32 @@ export default function Navigation({ }: NavigationProps) {
         <div id="mobile-menu" className="lg:hidden bg-gradient-to-br from-slate-900/95 via-purple-900/20 to-slate-900/95 backdrop-blur-xl border-t border-white/10" role="menu">
           <div className="px-4 pt-4 pb-6 space-y-1">
             {navItems.map((item) => (
+              item.isRoute ? (
+                <Link key={item.name} href={item.href}>
+                  <span
+                    data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                    className="text-white/80 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300 hover:bg-white/5 rounded-lg mx-2 cursor-pointer"
+                    role="menuitem"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              ) : (
+                <span
+                  key={item.name}
+                  data-testid={`mobile-nav-link-${item.name.toLowerCase().replace(" ", "-")}`}
+                  className="text-white/80 hover:text-white block px-4 py-3 text-base font-medium transition-all duration-300 hover:bg-white/5 rounded-lg mx-2 cursor-pointer"
+                  role="menuitem"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleHashNavigation(item.href);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  {item.name}
+                </span>
+              )
               item.isRoute ? (
                 <Link key={item.name} href={item.href}>
                   <span
