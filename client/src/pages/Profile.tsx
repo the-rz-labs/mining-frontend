@@ -154,6 +154,11 @@ export default function Profile() {
     queryKey: ['/api/stakes/miners'],
   });
 
+  // Fetch referral stats
+  const { data: referralStats } = useQuery<{ total_referrals: number; active_referrals: number; last_invited_at: string }>({
+    queryKey: ['/api/users/referral/stats'],
+  });
+
   const handleLogout = () => {
     toast({
       title: "Logged out successfully",
@@ -207,7 +212,7 @@ export default function Profile() {
   // Current values from API data
   const currentMiningPower = minersData?.total_power || 0;
   const currentActiveMiners = totalStakes;
-  const currentReferrals = activeReferrals;
+  const currentReferrals = referralStats?.total_referrals || 0;
   const currentBonusRate = bonusRate;
 
   // Dynamic stats based on API data with calculated progress percentages

@@ -631,6 +631,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for referral stats
+  app.get("/api/users/referral/stats", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/users/referral/stats', {
+        method: 'GET',
+        headers: { 
+          'Accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Referral stats API error:", response.status, errorText.substring(0, 200));
+        return res.status(response.status).json({ error: "Failed to fetch referral stats" });
+      }
+
+      const data = await response.json();
+      return res.json(data);
+    } catch (error) {
+      console.error("Referral stats API error:", error);
+      return res.status(500).json({ error: "Failed to fetch referral stats" });
+    }
+  });
+
   // Proxy route for referral list
   app.get("/api/users/referral/list", async (req, res) => {
     try {
