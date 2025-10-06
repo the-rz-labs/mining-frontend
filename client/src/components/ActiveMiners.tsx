@@ -68,12 +68,24 @@ interface ApiMinerResponse {
   }[];
 }
 
+// Helper function to format time duration
+function formatDuration(seconds: number): string {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0 || parts.length === 0) parts.push(`${minutes}m`);
+  
+  return parts.join(', ');
+}
+
 // Convert API miner data to component format
 function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): MinerData {
   // Calculate working time from seconds_active
-  const hours = Math.floor(apiMiner.seconds_active / 3600);
-  const minutes = Math.floor((apiMiner.seconds_active % 3600) / 60);
-  const workingTime = `${hours}h ${minutes}m`;
+  const workingTime = formatDuration(apiMiner.seconds_active);
   
   return {
     id: apiMiner.miner_id,
