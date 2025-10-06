@@ -640,7 +640,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Authorization header required" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/users/referral/list', {
+      const response = await fetch('https://api.coinmaining.game/api/users/referral/list/', {
         method: 'GET',
         headers: { 
           'Accept': 'application/json',
@@ -649,14 +649,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
+      const contentType = response.headers.get('content-type');
+      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Referral list API error:", response.status, errorText);
+        console.error("Referral list API error:", response.status, errorText.substring(0, 200));
         return res.status(response.status).json({ error: "Failed to fetch referral list" });
       }
 
-      const data = await response.json();
-      return res.json(data);
+      // Check if response is JSON
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        console.log("Referral list response:", JSON.stringify(data));
+        return res.json(data);
+      } else {
+        const text = await response.text();
+        console.error("Referral list returned non-JSON:", contentType, text.substring(0, 200));
+        return res.status(500).json({ error: "API returned invalid response format" });
+      }
     } catch (error) {
       console.error("Referral list API error:", error);
       return res.status(500).json({ error: "Failed to fetch referral list" });
