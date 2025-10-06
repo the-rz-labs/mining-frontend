@@ -430,6 +430,91 @@ export default function Miners() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Investment Amount Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border border-white/20 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-neon-purple via-white to-neon-green bg-clip-text text-transparent">
+              Deploy {selectedPlan?.name}
+            </DialogTitle>
+            <DialogDescription className="text-white/70">
+              Enter the amount you want to invest in this miner
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedPlan && (
+            <div className="space-y-6 py-4">
+              {/* Miner Info */}
+              <div className="bg-white/5 rounded-lg p-4 space-y-2 border border-white/10">
+                <div className="flex justify-between">
+                  <span className="text-white/60">Token</span>
+                  <span className="font-semibold text-white">{selectedPlan.token_details[0]?.symbol}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Min Investment</span>
+                  <span className="font-semibold text-white">{selectedPlan.price} {selectedPlan.token_details[0]?.symbol}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Your Balance</span>
+                  <span className={`font-semibold ${selectedPlan.token_details[0]?.symbol === 'MGC' ? 'text-neon-purple' : 'text-mining-orange'}`}>
+                    {(selectedPlan.token_details[0]?.symbol === 'MGC' ? mgcBalance : rzBalance).toFixed(2)} {selectedPlan.token_details[0]?.symbol}
+                  </span>
+                </div>
+              </div>
+
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="investment-amount" className="text-white">Investment Amount</Label>
+                <Input
+                  id="investment-amount"
+                  type="number"
+                  placeholder={`Min: ${selectedPlan.price}`}
+                  value={investmentAmount}
+                  onChange={(e) => setInvestmentAmount(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-neon-purple"
+                  data-testid="input-investment-amount"
+                  min={selectedPlan.price}
+                  max={selectedPlan.token_details[0]?.symbol === 'MGC' ? mgcBalance : rzBalance}
+                  step="0.01"
+                />
+                <p className="text-xs text-white/50">
+                  You can invest between {selectedPlan.price} and {(selectedPlan.token_details[0]?.symbol === 'MGC' ? mgcBalance : rzBalance).toFixed(2)} {selectedPlan.token_details[0]?.symbol}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className="border-white/20 text-white hover:bg-white/10"
+              data-testid="button-cancel-deploy"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeployMiner}
+              disabled={deployMinerMutation.isPending}
+              className="bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/80 hover:to-purple-500 text-white"
+              data-testid="button-confirm-deploy"
+            >
+              {deployMinerMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deploying...
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 mr-2" />
+                  Deploy Miner
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
