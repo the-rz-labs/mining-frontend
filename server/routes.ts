@@ -637,9 +637,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const authHeader = req.headers.authorization;
       
       if (!authHeader) {
+        console.error("[REFERRAL LIST] No auth header");
         return res.status(401).json({ error: "Authorization header required" });
       }
 
+      console.log("[REFERRAL LIST] Fetching from external API...");
       const response = await fetch('https://api.coinmaining.game/api/users/referral/list/', {
         method: 'GET',
         headers: { 
@@ -650,25 +652,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const contentType = response.headers.get('content-type');
+      console.log("[REFERRAL LIST] Response status:", response.status, "Content-Type:", contentType);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Referral list API error:", response.status, errorText.substring(0, 200));
+        console.error("[REFERRAL LIST] API error:", response.status, errorText.substring(0, 300));
         return res.status(response.status).json({ error: "Failed to fetch referral list" });
       }
 
       // Check if response is JSON
       if (contentType && contentType.includes('application/json')) {
         const data = await response.json();
-        console.log("Referral list response:", JSON.stringify(data));
+        console.log("[REFERRAL LIST] Success! Got JSON data");
         return res.json(data);
       } else {
         const text = await response.text();
-        console.error("Referral list returned non-JSON:", contentType, text.substring(0, 200));
+        console.error("[REFERRAL LIST] Non-JSON response! Content-Type:", contentType);
+        console.error("[REFERRAL LIST] First 500 chars:", text.substring(0, 500));
         return res.status(500).json({ error: "API returned invalid response format" });
       }
     } catch (error) {
-      console.error("Referral list API error:", error);
+      console.error("[REFERRAL LIST] Exception:", error);
       return res.status(500).json({ error: "Failed to fetch referral list" });
     }
   });
