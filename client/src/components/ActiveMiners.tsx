@@ -88,11 +88,11 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
   // Calculate working time from seconds_active
   const workingTime = formatDuration(apiMiner.seconds_active);
   
-  // Calculate effective rate correctly: base_rate + (total_bonus_bp / 1000)
-  // Example: 1% base + 10 bp = 1% + 0.01% = 1.01%
+  // Calculate effective rate correctly: base_rate + (total_bonus_bp / 100)
+  // Example: 1% base + 1 bp = 1% + 0.01% = 1.01%
   const baseRate = parseFloat(apiMiner.base_rate_percent);
   const bonusBp = apiMiner.bonus_breakdown.total_bonus_bp;
-  const bonusPercentage = bonusBp / 1000; // 10 bp = 0.01%
+  const bonusPercentage = bonusBp / 100; // 1 bp = 0.01%
   const effectiveRate = baseRate + bonusPercentage;
   
   return {
