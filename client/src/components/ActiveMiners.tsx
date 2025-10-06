@@ -100,8 +100,8 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     refetchInterval: 5000 // Refresh every 5 seconds for live updates
   });
 
-  // Convert API data to component format
-  const miners = apiResponse?.miners?.map(convertApiMinerToMinerData) || [];
+  // Convert API data to component format (now includes video URLs from the miners API)
+  const activeMiners = apiResponse?.miners?.map(convertApiMinerToMinerData) || [];
 
   // Update current time for display purposes
   useEffect(() => {
@@ -111,30 +111,6 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
     
     return () => clearInterval(timer);
   }, []);
-
-  // Fetch all plans
-  const { data: plansResponse } = useQuery<{
-    count: number;
-    results: Array<{
-      id: number;
-      name: string;
-      level: number;
-      video_url: string;
-      image: string;
-      monthly_reward_percent: string;
-    }>;
-  }>({
-    queryKey: ['/api/plans'],
-  });
-
-  // Merge video URLs into miner data by matching plan level to plan id
-  const activeMiners = miners.map(miner => {
-    const matchingPlan = plansResponse?.results.find(plan => plan.level === miner.planLevel);
-    return {
-      ...miner,
-      videoUrl: matchingPlan?.video_url
-    };
-  });
 
   // Show loading state
   if (isLoading) {
