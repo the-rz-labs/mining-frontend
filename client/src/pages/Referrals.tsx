@@ -17,6 +17,7 @@ import {
 import { SiWhatsapp, SiFacebook, SiTelegram } from "react-icons/si";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 
 interface ReferralResponse {
   code: string;
@@ -24,86 +25,55 @@ interface ReferralResponse {
   created_at: string;
 }
 
-// Mock referral data
-const referralStats = {
-  totalReferrals: 5,
-  activeReferrals: 3,
-  bonusRate: 0.05 // 5 * 0.01%
-};
+interface ReferralListResponse {
+  total_referrals: number;
+  active_referrals: number;
+  per_active_bonus_percent: number;
+  items: {
+    user_id: number;
+    display_name: string;
+    username: string;
+    avatar_url: string;
+    invited_at: string;
+    is_active: boolean;
+    bonus_rate_percent: number;
+    bonus_rate_text: string;
+  }[];
+}
 
-const referralList = [
-  {
-    id: "1",
-    username: "Just Larry",
-    joinDate: "03.10.2023",
-    status: "Active",
-    avatar: "",
-    bonusContribution: 0.01
-  },
-  {
-    id: "2", 
-    username: "Space Monday",
-    joinDate: "30.09.2023",
-    status: "Active", 
-    avatar: "",
-    bonusContribution: 0.01
-  },
-  {
-    id: "3",
-    username: "Elen Flash",
-    joinDate: "05.11.2021",
-    status: "Inactive",
-    avatar: "",
-    bonusContribution: 0
-  },
-  {
-    id: "4",
-    username: "Sweet Botbert 21",
-    joinDate: "03.10.2020",
-    status: "Active",
-    avatar: "",
-    bonusContribution: 0.01
-  },
-  {
-    id: "5",
-    username: "John Boi :)",
-    joinDate: "03.10.2019",
-    status: "Active",
-    avatar: "",
-    bonusContribution: 0.01
-  }
-];
-
-function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
+function ReferralRow({ referral }: { referral: ReferralListResponse['items'][0] }) {
+  // Format date from ISO string
+  const formattedDate = format(new Date(referral.invited_at), 'dd.MM.yyyy');
+  
   return (
     <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200">
       <div className="flex items-center space-x-4">
         <Avatar className="w-10 h-10 border-2 border-neon-purple/30">
-          <AvatarImage src={referral.avatar} alt={referral.username} />
+          <AvatarImage src={referral.avatar_url} alt={referral.display_name} />
           <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-sm font-bold">
-            {referral.username.slice(0, 2).toUpperCase()}
+            {referral.display_name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-white font-medium">{referral.username}</p>
-          <p className="text-white/60 text-sm">{referral.joinDate}</p>
+          <p className="text-white font-medium">{referral.display_name}</p>
+          <p className="text-white/60 text-sm">{formattedDate}</p>
         </div>
       </div>
       
       <div className="flex items-center space-x-6">
         <div className="text-center">
           <p className="text-white/60 text-sm mb-1">Bonus Rate</p>
-          <p className="text-neon-green font-bold">+{referral.bonusContribution}%</p>
+          <p className="text-neon-green font-bold">{referral.bonus_rate_text}</p>
         </div>
         <Badge 
           className={`${
-            referral.status === 'Active' 
+            referral.is_active
               ? 'bg-neon-green/20 text-neon-green border-neon-green/50' 
               : 'bg-white/10 text-white/60 border-white/20'
           }`}
-          data-testid={`badge-status-${referral.id}`}
+          data-testid={`badge-status-${referral.user_id}`}
         >
-          {referral.status}
+          {referral.is_active ? 'Active' : 'Inactive'}
         </Badge>
       </div>
     </div>
@@ -113,9 +83,14 @@ function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
 export default function Referrals() {
   const { toast } = useToast();
   
-  // Fetch referral data from API
-  const { data: referralData, isLoading } = useQuery<ReferralResponse>({
+  // Fetch referral code from API
+  const { data: referralData, isLoading: isLoadingCode } = useQuery<ReferralResponse>({
     queryKey: ['/api/users/referral/my'],
+  });
+
+  // Fetch referral list from API
+  const { data: referralListData, isLoading: isLoadingList } = useQuery<ReferralListResponse>({
+    queryKey: ['/api/users/referral/list'],
   });
 
   const referralCode = referralData?.code || "";
@@ -123,6 +98,15 @@ export default function Referrals() {
   const referralLink = referralCode 
     ? `${window.location.origin}/sign-up?invite=${referralCode}`
     : "";
+  
+  // Use real data from API
+  const referralStats = {
+    totalReferrals: referralListData?.total_referrals || 0,
+    activeReferrals: referralListData?.active_referrals || 0,
+    bonusRate: (referralListData?.active_referrals || 0) * (referralListData?.per_active_bonus_percent || 0)
+  };
+  
+  const referralList = referralListData?.items || [];
   
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -166,7 +150,7 @@ export default function Referrals() {
   ];
 
   // Show loading state
-  if (isLoading) {
+  if (isLoadingCode || isLoadingList) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -362,13 +346,13 @@ export default function Referrals() {
             <CardContent>
               <div className="space-y-3">
                 {/* Referral List */}
-                <div className="space-y-2">
-                  {referralList.map((referral) => (
-                    <ReferralRow key={referral.id} referral={referral} />
-                  ))}
-                </div>
-                
-                {referralList.length === 0 && (
+                {referralList.length > 0 ? (
+                  <div className="space-y-2">
+                    {referralList.map((referral) => (
+                      <ReferralRow key={referral.user_id} referral={referral} />
+                    ))}
+                  </div>
+                ) : (
                   <div className="text-center py-12 text-white/60">
                     <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
                     <p className="text-lg font-medium mb-2">No referrals yet</p>
