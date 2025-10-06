@@ -624,6 +624,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const data = await response.json();
+      console.log("Referral API response:", JSON.stringify(data));
       return res.json(data);
     } catch (error) {
       console.error("Referral API error:", error);
