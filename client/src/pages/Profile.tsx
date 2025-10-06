@@ -155,8 +155,7 @@ export default function Profile() {
   const [showSettings, setShowSettings] = useState(false);
   const [settingsForm, setSettingsForm] = useState({
     username: "",
-    email: "",
-    avatar_key: ""
+    email: ""
   });
 
   // Fetch user profile from API
@@ -176,7 +175,7 @@ export default function Profile() {
 
   // Mutation for updating profile
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: { username: string; display_name: string; email: string; avatar_key: string }) => {
+    mutationFn: async (data: { username: string; display_name: string; email: string; avatar_key?: string }) => {
       return await apiRequest('PATCH', '/api/users/me/profile', data);
     },
     onSuccess: () => {
@@ -204,20 +203,26 @@ export default function Profile() {
     navigate("/sign-in");
   };
 
-  const handleAvatarSelect = (avatar: string) => {
-    setShowAvatarEdit(false);
-    toast({
-      title: "Avatar Updated! ✨",
-      description: "Your NFT avatar has been updated successfully.",
-    });
+  const handleAvatarSelect = async (avatarUrl: string) => {
+    // Extract avatar key from URL (e.g., "pr-1" from "https://coinmaining.game/profiles/pr-1.jpeg")
+    const avatarKey = avatarUrl.split('/').pop()?.replace('.jpeg', '') || '';
+    
+    if (profileData) {
+      updateProfileMutation.mutate({
+        username: profileData.user.username,
+        display_name: profileData.user.username,
+        email: profileData.user.email,
+        avatar_key: avatarKey
+      });
+      setShowAvatarEdit(false);
+    }
   };
 
   const handleOpenSettings = () => {
     if (profileData) {
       setSettingsForm({
         username: profileData.user.username,
-        email: profileData.user.email,
-        avatar_key: profileData.user.avatar
+        email: profileData.user.email
       });
       setShowSettings(true);
     }
@@ -228,8 +233,7 @@ export default function Profile() {
     updateProfileMutation.mutate({
       username: settingsForm.username,
       display_name: settingsForm.username, // Use same value for display_name
-      email: settingsForm.email,
-      avatar_key: settingsForm.avatar_key
+      email: settingsForm.email
     });
   };
 
@@ -486,22 +490,6 @@ export default function Profile() {
                   required
                   data-testid="input-email"
                 />
-              </div>
-
-              {/* Avatar Key Field */}
-              <div className="space-y-2">
-                <Label htmlFor="avatar_key" className="text-white/80">Avatar Key</Label>
-                <Input
-                  id="avatar_key"
-                  type="text"
-                  value={settingsForm.avatar_key}
-                  onChange={(e) => setSettingsForm({ ...settingsForm, avatar_key: e.target.value })}
-                  className="bg-white/5 border-white/20 text-white focus:border-neon-purple"
-                  placeholder="e.g., pr-32"
-                  required
-                  data-testid="input-avatar-key"
-                />
-                <p className="text-xs text-white/50">Avatar keys format: pr-1, pr-2, pr-32, etc.</p>
               </div>
             </div>
 
