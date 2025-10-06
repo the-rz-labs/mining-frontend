@@ -3,11 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Play, Loader2, Zap, TrendingUp } from "lucide-react";
 import { useReadContract, useAccount } from "wagmi";
 import { formatUnits } from "viem";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useState } from "react";
 
 interface TokenDetail {
   id: number;
@@ -58,6 +62,11 @@ const RZ_TOKEN_ADDRESS = "0x1B1052b305a30a9F4d77B53e0d09772a920c5A23";
 export default function Miners() {
   const { address } = useAccount();
   const { toast } = useToast();
+  
+  // State for investment dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [investmentAmount, setInvestmentAmount] = useState("");
 
   // Fetch MGC balance
   const { data: mgcBalanceData } = useReadContract({
@@ -128,7 +137,20 @@ export default function Miners() {
   });
 
   const handleStartMiner = (plan: Plan) => {
-    const tokenId = plan.token_details[0]?.id;
+    setSelectedPlan(plan);
+    setInvestmentAmount(plan.price.toString()); // Set default to minimum investment
+    setIsDialogOpen(true);
+  };
+
+  const handleDeployMiner = () => {
+    if (!selectedPlan) return;
+
+    const tokenId = selectedPlan.token_details[0]?.id;
+    const tokenSymbol = selectedPlan.token_details[0]?.symbol || '';
+    const userBalance = tokenSymbol === 'MGC' ? mgcBalance : rzBalance;
+    const amount = parseFloat(investmentAmount);
+
+    // Validation
     if (!tokenId) {
       toast({
         title: "Error",
@@ -138,11 +160,31 @@ export default function Miners() {
       return;
     }
 
+    if (isNaN(amount) || amount < selectedPlan.price) {
+      toast({
+        title: "Invalid Amount",
+        description: `Minimum investment is ${selectedPlan.price} ${tokenSymbol}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (amount > userBalance) {
+      toast({
+        title: "Insufficient Balance",
+        description: `Your balance is ${userBalance.toFixed(2)} ${tokenSymbol}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     deployMinerMutation.mutate({
-      miner: plan.id,
-      amount: plan.price.toString(),
+      miner: selectedPlan.id,
+      amount: amount.toString(),
       token: tokenId,
     });
+
+    setIsDialogOpen(false);
   };
 
   if (isLoading) {
@@ -247,7 +289,7 @@ export default function Miners() {
                 <span className="text-white font-semibold">{plan.power} TH/s</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white/60 text-sm">Price</span>
+                <span className="text-white/60 text-sm">Min Investment</span>
                 <span className={`font-bold ${isMGC ? 'text-neon-purple' : 'text-mining-orange'}`}>
                   {plan.price} {tokenSymbol}
                 </span>
