@@ -222,80 +222,75 @@ export default function DashboardHome() {
         </div>
 
 
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* Summary Cards - Horizontal Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 animate-slide-in-left">
           
-          {/* Token Balance Cards */}
-          <div className="lg:col-span-1 space-y-4 animate-slide-in-left">
-            
-            {/* MGC Balance */}
-            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-purple/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-purple-600/5"></div>
-              <CardContent className="p-6 relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-r from-neon-purple to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <Coins className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white">MGC</h3>
-                    </div>
+          {/* MGC Balance */}
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-purple/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-purple-600/5"></div>
+            <CardContent className="p-6 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-neon-purple to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Coins className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-white/60">Wallet Balance</p>
+                  <div>
+                    <p className="text-sm text-white/60">MGC Wallet</p>
                     <p className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-purple-400 bg-clip-text text-transparent" data-testid="balance-mgc">{displayMGCBalance}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* RZ Balance */}
-            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-mining-orange/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-mining-orange/10 to-orange-600/5"></div>
-              <CardContent className="p-6 relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-r from-mining-orange to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <Coins className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white">RZ</h3>
-                    </div>
+          {/* RZ Balance */}
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-mining-orange/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-mining-orange/10 to-orange-600/5"></div>
+            <CardContent className="p-6 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-mining-orange to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Coins className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-white/60">Wallet Balance</p>
+                  <div>
+                    <p className="text-sm text-white/60">RZ Wallet</p>
                     <p className="text-2xl font-bold bg-gradient-to-r from-mining-orange to-orange-400 bg-clip-text text-transparent" data-testid="balance-rz">{displayRZBalance}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Total Earnings Display */}
-            <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-green/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-green/10 to-emerald-600/5"></div>
-              <CardContent className="p-6 relative">
-                <h3 className="font-semibold text-white mb-4 flex items-center">
-                  <Trophy className="w-5 h-5 mr-2 text-neon-green" />
-                  Total Earned
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between py-2 border-b border-white/10">
-                    <span className="text-white/70 font-medium">Total MGC</span>
-                    <span className="text-neon-purple font-bold text-lg" data-testid="total-earned-mgc">{totalEarnedMGC.toFixed(6)} MGC</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-white/70 font-medium">Total RZ</span>
-                    <span className="text-mining-orange font-bold text-lg" data-testid="total-earned-rz">{totalEarnedRZ.toFixed(6)} RZ</span>
+          {/* Total Earnings Display */}
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-lg hover:shadow-neon-green/20 relative overflow-hidden md:col-span-2 lg:col-span-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-neon-green/10 to-emerald-600/5"></div>
+            <CardContent className="p-6 relative">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm text-white/60 flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-neon-green" />
+                    Total Earned
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <span className="text-neon-purple font-bold text-lg" data-testid="total-earned-mgc">{totalEarnedMGC.toFixed(4)}</span>
+                      <span className="text-neon-purple/60 text-xs ml-1">MGC</span>
+                    </div>
+                    <div className="h-6 w-px bg-white/20"></div>
+                    <div>
+                      <span className="text-mining-orange font-bold text-lg" data-testid="total-earned-rz">{totalEarnedRZ.toFixed(4)}</span>
+                      <span className="text-mining-orange/60 text-xs ml-1">RZ</span>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Active Miners Section */}
-          <div className="lg:col-span-3 animate-slide-in-right">
-            <ActiveMiners mgcBalance={displayMGCBalance} rzBalance={displayRZBalance} />
-          </div>
+        {/* Active Miners Section - Full Width */}
+        <div className="animate-slide-in-right">
+          <ActiveMiners mgcBalance={displayMGCBalance} rzBalance={displayRZBalance} />
         </div>
         
       </div>
