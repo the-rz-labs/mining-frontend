@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
-import { ChevronLeft, Shield, Users, ArrowRight, Loader2, Wallet, Image, CheckCircle } from "lucide-react";
+import { ChevronLeft, Shield, Users, ArrowRight, Loader2, Wallet, Image, CheckCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -494,15 +494,29 @@ export default function SignUp() {
                     name="invite_code"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white/80 font-medium">Invite Code (Optional)</FormLabel>
+                        <FormLabel className="text-white/80 font-medium">
+                          Invite Code (Optional)
+                          {inviteCode && (
+                            <span className="ml-2 text-xs text-neon-green flex items-center gap-1">
+                              <CheckCircle className="w-3 h-3" />
+                              Pre-filled from invite link
+                            </span>
+                          )}
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
                             <Input
                               {...field}
                               placeholder="Enter invite code if you have one"
-                              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300 group-hover:bg-white/10"
+                              className={`h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl focus:ring-2 focus:ring-neon-green/50 focus:border-transparent transition-all duration-300 ${
+                                inviteCode ? 'bg-neon-green/10 border-neon-green/30 cursor-not-allowed' : 'group-hover:bg-white/10'
+                              }`}
+                              disabled={!!inviteCode}
                               data-testid="input-invite-code"
                             />
+                            {inviteCode && (
+                              <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neon-green/60" />
+                            )}
                           </div>
                         </FormControl>
                         <FormMessage className="text-red-400" />
