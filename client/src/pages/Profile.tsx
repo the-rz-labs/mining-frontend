@@ -149,6 +149,11 @@ export default function Profile() {
     queryKey: ['/api/users/me'],
   });
 
+  // Fetch miners data for mining power
+  const { data: minersData } = useQuery<{ total_power: number; total_staked: string; active_miners: number }>({
+    queryKey: ['/api/stakes/miners'],
+  });
+
   const handleLogout = () => {
     toast({
       title: "Logged out successfully",
@@ -199,8 +204,8 @@ export default function Profile() {
   const MAX_REFERRALS = 50;
   const MAX_BONUS_RATE = 1.5;
 
-  // Current values (will be replaced by API data in the future)
-  const currentMiningPower = 0; // TODO: Get from API
+  // Current values from API data
+  const currentMiningPower = minersData?.total_power || 0;
   const currentActiveMiners = totalStakes;
   const currentReferrals = activeReferrals;
   const currentBonusRate = bonusRate;
