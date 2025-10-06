@@ -16,6 +16,13 @@ import {
 } from "lucide-react";
 import { SiWhatsapp, SiFacebook, SiTelegram } from "react-icons/si";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+
+interface ReferralResponse {
+  code: string;
+  url: string;
+  created_at: string;
+}
 
 // Mock referral data
 const referralStats = {
@@ -104,9 +111,15 @@ function ReferralRow({ referral }: { referral: typeof referralList[0] }) {
 }
 
 export default function Referrals() {
-  const [referralCode] = useState("CRYPTO2024MINE");
-  const referralLink = `https://ranking-mining.com/ref/${referralCode}`;
   const { toast } = useToast();
+  
+  // Fetch referral data from API
+  const { data: referralData, isLoading } = useQuery<ReferralResponse>({
+    queryKey: ['/api/users/referral/my'],
+  });
+
+  const referralCode = referralData?.code || "";
+  const referralLink = referralData?.url || "";
   
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -148,6 +161,17 @@ export default function Referrals() {
       testId: "button-share-facebook"
     }
   ];
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-white/60">Loading referral data...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
