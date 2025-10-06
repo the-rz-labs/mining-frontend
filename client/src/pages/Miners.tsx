@@ -163,7 +163,7 @@ export default function Miners() {
     if (isNaN(amount) || amount < selectedPlan.price) {
       toast({
         title: "Invalid Amount",
-        description: `Minimum investment is ${selectedPlan.price} ${tokenSymbol}`,
+        description: `Minimum balance required is ${selectedPlan.price} ${tokenSymbol}`,
         variant: "destructive",
       });
       return;
@@ -289,7 +289,7 @@ export default function Miners() {
                 <span className="text-white font-semibold">{plan.power} TH/s</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white/60 text-sm">Min Investment</span>
+                <span className="text-white/60 text-sm">Min Balance</span>
                 <span className={`font-bold ${isMGC ? 'text-neon-purple' : 'text-mining-orange'}`}>
                   {plan.price} {tokenSymbol}
                 </span>
@@ -452,7 +452,7 @@ export default function Miners() {
                   <span className="font-semibold text-white">{selectedPlan.token_details[0]?.symbol}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/60">Min Investment</span>
+                  <span className="text-white/60">Min Balance</span>
                   <span className="font-semibold text-white">{selectedPlan.price} {selectedPlan.token_details[0]?.symbol}</span>
                 </div>
                 <div className="flex justify-between">
