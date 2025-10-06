@@ -21,6 +21,7 @@ interface MinerData {
   baseRate: number;
   effectiveRate: number;
   bonusMultiplier: number;
+  bonusPercentage: number;
   bonusBreakdown: {
     referral_active_count: number;
     referral_bonus_bp: number;
@@ -91,7 +92,8 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
   // Example: 1% base + 10 bp = 1% + 0.01% = 1.01%
   const baseRate = parseFloat(apiMiner.base_rate_percent);
   const bonusBp = apiMiner.bonus_breakdown.total_bonus_bp;
-  const effectiveRate = baseRate + (bonusBp / 1000);
+  const bonusPercentage = bonusBp / 1000; // 10 bp = 0.01%
+  const effectiveRate = baseRate + bonusPercentage;
   
   return {
     id: apiMiner.miner_id,
@@ -101,6 +103,7 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     baseRate: baseRate,
     effectiveRate: effectiveRate,
     bonusMultiplier: parseFloat(apiMiner.bonus_multiplier),
+    bonusPercentage: bonusPercentage,
     bonusBreakdown: apiMiner.bonus_breakdown,
     tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
     workingTime,
@@ -200,7 +203,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                               {miner.effectiveRate}% Rate
                               {miner.bonusMultiplier > 1 && (
                                 <span className="ml-2 text-xs text-neon-green">
-                                  +{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%
+                                  +{miner.bonusPercentage.toFixed(2)}%
                                 </span>
                               )}
                             </div>
@@ -251,7 +254,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                               <div className="text-white font-bold">
                                 {miner.effectiveRate}%
                                 <span className="ml-1 text-xs text-neon-green">
-                                  (+{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%)
+                                  (+{miner.bonusPercentage.toFixed(2)}%)
                                 </span>
                               </div>
                               <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
@@ -390,7 +393,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                                 {miner.effectiveRate}% Mining Rate
                                 {miner.bonusMultiplier > 1 && (
                                   <span className="ml-2 text-sm text-neon-green">
-                                    +{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%
+                                    +{miner.bonusPercentage.toFixed(2)}%
                                   </span>
                                 )}
                               </div>
@@ -441,7 +444,7 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                                 <div className="text-white font-bold">
                                   {miner.effectiveRate}%
                                   <span className="ml-1 text-xs text-neon-green">
-                                    (+{((miner.bonusMultiplier - 1) * 100).toFixed(1)}%)
+                                    (+{miner.bonusPercentage.toFixed(2)}%)
                                   </span>
                                 </div>
                                 <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
