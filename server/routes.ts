@@ -617,8 +617,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await fetch('https://api.coinmaining.game/api/users/referral/my', {
         method: 'GET',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': authHeader
+          'Accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
         }
       });
       
