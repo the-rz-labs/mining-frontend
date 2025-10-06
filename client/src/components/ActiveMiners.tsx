@@ -62,6 +62,7 @@ interface ApiMinerResponse {
     active_since: string;
     seconds_active: number;
     accrued_reward_until_now: string;
+    video_url: string;
   }[];
 }
 
@@ -85,7 +86,8 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     workingTime,
     power: apiMiner.power,
     earningPerSecond: parseFloat(apiMiner.earning_per_second),
-    planLevel: apiMiner.plan_level
+    planLevel: apiMiner.plan_level,
+    videoUrl: apiMiner.video_url
   };
 }
 
