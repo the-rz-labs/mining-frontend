@@ -30,6 +30,7 @@ interface MinerData {
   tokensEarned: number;
   workingTime: string;
   power: number;
+  stakedAmount: number;
   earningPerSecond: number;
   planLevel: number;
   videoUrl?: string;
@@ -85,6 +86,7 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     tokensEarned: parseFloat(apiMiner.accrued_reward_until_now),
     workingTime,
     power: apiMiner.power,
+    stakedAmount: parseFloat(apiMiner.staked_amount),
     earningPerSecond: parseFloat(apiMiner.earning_per_second),
     planLevel: apiMiner.plan_level,
     videoUrl: apiMiner.video_url
@@ -239,6 +241,22 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                             <span className="text-white font-bold">{miner.baseRate}%</span>
                           )}
                         </div>
+                      </div>
+
+                      <div className="flex items-center justify-between py-2 border-b border-white/10">
+                        <div className="flex items-center gap-3">
+                          <Coins className="w-4 h-4 text-mining-orange" />
+                          <span className="text-white/80 font-medium">Staked Amount</span>
+                        </div>
+                        <span className="text-white font-bold">{miner.stakedAmount.toFixed(2)} {miner.token}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between py-2 border-b border-white/10">
+                        <div className="flex items-center gap-3">
+                          <Zap className="w-4 h-4 text-neon-green" />
+                          <span className="text-white/80 font-medium">Hashrate</span>
+                        </div>
+                        <span className="text-white font-bold">{miner.power} TH/s</span>
                       </div>
 
                       <div className={`rounded-xl p-4 relative overflow-hidden ${
@@ -413,6 +431,22 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                               <span className="text-white font-bold">{miner.baseRate}%</span>
                             )}
                           </div>
+                        </div>
+
+                        <div className="flex items-center justify-between py-3 border-b border-white/20">
+                          <div className="flex items-center gap-2">
+                            <Coins className="w-4 h-4 text-mining-orange" />
+                            <span className="text-white/80 font-medium">Staked Amount</span>
+                          </div>
+                          <span className="text-white font-bold">{miner.stakedAmount.toFixed(2)} {miner.token}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-3 border-b border-white/20">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-neon-green" />
+                            <span className="text-white/80 font-medium">Hashrate</span>
+                          </div>
+                          <span className="text-white font-bold">{miner.power} TH/s</span>
                         </div>
 
                         <div className={`rounded-lg p-4 relative overflow-hidden ${
