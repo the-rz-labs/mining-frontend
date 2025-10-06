@@ -338,7 +338,7 @@ export default function Miners() {
   return (
     <div className="space-y-10 px-2">
       {/* Header */}
-      <div className="relative">
+      <div className="relative px-4">
         <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/20 via-transparent to-mining-orange/20 blur-3xl"></div>
         <div className="relative">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-neon-purple via-white to-mining-orange bg-clip-text text-transparent mb-3">
