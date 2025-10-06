@@ -238,7 +238,7 @@ export default function Miners() {
 
         <CardContent className="p-0 relative z-10">
           {/* Image Section */}
-          <div className="relative h-48 overflow-hidden">
+          <div className="relative h-64 overflow-hidden">
             <img
               src={plan.image}
               alt={plan.name}
