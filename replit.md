@@ -3,9 +3,20 @@
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
 ## Recent Updates (October 6, 2025)
+- **Stop Miner Functionality**: Implemented ability to stop active miners
+  - Backend proxy route at `/api/stakes/stake/:id` (PATCH) calling `https://api.coinmaining.game/api/stakes/stake/{id}/`
+  - Uses `stake_id` from miners API response to identify specific stake
+  - Sends `{ is_active: false }` to stop the miner
+  - Updated `ApiMinerResponse` and `MinerData` interfaces to include `stake_id` field
+  - Single "Stop" button replaces previous "Stop & Claim" and "Claim Now" buttons
+  - Button shows loading state with spinner and "Stopping..." text
+  - Success toast: "Miner Stopped Successfully!"
+  - Auto-refresh after stopping: invalidates stakes/miners and profile queries
+  
 - **Profile Settings Dialog**: Implemented user profile editing functionality
   - Backend proxy route at `/api/users/me/profile` (PATCH) calling `https://api.coinmaining.game/api/users/me/profile/`
-  - Users can update username, email, and avatar key through Settings dialog
+  - Settings dialog now only includes username and email fields (avatar removed)
+  - Avatar changes handled via existing avatar selection modal (camera button)
   - Form validation with success/error toast notifications
   - Auto-refresh profile data after successful update using query invalidation
   - Mobile-responsive dialog with cyberpunk styling

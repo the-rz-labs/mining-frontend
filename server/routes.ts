@@ -919,6 +919,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for stopping a miner
+  app.patch("/api/stakes/stake/:id", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const { id } = req.params;
+      const { is_active } = req.body;
+
+      if (is_active === undefined) {
+        return res.status(400).json({ error: "Missing required field: is_active" });
+      }
+
+      const response = await fetch(`https://api.coinmaining.game/api/stakes/stake/${id}/`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({
+          is_active
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Stop miner API error:", response.status, data);
+        return res.status(response.status).json(data);
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Stop miner proxy error:", error);
+      res.status(500).json({ error: "Failed to stop miner" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

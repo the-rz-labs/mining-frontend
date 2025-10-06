@@ -1,20 +1,24 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Play, 
   Activity,
   Clock,
   TrendingUp,
   Coins,
-  Zap
+  Zap,
+  StopCircle
 } from "lucide-react";
 
 interface MinerData {
   id: number;
+  stakeId: number;
   name: string;
   token: string;
   status: boolean;
@@ -43,6 +47,7 @@ interface ApiMinerResponse {
   total_staked: string;
   active_miners: number;
   miners: {
+    stake_id: number;
     miner_id: number;
     miner_name: string;
     is_online: boolean;
@@ -97,6 +102,7 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
   
   return {
     id: apiMiner.miner_id,
+    stakeId: apiMiner.stake_id,
     name: apiMiner.miner_name,
     token: apiMiner.symbol,
     status: apiMiner.is_online,
@@ -117,6 +123,29 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
 
 export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rzBalance: string }) {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { toast } = useToast();
+  
+  // Mutation for stopping a miner
+  const stopMinerMutation = useMutation({
+    mutationFn: async (stakeId: number) => {
+      return await apiRequest('PATCH', `/api/stakes/stake/${stakeId}`, { is_active: false });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/stakes/miners'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/me'] });
+      toast({
+        title: "Miner Stopped Successfully!",
+        description: "Your miner has been stopped and rewards are ready to claim.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to Stop Miner",
+        description: error?.message || "An error occurred while stopping the miner",
+        variant: "destructive",
+      });
+    },
+  });
   
   // Fetch miners data from API
   const { data: apiResponse, isLoading } = useQuery<ApiMinerResponse>({
@@ -337,20 +366,25 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         </div>
                       </div>
                       
-                      {/* Action Buttons */}
-                      <div className="grid grid-cols-1 gap-3 mt-4">
+                      {/* Action Button */}
+                      <div className="mt-4">
                         <Button
-                          className="h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02]"
-                          data-testid={`button-stop-claim-${miner.token.toLowerCase()}`}
+                          onClick={() => stopMinerMutation.mutate(miner.stakeId)}
+                          disabled={stopMinerMutation.isPending}
+                          className="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                          data-testid={`button-stop-${miner.token.toLowerCase()}`}
                         >
-                          Stop & Claim
-                        </Button>
-                        
-                        <Button
-                          className="h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
-                          data-testid={`button-claim-${miner.token.toLowerCase()}`}
-                        >
-                          Claim Now
+                          {stopMinerMutation.isPending ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Stopping...
+                            </>
+                          ) : (
+                            <>
+                              <StopCircle className="w-5 h-5 mr-2" />
+                              Stop
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -523,20 +557,25 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         </div>
                       </div>
                       
-                      {/* Action Buttons - Desktop */}
-                      <div className="space-y-3 mt-6">
+                      {/* Action Button - Desktop */}
+                      <div className="mt-6">
                         <Button
-                          className="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02]"
-                          data-testid={`button-stop-claim-${miner.token.toLowerCase()}`}
+                          onClick={() => stopMinerMutation.mutate(miner.stakeId)}
+                          disabled={stopMinerMutation.isPending}
+                          className="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                          data-testid={`button-stop-${miner.token.toLowerCase()}`}
                         >
-                          Stop & Claim
-                        </Button>
-                        
-                        <Button
-                          className="w-full h-12 bg-gradient-to-r from-neon-purple to-purple-500 hover:from-neon-purple/80 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg shadow-neon-purple/30 transition-all duration-300 hover:scale-[1.02]"
-                          data-testid={`button-claim-${miner.token.toLowerCase()}`}
-                        >
-                          Claim Now
+                          {stopMinerMutation.isPending ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Stopping...
+                            </>
+                          ) : (
+                            <>
+                              <StopCircle className="w-5 h-5 mr-2" />
+                              Stop
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
