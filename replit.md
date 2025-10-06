@@ -3,6 +3,30 @@
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
 ## Recent Updates (October 6, 2025)
+- **Profile Settings Dialog**: Implemented user profile editing functionality
+  - Backend proxy route at `/api/users/me/profile` (PATCH) calling `https://api.coinmaining.game/api/users/me/profile/`
+  - Users can update username, email, and avatar key through Settings dialog
+  - Form validation with success/error toast notifications
+  - Auto-refresh profile data after successful update using query invalidation
+  - Mobile-responsive dialog with cyberpunk styling
+  
+- **Profile Page Mobile Responsiveness**: Enhanced mobile view for better UX
+  - Profile header stacks vertically on mobile, horizontal on desktop
+  - Avatar sizes: 80px (mobile) → 128px (desktop)
+  - Action buttons row layout on mobile, column on desktop  
+  - Achievement badges and stats grid optimized for mobile screens
+  - Reduced padding and gaps for better mobile space utilization
+  
+- **Mining Rate Calculation Fix**: Corrected bonus percentage display in active miners
+  - Fixed basis points calculation: divides by 100 instead of 1000
+  - Example: 1 bp = 0.01%, so 1% base + 1 bp = 1.01%
+  - Displays accurate bonus rate: "1.01% (+0.01%)" with base rate shown below
+  
+- **Referral Stats Integration**: Integrated referral stats API for accurate counts
+  - Backend proxy route at `/api/users/referral/stats` 
+  - Profile page now fetches total_referrals from dedicated stats endpoint
+  - Displays correct referral count in Profile stats card
+  
 - **ActiveMiners Component Refactoring**: Optimized API calls and simplified code
   - Removed redundant `/api/plans` query for video URLs
   - Miners API (`/api/stakes/miners`) now directly provides `video_url` field in response

@@ -769,6 +769,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy route for updating user profile
+  app.patch("/api/users/me/profile", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/users/me/profile/', {
+        method: 'PATCH',
+        headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify(req.body)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Update profile API error:", response.status, errorText.substring(0, 200));
+        return res.status(response.status).json({ error: "Failed to update profile" });
+      }
+
+      const data = await response.json();
+      return res.json(data);
+    } catch (error) {
+      console.error("Update profile API error:", error);
+      return res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
   // Proxy route for user miners/stakes data
   app.get("/api/stakes/miners", async (req, res) => {
     try {

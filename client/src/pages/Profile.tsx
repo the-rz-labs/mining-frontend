@@ -23,7 +23,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { AvatarSelection } from "@/components/AvatarSelection";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const BASE_URL = "https://coinmaining.game";
 
@@ -143,6 +152,12 @@ export default function Profile() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [showAvatarEdit, setShowAvatarEdit] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settingsForm, setSettingsForm] = useState({
+    username: "",
+    email: "",
+    avatar_key: ""
+  });
 
   // Fetch user profile from API
   const { data: profileData, isLoading } = useQuery<UserProfileResponse>({
@@ -159,6 +174,28 @@ export default function Profile() {
     queryKey: ['/api/users/referral/stats'],
   });
 
+  // Mutation for updating profile
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: { username: string; display_name: string; email: string; avatar_key: string }) => {
+      return await apiRequest('PATCH', '/api/users/me/profile', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/users/me'] });
+      setShowSettings(false);
+      toast({
+        title: "Profile Updated! ✨",
+        description: "Your profile has been updated successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleLogout = () => {
     toast({
       title: "Logged out successfully",
@@ -172,6 +209,27 @@ export default function Profile() {
     toast({
       title: "Avatar Updated! ✨",
       description: "Your NFT avatar has been updated successfully.",
+    });
+  };
+
+  const handleOpenSettings = () => {
+    if (profileData) {
+      setSettingsForm({
+        username: profileData.user.username,
+        email: profileData.user.email,
+        avatar_key: profileData.user.avatar
+      });
+      setShowSettings(true);
+    }
+  };
+
+  const handleSettingsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfileMutation.mutate({
+      username: settingsForm.username,
+      display_name: settingsForm.username, // Use same value for display_name
+      email: settingsForm.email,
+      avatar_key: settingsForm.avatar_key
     });
   };
 
@@ -291,6 +349,7 @@ export default function Profile() {
           <Button 
             variant="outline" 
             className="bg-white/5 border-white/20 text-white hover:bg-white/10 flex-1 md:flex-none text-sm md:text-base"
+            onClick={handleOpenSettings}
             data-testid="button-settings"
           >
             <Settings className="w-3 h-3 md:w-4 md:h-4 mr-2" />
@@ -390,6 +449,85 @@ export default function Profile() {
           </div>
         </div>
       )}
+
+      {/* Settings Dialog */}
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="bg-slate-900 border border-white/20 text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Profile Settings</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSettingsSubmit} className="space-y-6">
+            <div className="space-y-4">
+              {/* Username Field */}
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-white/80">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  value={settingsForm.username}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, username: e.target.value })}
+                  className="bg-white/5 border-white/20 text-white focus:border-neon-purple"
+                  placeholder="Enter username"
+                  required
+                  data-testid="input-username"
+                />
+              </div>
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-white/80">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={settingsForm.email}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
+                  className="bg-white/5 border-white/20 text-white focus:border-neon-purple"
+                  placeholder="Enter email"
+                  required
+                  data-testid="input-email"
+                />
+              </div>
+
+              {/* Avatar Key Field */}
+              <div className="space-y-2">
+                <Label htmlFor="avatar_key" className="text-white/80">Avatar Key</Label>
+                <Input
+                  id="avatar_key"
+                  type="text"
+                  value={settingsForm.avatar_key}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, avatar_key: e.target.value })}
+                  className="bg-white/5 border-white/20 text-white focus:border-neon-purple"
+                  placeholder="e.g., pr-32"
+                  required
+                  data-testid="input-avatar-key"
+                />
+                <p className="text-xs text-white/50">Avatar keys format: pr-1, pr-2, pr-32, etc.</p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowSettings(false)}
+                className="flex-1 bg-white/5 border-white/20 text-white hover:bg-white/10"
+                data-testid="button-cancel-settings"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateProfileMutation.isPending}
+                className="flex-1 bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/90 hover:to-purple-600/90 text-white"
+                data-testid="button-save-settings"
+              >
+                {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
