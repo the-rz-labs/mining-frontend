@@ -345,7 +345,7 @@ export default function Profile() {
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-white/60 text-sm">{stat.progress}%</span>
+                <span className="text-white/60 text-sm">{stat.progress.toFixed(1)}%</span>
               </div>
               <div className="space-y-2">
                 <div>
