@@ -9,7 +9,8 @@ import {
   Activity,
   Clock,
   TrendingUp,
-  Coins
+  Coins,
+  Zap
 } from "lucide-react";
 
 interface MinerData {
