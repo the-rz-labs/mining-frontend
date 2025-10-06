@@ -119,7 +119,10 @@ export default function Referrals() {
   });
 
   const referralCode = referralData?.code || "";
-  const referralLink = referralData?.url || "";
+  // Generate our own referral link using the current domain
+  const referralLink = referralCode 
+    ? `${window.location.origin}/sign-up?invite=${referralCode}`
+    : "";
   
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
