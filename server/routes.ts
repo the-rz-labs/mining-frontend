@@ -601,19 +601,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Proxy route for user referral data
   app.get("/api/users/referral/my", async (req, res) => {
-    console.log("=== REFERRAL ROUTE HIT ===");
-    console.log("Auth header:", req.headers.authorization?.substring(0, 20) + "...");
-    
     try {
-      // Get the Authorization header from the request
       const authHeader = req.headers.authorization;
       
       if (!authHeader) {
-        console.log("No auth header, returning 401");
         return res.status(401).json({ error: "Authorization header required" });
       }
 
-      console.log("Fetching from external API...");
       const response = await fetch('https://api.coinmaining.game/api/users/referral/my', {
         method: 'GET',
         headers: { 
@@ -623,8 +617,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      console.log("External API response status:", response.status);
-      
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Referral API error:", response.status, errorText);
@@ -632,16 +624,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const data = await response.json();
-      console.log("Referral API response data:", JSON.stringify(data));
-      res.setHeader('Content-Type', 'application/json');
       return res.json(data);
     } catch (error) {
       console.error("Referral API error:", error);
       return res.status(500).json({ error: "Failed to fetch referral data" });
     }
   });
-  
-  console.log("✓ Referral route registered at /api/users/referral/my");
 
   // Proxy route for user profile data
   app.get("/api/users/me", async (req, res) => {
