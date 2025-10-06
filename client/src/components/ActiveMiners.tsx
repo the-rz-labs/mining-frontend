@@ -79,7 +79,7 @@ function formatDuration(seconds: number): string {
   if (hours > 0) parts.push(`${hours}h`);
   if (minutes > 0 || parts.length === 0) parts.push(`${minutes}m`);
   
-  return parts.join(', ');
+  return parts.join(' ');
 }
 
 // Convert API miner data to component format
