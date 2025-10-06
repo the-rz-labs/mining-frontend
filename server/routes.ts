@@ -640,7 +640,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Authorization header required" });
       }
 
-      const response = await fetch('https://api.coinmaining.game/api/users/referral/list/', {
+      const response = await fetch('https://api.coinmaining.game/api/users/referral/list', {
         method: 'GET',
         headers: { 
           'Accept': 'application/json',
