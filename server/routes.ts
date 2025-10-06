@@ -633,48 +633,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Proxy route for referral list
   app.get("/api/users/referral/list", async (req, res) => {
-    try {
-      const authHeader = req.headers.authorization;
-      
-      if (!authHeader) {
-        console.error("[REFERRAL LIST] No auth header");
-        return res.status(401).json({ error: "Authorization header required" });
-      }
-
-      console.log("[REFERRAL LIST] Fetching from external API...");
-      const response = await fetch('https://api.coinmaining.game/api/users/referral/list/', {
-        method: 'GET',
-        headers: { 
-          'Accept': 'application/json',
-          'Authorization': authHeader,
-          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+    // Return mock data for now to test if route works
+    return res.json({
+      total_referrals: 2,
+      active_referrals: 0,
+      per_active_bonus_percent: 0.1,
+      items: [
+        {
+          user_id: 23,
+          display_name: "Test User 1",
+          username: "test_user_1",
+          avatar_url: "",
+          invited_at: "2025-10-06T17:28:00.021860Z",
+          is_active: false,
+          bonus_rate_percent: 0,
+          bonus_rate_text: "+0.00%"
+        },
+        {
+          user_id: 22,
+          display_name: "Test User 2",
+          username: "test_user_2",
+          avatar_url: "",
+          invited_at: "2025-10-05T16:56:09.416618Z",
+          is_active: false,
+          bonus_rate_percent: 0,
+          bonus_rate_text: "+0.00%"
         }
-      });
-      
-      const contentType = response.headers.get('content-type');
-      console.log("[REFERRAL LIST] Response status:", response.status, "Content-Type:", contentType);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("[REFERRAL LIST] API error:", response.status, errorText.substring(0, 300));
-        return res.status(response.status).json({ error: "Failed to fetch referral list" });
-      }
-
-      // Check if response is JSON
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        console.log("[REFERRAL LIST] Success! Got JSON data");
-        return res.json(data);
-      } else {
-        const text = await response.text();
-        console.error("[REFERRAL LIST] Non-JSON response! Content-Type:", contentType);
-        console.error("[REFERRAL LIST] First 500 chars:", text.substring(0, 500));
-        return res.status(500).json({ error: "API returned invalid response format" });
-      }
-    } catch (error) {
-      console.error("[REFERRAL LIST] Exception:", error);
-      return res.status(500).json({ error: "Failed to fetch referral list" });
-    }
+      ]
+    });
   });
 
   // Proxy route for user profile data
