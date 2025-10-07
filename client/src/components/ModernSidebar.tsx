@@ -12,16 +12,16 @@ const navigationItems = [
     testId: "link-nav-dashboard",
   },
   {
-    title: "Miners",
-    href: "/app/miners",
-    icon: Zap,
-    testId: "link-nav-miners",
-  },
-  {
     title: "Profile", 
     href: "/app/profile",
     icon: User,
     testId: "link-nav-profile",
+  },
+  {
+    title: "Miners",
+    href: "/app/miners",
+    icon: Zap,
+    testId: "link-nav-miners",
   },
   {
     title: "Achievements",
