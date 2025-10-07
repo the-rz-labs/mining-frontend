@@ -46,31 +46,31 @@ function ReferralRow({ referral }: { referral: ReferralListResponse['items'][0] 
   const formattedDate = format(new Date(referral.invited_at), 'dd.MM.yyyy');
   
   return (
-    <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200">
-      <div className="flex items-center space-x-4">
-        <Avatar className="w-10 h-10 border-2 border-neon-purple/30">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200 gap-3">
+      <div className="flex items-center space-x-3 sm:space-x-4">
+        <Avatar className="w-10 h-10 sm:w-10 sm:h-10 border-2 border-neon-purple/30">
           <AvatarImage src={referral.avatar_url} alt={referral.display_name} />
           <AvatarFallback className="bg-gradient-to-br from-neon-purple/30 to-neon-green/30 text-white text-sm font-bold">
             {referral.display_name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <p className="text-white font-medium">{referral.display_name}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-medium truncate">{referral.display_name}</p>
           <p className="text-white/60 text-sm">{formattedDate}</p>
         </div>
       </div>
       
-      <div className="flex items-center space-x-6">
-        <div className="text-center">
-          <p className="text-white/60 text-sm mb-1">Bonus Rate</p>
-          <p className="text-neon-green font-bold">{referral.bonus_rate_text}</p>
+      <div className="flex items-center justify-between sm:justify-end sm:space-x-6 gap-3">
+        <div className="text-left sm:text-center">
+          <p className="text-white/60 text-xs sm:text-sm mb-1">Bonus Rate</p>
+          <p className="text-neon-green font-bold text-sm sm:text-base">{referral.bonus_rate_text}</p>
         </div>
         <Badge 
           className={`${
             referral.is_active
               ? 'bg-neon-green/20 text-neon-green border-neon-green/50' 
               : 'bg-white/10 text-white/60 border-white/20'
-          }`}
+          } text-xs sm:text-sm px-2 sm:px-3`}
           data-testid={`badge-status-${referral.user_id}`}
         >
           {referral.is_active ? 'Active' : 'Inactive'}
