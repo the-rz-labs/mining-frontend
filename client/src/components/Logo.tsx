@@ -13,12 +13,12 @@ export default function Logo() {
         />
       </div>
       
-      {/* Brand text */}
-      <div className="flex flex-col">
-        <span className="text-xl font-bold bg-gradient-to-r from-mining-orange to-neon-green bg-clip-text text-transparent font-mono tracking-wider">
+      {/* Brand text - compact for header */}
+      <div className="flex flex-col justify-center -space-y-0.5">
+        <span className="text-base font-bold bg-gradient-to-r from-mining-orange to-neon-green bg-clip-text text-transparent font-mono tracking-wider leading-tight">
           MINING
         </span>
-        <span className="text-xs text-muted-foreground font-light tracking-widest">
+        <span className="text-[10px] text-muted-foreground font-light tracking-widest leading-tight">
           RZ PLATFORM
         </span>
       </div>
