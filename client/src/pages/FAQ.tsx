@@ -47,35 +47,35 @@ const faqs = {
   "getting-started": [
     {
       question: "How do I start mining on the Ranking platform?",
-      answer: "To start mining, first create an account and complete the verification process. Then navigate to the Dashboard, select a mining plan that suits your needs, and configure your mining settings. Your mining will begin automatically once payment is confirmed."
+      answer: "You can simply login to your account, choose a plan and start it if you have enough tokens in your wallet. We do not get your money, we just check your balance to verify you have sufficient funds."
     },
     {
       question: "What are MGC and RZ tokens?",
-      answer: "MGC (Mining Gold Coin) and RZ (Ranking Zone) are the two primary tokens on our platform. MGC is earned through mining operations and can be traded or withdrawn. RZ tokens are earned through staking and referral activities, providing additional rewards and platform benefits."
+      answer: "The MGC (Meta Games Coin) token is a specialized digital currency. It is a multifaceted tool within our ecosystem, allowing gamers to earn, trade, and utilize tokens through various gaming activities."
     },
     {
       question: "Do I need special hardware to mine?",
-      answer: "No, you don't need any physical hardware. Our platform uses cloud mining technology, meaning we provide all the necessary mining equipment in our data centers. You simply purchase mining contracts and earn rewards without managing hardware yourself."
+      answer: "No, you don't need any special hardware to mine on our platform."
     }
   ],
   "mining": [
     {
       question: "How are mining rewards calculated?",
-      answer: "Mining rewards are calculated based on your hash rate allocation, current network difficulty, and the mining plan you've selected. Rewards are distributed daily and can be viewed in your dashboard. The exact formula considers market conditions and operational costs."
+      answer: "Mining rewards are calculated based on the rate of your miners, using a formula that operates in seconds. You can see your live earnings in real-time, updating every second on your dashboard."
     },
     {
       question: "Can I upgrade my mining plan?",
-      answer: "Yes, you can upgrade your mining plan at any time from the Dashboard. The upgrade will take effect immediately, and you'll start earning at the new rate from the next payout cycle. Any existing contracts will continue until their expiration."
+      answer: "Yes, in the Miners page you can upgrade or downgrade (replace) your miner with another one at any time."
     },
     {
       question: "What happens if mining operations are interrupted?",
-      answer: "Our mining operations have 99.9% uptime guarantee. In rare cases of interruption, your contracts are automatically extended to compensate for the downtime, ensuring you receive the full value of your mining plan."
+      answer: "Mining operations are never interrupted on our platform."
     }
   ],
   "security": [
     {
       question: "How do you protect my funds and personal information?",
-      answer: "We use bank-level security including SSL encryption, two-factor authentication, cold storage for funds, and regular security audits. Your personal information is never shared with third parties and is stored using advanced encryption protocols."
+      answer: "There is no deposit into this platform, so your money stays in your wallet and remains safe. The platform itself is also secure, ensuring your personal information is protected."
     },
     {
       question: "Is my wallet connection secure?",
@@ -89,15 +89,15 @@ const faqs = {
   "payments": [
     {
       question: "How often are mining rewards paid out?",
-      answer: "Mining rewards are calculated daily and paid out every 24 hours directly to your account balance. You can then withdraw these rewards to your connected wallet at any time, subject to minimum withdrawal amounts."
+      answer: "You can claim your rewards at any time with no limit. There are no restrictions on how frequently you can withdraw your earnings."
     },
     {
       question: "What are the withdrawal fees and minimums?",
-      answer: "Withdrawal fees vary by token: MGC has a 0.5% fee with a 10 MGC minimum, while RZ has a 0.3% fee with a 5 RZ minimum. These fees cover blockchain transaction costs and platform maintenance."
+      answer: "There is no minimum withdrawal amount. You only need to pay the transaction fee when claiming your rewards."
     },
     {
       question: "How long do withdrawals take to process?",
-      answer: "Withdrawals are typically processed within 1-4 hours during business hours. Blockchain confirmation times vary, but most transactions complete within 10-30 minutes depending on network congestion."
+      answer: "Withdrawals are processed instantly. It takes 1-2 minutes after your transaction succeeds on the blockchain."
     }
   ],
   "referrals": [
