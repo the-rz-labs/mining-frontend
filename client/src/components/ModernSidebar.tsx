@@ -61,7 +61,7 @@ export function ModernSidebar() {
   return (
     <div className="hidden lg:flex w-72 h-screen bg-white/5 backdrop-blur-xl border-r border-white/10 flex-col shadow-2xl shadow-neon-purple/10 relative z-10">
       {/* Logo Section */}
-      <div className="p-6 border-b border-white/10 bg-white/[0.02]">
+      <div className="h-16 px-6 border-b border-white/10 bg-white/[0.02] flex items-center">
         <Logo />
       </div>
       
