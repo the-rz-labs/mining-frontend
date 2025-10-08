@@ -44,7 +44,7 @@ export function MinimalHeader() {
     <>
       <header className="h-16 bg-white/5 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4 sm:px-6 shadow-lg shadow-neon-purple/10">
         {/* Mobile menu button and logo */}
-        <div className="flex items-center space-x-4 lg:hidden">
+        <div className="flex items-center space-x-4 lg:hidden h-16">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -60,7 +60,7 @@ export function MinimalHeader() {
         <div className="hidden lg:block"></div>
 
         {/* Right side with user actions */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 h-16">
           <appkit-account-button balance="hide" />
         </div>
       </header>
