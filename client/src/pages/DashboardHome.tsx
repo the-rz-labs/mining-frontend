@@ -125,6 +125,12 @@ interface ApiMinerResponse {
   total_power: number;
   total_staked: string;
   active_miners: number;
+  earnings_summary: {
+    symbol: string;
+    total_accrued: string;
+    total_withdrawn: string;
+    pending: string;
+  }[];
   miners: {
     miner_id: number;
     miner_name: string;
@@ -181,14 +187,12 @@ export default function DashboardHome() {
     refetchInterval: 5000
   });
 
-  // Calculate total earned MGC and RZ from miners
-  const totalEarnedMGC = apiMinersResponse?.miners
-    ?.filter(m => m.symbol.toUpperCase() === 'MGC')
-    .reduce((sum, m) => sum + parseFloat(m.accrued_reward_until_now), 0) || 0;
-
-  const totalEarnedRZ = apiMinersResponse?.miners
-    ?.filter(m => m.symbol.toUpperCase() === 'RZ')
-    .reduce((sum, m) => sum + parseFloat(m.accrued_reward_until_now), 0) || 0;
+  // Get total earnings from earnings_summary
+  const mgcEarnings = apiMinersResponse?.earnings_summary?.find(e => e.symbol.toUpperCase() === 'MGC');
+  const rzEarnings = apiMinersResponse?.earnings_summary?.find(e => e.symbol.toUpperCase() === 'RZ');
+  
+  const totalEarnedMGC = mgcEarnings ? parseFloat(mgcEarnings.total_accrued) : 0;
+  const totalEarnedRZ = rzEarnings ? parseFloat(rzEarnings.total_accrued) : 0;
 
   // Format token balances using actual decimals from contracts
   const formattedMGCBalance = mgcBalance && mgcDecimals !== undefined

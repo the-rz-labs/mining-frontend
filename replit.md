@@ -2,7 +2,21 @@
 
 This is a futuristic cryptocurrency mining platform called "Ranking" that offers mining plans for two tokens: MGC (purple-themed) and RZ (green-themed). The application features a cyberpunk-inspired design with neon colors and glowing effects, providing users with mining plan selection, live statistics, token performance charts, a referral system, and comprehensive company information through dedicated Contact and About Us pages. The platform emphasizes a modern fintech aesthetic similar to Binance or Coinbase but with gaming and cyberpunk visual elements.
 
-## Recent Updates (October 6, 2025)
+## Recent Updates (October 8, 2025)
+- **Earnings Summary Integration**: Updated Dashboard to use earnings_summary from miners API
+  - Miners API now returns `earnings_summary` array with per-token breakdown
+  - Each summary includes: symbol, total_accrued, total_withdrawn, pending
+  - Dashboard "Total Earned" card now uses earnings_summary data instead of calculating from individual miners
+  - Updated `ApiMinerResponse` interfaces in both DashboardHome.tsx and ActiveMiners.tsx
+  - More accurate and performant earnings display using aggregated API data
+
+- **Navigation Reorganization**: Optimized navigation structure for better UX
+  - Profile moved to second position (right after Dashboard) in all navigation views
+  - Miners section hidden from mobile sidebar (still accessible on desktop)
+  - Consistent navigation order across desktop sidebar and mobile menu
+  - Giveaways page converted to "Coming Soon" design with cyberpunk theme
+
+## Previous Updates (October 6, 2025)
 - **Stop Miner Functionality**: Implemented ability to stop active miners
   - Backend proxy route at `/api/stakes/stake/:id` (PATCH) calling `https://api.coinmaining.game/api/stakes/stake/{id}/`
   - Uses `stake_id` from miners API response to identify specific stake

@@ -46,6 +46,12 @@ interface ApiMinerResponse {
   total_power: number;
   total_staked: string;
   active_miners: number;
+  earnings_summary: {
+    symbol: string;
+    total_accrued: string;
+    total_withdrawn: string;
+    pending: string;
+  }[];
   miners: {
     stake_id: number;
     miner_id: number;
