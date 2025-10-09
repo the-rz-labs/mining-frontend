@@ -1,37 +1,44 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, BookOpen, MessageCircle, Zap, Shield, DollarSign, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { HelpCircle, Search, BookOpen, MessageCircle, Zap, Shield, DollarSign, Users } from "lucide-react";
 
 const faqCategories = [
   {
     id: "getting-started",
     title: "Getting Started",
     icon: BookOpen,
+    badge: "New",
     color: "neon-green"
   },
   {
     id: "mining",
     title: "Mining Operations",
     icon: Zap,
+    badge: "Popular",
     color: "neon-purple"
   },
   {
     id: "security",
     title: "Security & Safety",
     icon: Shield,
+    badge: "Important",
     color: "mining-orange"
   },
   {
     id: "payments",
     title: "Payments & Withdrawals",
     icon: DollarSign,
+    badge: "",
     color: "neon-green"
   },
   {
     id: "referrals",
     title: "Referral Program",
     icon: Users,
+    badge: "",
     color: "neon-purple"
   }
 ];
@@ -109,7 +116,46 @@ const faqs = {
   ]
 };
 
+function CategoryCard({ category, isSelected, onClick }: {
+  category: typeof faqCategories[0];
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Card
+      className={`cursor-pointer transition-all duration-300 border ${
+        isSelected
+          ? 'border-neon-purple/50 bg-neon-purple/10'
+          : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+      }`}
+      onClick={onClick}
+      data-testid={`category-${category.id}`}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className={`w-10 h-10 rounded-lg bg-gradient-to-br from-${category.color}/20 to-${category.color}/10 flex items-center justify-center border border-white/10`}>
+              <category.icon className={`w-5 h-5 text-${category.color}`} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-white">{category.title}</h3>
+              <p className="text-xs text-white/60">{faqs[category.id as keyof typeof faqs].length} questions</p>
+            </div>
+          </div>
+          {category.badge && (
+            <Badge className={`bg-${category.color}/20 text-${category.color} border-${category.color}/50`}>
+              {category.badge}
+            </Badge>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function FAQ() {
+  const [selectedCategory, setSelectedCategory] = useState("getting-started");
+
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -122,62 +168,99 @@ export default function FAQ() {
         </p>
       </div>
 
-      {/* FAQ Categories */}
-      {faqCategories.map((category) => (
-        <Card key={category.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-white">
-              <category.icon className={`w-5 h-5 text-${category.color}`} />
-              <span>{category.title}</span>
-            </CardTitle>
-            <CardDescription className="text-white/60">
-              {faqs[category.id as keyof typeof faqs].length} frequently asked questions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {faqs[category.id as keyof typeof faqs].map((faq, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="border-white/10"
-                  data-testid={`faq-item-${category.id}-${index}`}
-                >
-                  <AccordionTrigger className="text-white hover:text-neon-purple text-left">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-white/70 leading-relaxed">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
-      ))}
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-4">
+        <Button
+          variant="outline"
+          className="border-white/20 text-white hover:bg-white/10"
+          data-testid="button-search-faq"
+        >
+          <Search className="w-4 h-4 mr-2" />
+          Search FAQ
+        </Button>
+        <Button
+          variant="outline"
+          className="border-white/20 text-white hover:bg-white/10"
+          data-testid="button-contact-support"
+        >
+          <MessageCircle className="w-4 h-4 mr-2" />
+          Contact Support
+        </Button>
+      </div>
 
-      {/* Contact Support Card */}
-      <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mx-auto">
-              <MessageCircle className="w-8 h-8 text-neon-purple" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Still need help?</h3>
-              <p className="text-white/60 mb-4">
-                Can't find the answer you're looking for? Our support team is here to help.
-              </p>
-              <Button
-                className="bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/80 hover:to-purple-600/80"
-                data-testid="button-contact-support-bottom"
-              >
-                Contact Support Team
-              </Button>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Categories Sidebar */}
+        <div className="lg:col-span-1 space-y-4">
+          <h2 className="text-lg font-semibold text-white">Categories</h2>
+          <div className="space-y-2">
+            {faqCategories.map((category) => (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                isSelected={selectedCategory === category.id}
+                onClick={() => setSelectedCategory(category.id)}
+              />
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* FAQ Content */}
+        <div className="lg:col-span-3">
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-white">
+                <HelpCircle className="w-5 h-5 text-neon-green" />
+                <span>{faqCategories.find(c => c.id === selectedCategory)?.title}</span>
+              </CardTitle>
+              <CardDescription className="text-white/60">
+                {faqs[selectedCategory as keyof typeof faqs].length} frequently asked questions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                {faqs[selectedCategory as keyof typeof faqs].map((faq, index) => (
+                  <AccordionItem
+                    key={index}
+                    value={`item-${index}`}
+                    className="border-white/10"
+                    data-testid={`faq-item-${index}`}
+                  >
+                    <AccordionTrigger className="text-white hover:text-neon-purple text-left">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-white/70 leading-relaxed">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          {/* Contact Support Card */}
+          <Card className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg mt-6">
+            <CardContent className="p-6">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-neon-purple/20 to-neon-green/20 rounded-full flex items-center justify-center mx-auto">
+                  <MessageCircle className="w-8 h-8 text-neon-purple" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Still need help?</h3>
+                  <p className="text-white/60 mb-4">
+                    Can't find the answer you're looking for? Our support team is here to help.
+                  </p>
+                  <Button
+                    className="bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/80 hover:to-purple-600/80"
+                    data-testid="button-contact-support-bottom"
+                  >
+                    Contact Support Team
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
