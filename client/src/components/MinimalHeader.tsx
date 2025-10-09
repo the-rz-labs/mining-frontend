@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle, Wallet } from "lucide-react";
+import { Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle, Wallet, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
@@ -9,6 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 const navigationItems = [
   { title: "Dashboard", href: "/app", icon: Home },
   { title: "Profile", href: "/app/profile", icon: User },
+  { title: "Miners", href: "/app/miners", icon: Zap },
   { title: "Earnings", href: "/app/earnings", icon: Wallet },
   { title: "Achievements", href: "/app/achievements", icon: Trophy },
   { title: "Referrals", href: "/app/referrals", icon: Users },
