@@ -13,6 +13,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import DashboardHome from "@/pages/DashboardHome";
 import Profile from "@/pages/Profile";
 import Miners from "@/pages/Miners";
+import Earnings from "@/pages/Earnings";
 import Referrals from "@/pages/Referrals";
 import Giveaways from "@/pages/Giveaways";
 import Support from "@/pages/Support";
@@ -62,6 +63,13 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <Miners />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/app/earnings">
+        <ProtectedRoute>
+          <AppLayout>
+            <Earnings />
           </AppLayout>
         </ProtectedRoute>
       </Route>
