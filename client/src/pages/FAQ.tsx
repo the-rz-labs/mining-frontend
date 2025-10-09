@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HelpCircle, Search, BookOpen, MessageCircle, Zap, Shield, DollarSign, Users } from "lucide-react";
+import { HelpCircle, BookOpen, MessageCircle, Zap, Shield, DollarSign, Users } from "lucide-react";
 
 const faqCategories = [
   {
@@ -168,30 +168,9 @@ export default function FAQ() {
         </p>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-4">
-        <Button
-          variant="outline"
-          className="border-white/20 text-white hover:bg-white/10"
-          data-testid="button-search-faq"
-        >
-          <Search className="w-4 h-4 mr-2" />
-          Search FAQ
-        </Button>
-        <Button
-          variant="outline"
-          className="border-white/20 text-white hover:bg-white/10"
-          data-testid="button-contact-support"
-        >
-          <MessageCircle className="w-4 h-4 mr-2" />
-          Contact Support
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Categories Sidebar */}
         <div className="lg:col-span-1 space-y-4">
-          <h2 className="text-lg font-semibold text-white">Categories</h2>
           <div className="space-y-2">
             {faqCategories.map((category) => (
               <CategoryCard
