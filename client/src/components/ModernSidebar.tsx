@@ -1,4 +1,4 @@
-import { Home, User, HelpCircle, MessageSquare, Users, Gift, Trophy, Zap, Wallet } from "lucide-react";
+import { Home, User, HelpCircle, MessageSquare, Users, Gift, Trophy, Zap, Wallet, History } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
@@ -34,6 +34,12 @@ const navigationItems = [
     href: "/app/achievements", 
     icon: Trophy,
     testId: "link-nav-achievements",
+  },
+  {
+    title: "Mining History",
+    href: "/app/history",
+    icon: History,
+    testId: "link-nav-history",
   },
   {
     title: "Referrals",

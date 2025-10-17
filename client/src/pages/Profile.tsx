@@ -15,7 +15,8 @@ import {
   Target,
   Award,
   Crown,
-  Star
+  Star,
+  Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 const BASE_URL = "https://coinmaining.game";
 
@@ -66,86 +68,33 @@ interface UserProfileResponse {
   badges: any[];
 }
 
+interface BadgeData {
+  id: number;
+  key: string;
+  name: string;
+  title: string;
+  description: string;
+  type: string;
+  reward_rate_bp: number;
+  image_url: string;
+  rarity: string;
+}
+
+interface UserBadgeData {
+  badge: BadgeData;
+  is_active: boolean;
+  awarded_at: string;
+}
+
+interface UserBadgesResponse {
+  bonus_bp: number;
+  badges: UserBadgeData[];
+}
+
 // Helper function to get avatar URL from avatar key
 const getAvatarUrl = (avatarKey: string): string => {
   return `https://coinmaining.game/profiles/${avatarKey}.jpeg`;
 };
-
-// Circular achievement badges (GitHub style)
-const circularBadges = [
-  { 
-    id: "pioneer",
-    title: "Mining Pioneer", 
-    icon: Zap, 
-    color: "from-blue-400 to-blue-600",
-    bgColor: "bg-blue-500/20",
-    borderColor: "border-blue-400/50",
-    earned: true
-  },
-  { 
-    id: "streak",
-    title: "Fire Streak", 
-    icon: Flame, 
-    color: "from-orange-400 to-red-600",
-    bgColor: "bg-orange-500/20", 
-    borderColor: "border-orange-400/50",
-    earned: true
-  },
-  { 
-    id: "community",
-    title: "Team Builder", 
-    icon: Users, 
-    color: "from-purple-400 to-pink-600",
-    bgColor: "bg-purple-500/20",
-    borderColor: "border-purple-400/50",
-    earned: true
-  },
-  { 
-    id: "rocket",
-    title: "Power Boost", 
-    icon: Rocket, 
-    color: "from-green-400 to-emerald-600",
-    bgColor: "bg-green-500/20",
-    borderColor: "border-green-400/50",
-    earned: true
-  },
-  { 
-    id: "diamond",
-    title: "Diamond Elite", 
-    icon: Diamond, 
-    color: "from-cyan-400 to-blue-600",
-    bgColor: "bg-cyan-500/20",
-    borderColor: "border-cyan-400/50",
-    earned: false
-  },
-  { 
-    id: "crown",
-    title: "Master Miner", 
-    icon: Crown, 
-    color: "from-yellow-400 to-orange-600",
-    bgColor: "bg-yellow-500/20",
-    borderColor: "border-yellow-400/50",
-    earned: false
-  },
-  { 
-    id: "shield",
-    title: "Security Pro", 
-    icon: Shield, 
-    color: "from-indigo-400 to-purple-600",
-    bgColor: "bg-indigo-500/20",
-    borderColor: "border-indigo-400/50",
-    earned: true
-  },
-  { 
-    id: "target",
-    title: "Goal Crusher", 
-    icon: Target, 
-    color: "from-pink-400 to-rose-600",
-    bgColor: "bg-pink-500/20",
-    borderColor: "border-pink-400/50",
-    earned: true
-  }
-];
 
 
 export default function Profile() {
@@ -171,6 +120,16 @@ export default function Profile() {
   // Fetch referral stats
   const { data: referralStats } = useQuery<{ total_referrals: number; active_referrals: number; last_invited_at: string }>({
     queryKey: ['/api/users/referral/stats'],
+  });
+
+  // Fetch all badges
+  const { data: allBadges } = useQuery<BadgeData[]>({
+    queryKey: ['/api/badges'],
+  });
+
+  // Fetch user's achieved badges
+  const { data: userBadges } = useQuery<UserBadgesResponse>({
+    queryKey: ['/api/badges/me'],
   });
 
   // Mutation for updating profile
@@ -371,36 +330,94 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* GitHub-style Circular Badges */}
+      {/* Achievements Section */}
       <div className="space-y-4 md:space-y-6">
         <div className="text-center">
           <h2 className="text-xl md:text-2xl font-bold text-white mb-1 md:mb-2">Achievements</h2>
-          <p className="text-white/60 text-sm md:text-base">Earned {circularBadges.filter(b => b.earned).length} of {circularBadges.length} badges</p>
+          <p className="text-white/60 text-sm md:text-base">
+            {userBadges && allBadges 
+              ? `Earned ${userBadges.badges.length} of ${allBadges.length} badges`
+              : 'Loading badges...'}
+          </p>
         </div>
         
         <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-          {circularBadges.map((badge) => (
-            <div key={badge.id} className="relative group">
-              {/* Circular Badge */}
-              <div className={`
-                w-16 h-16 md:w-20 md:h-20 rounded-full border-2 ${badge.borderColor} ${badge.bgColor}
-                flex items-center justify-center cursor-pointer
-                transition-all duration-300 hover:scale-110
-                ${badge.earned ? 'opacity-100' : 'opacity-40 grayscale'}
-              `}>
-                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br ${badge.color} flex items-center justify-center shadow-lg`}>
-                  <badge.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                </div>
-              </div>
-              
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
-                <div className="bg-black/90 backdrop-blur-sm text-white text-xs md:text-sm px-2 md:px-3 py-1.5 md:py-2 rounded-lg whitespace-nowrap border border-white/20">
-                  {badge.title}
-                </div>
-              </div>
-            </div>
-          ))}
+          {(() => {
+            if (!allBadges) return null;
+            
+            // Define rarity order: Common -> Uncommon -> Rare -> Epic -> Legendary
+            const rarityOrder = {
+              'COMMON': 1,
+              'UNCOMMON': 2,
+              'RARE': 3,
+              'EPIC': 4,
+              'LEGENDARY': 5
+            };
+            
+            return [...allBadges]
+              .sort((a, b) => {
+                return (rarityOrder[a.rarity.toUpperCase() as keyof typeof rarityOrder] || 0) - 
+                       (rarityOrder[b.rarity.toUpperCase() as keyof typeof rarityOrder] || 0);
+              })
+              .slice(0, 6)
+              .map((badge) => {
+                const userBadge = userBadges?.badges.find(ub => ub.badge.id === badge.id);
+                const isUnlocked = !!userBadge;
+                
+                const getRarityColor = (rarity: string) => {
+                  switch (rarity.toUpperCase()) {
+                    case 'LEGENDARY': return 'from-yellow-500 to-orange-500';
+                    case 'EPIC': return 'from-purple-500 to-pink-500';
+                    case 'RARE': return 'from-blue-500 to-cyan-500';
+                    case 'UNCOMMON': return 'from-green-500 to-emerald-500';
+                    default: return 'from-gray-500 to-gray-400';
+                  }
+                };
+
+                return (
+                  <div key={badge.id} className="relative group" data-testid={`badge-${badge.key}`}>
+                    {/* Badge Container */}
+                    <div className={`
+                      w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-2
+                      flex items-center justify-center cursor-pointer
+                      transition-all duration-300 hover:scale-110
+                      ${isUnlocked 
+                        ? 'border-neon-purple/40 opacity-100' 
+                        : 'border-white/20 opacity-40 grayscale'
+                      }
+                    `}>
+                      <img 
+                        src={badge.image_url} 
+                        alt={badge.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    
+                    {/* Lock/Unlock Indicator */}
+                    <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${
+                      isUnlocked ? 'bg-neon-green' : 'bg-gray-600'
+                    }`}>
+                      {isUnlocked ? (
+                        <Star className="w-3 h-3 md:w-4 md:h-4 text-black fill-black" />
+                      ) : (
+                        <Lock className="w-3 h-3 md:w-4 md:h-4 text-white" />
+                      )}
+                    </div>
+                    
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+                      <div className="bg-black/90 backdrop-blur-sm text-white px-2 md:px-3 py-1.5 md:py-2 rounded-lg border border-white/20 min-w-max max-w-xs">
+                        <p className="font-bold text-xs md:text-sm">{badge.title}</p>
+                        <p className="text-[10px] md:text-xs text-white/60 mt-1">{badge.description}</p>
+                        <Badge className={`mt-1 bg-gradient-to-r ${getRarityColor(badge.rarity)} border-none text-[10px] px-1.5 py-0`}>
+                          {badge.rarity}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                );
+              });
+          })()}
         </div>
       </div>
 

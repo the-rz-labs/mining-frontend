@@ -1,4 +1,4 @@
-import { Home, User, HelpCircle, MessageSquare, Settings, Users, Gift } from "lucide-react";
+import { Home, User, HelpCircle, MessageSquare, Settings, Users, Gift, Trophy, Zap, Wallet, History } from "lucide-react";
 import { Link } from "wouter";
 import {
   Sidebar,
@@ -26,6 +26,30 @@ const navigationItems = [
     href: "/app/profile",
     icon: User,
     testId: "link-nav-profile",
+  },
+  {
+    title: "Miners",
+    href: "/app/miners",
+    icon: Zap,
+    testId: "link-nav-miners",
+  },
+  {
+    title: "Earnings",
+    href: "/app/earnings",
+    icon: Wallet,
+    testId: "link-nav-earnings",
+  },
+  {
+    title: "Achievements",
+    href: "/app/achievements",
+    icon: Trophy,
+    testId: "link-nav-achievements",
+  },
+  {
+    title: "Mining History",
+    href: "/app/history",
+    icon: History,
+    testId: "link-nav-history",
   },
   {
     title: "Referrals",

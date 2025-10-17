@@ -22,6 +22,8 @@ interface MinerData {
   name: string;
   token: string;
   status: boolean;
+  statusReason?: string;
+  autoPaused?: boolean;
   baseRate: number;
   effectiveRate: number;
   bonusMultiplier: number;
@@ -57,6 +59,8 @@ interface ApiMinerResponse {
     miner_id: number;
     miner_name: string;
     is_online: boolean;
+    status_reason?: string;
+    auto_paused?: boolean;
     plan_level: number;
     power: number;
     symbol: string;
@@ -112,6 +116,8 @@ function convertApiMinerToMinerData(apiMiner: ApiMinerResponse['miners'][0]): Mi
     name: apiMiner.miner_name,
     token: apiMiner.symbol,
     status: apiMiner.is_online,
+    statusReason: apiMiner.status_reason,
+    autoPaused: apiMiner.auto_paused,
     baseRate: baseRate,
     effectiveRate: effectiveRate,
     bonusMultiplier: parseFloat(apiMiner.bonus_multiplier),
@@ -160,7 +166,9 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
   });
 
   // Convert API data to component format (now includes video URLs from the miners API)
-  const activeMiners = apiResponse?.miners?.map(convertApiMinerToMinerData) || [];
+  // Filter to show only online miners on dashboard
+  const activeMiners = (apiResponse?.miners?.map(convertApiMinerToMinerData) || [])
+    .filter(miner => miner.status);
 
   // Update current time for display purposes
   useEffect(() => {
@@ -223,26 +231,37 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40">
                         <div className="absolute top-4 left-4">
                           <div className={`flex items-center gap-2 px-3 py-1 rounded-full backdrop-blur-sm ${
-                            miner.token === 'MGC' 
-                              ? 'bg-neon-purple/80 border border-neon-purple/50' 
-                              : 'bg-mining-orange/80 border border-mining-orange/50'
+                            miner.status
+                              ? miner.token === 'MGC' 
+                                ? 'bg-neon-purple/80 border border-neon-purple/50' 
+                                : 'bg-mining-orange/80 border border-mining-orange/50'
+                              : 'bg-orange-500/80 border border-orange-500/50'
                           } text-white text-sm font-medium shadow-lg`}>
-                            <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
-                            {miner.token} Mining
+                            <div className={`w-2 h-2 rounded-full ${
+                              miner.status ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-orange-400'
+                            }`}></div>
+                            {miner.status ? `${miner.token} Mining` : 'Offline'}
                           </div>
+                          {!miner.status && miner.statusReason && (
+                            <div className="mt-2 text-xs text-orange-300 bg-black/60 px-2 py-1 rounded backdrop-blur-sm max-w-[200px]">
+                              {miner.statusReason}
+                            </div>
+                          )}
                         </div>
                         
                         <div className="absolute bottom-4 left-4">
                           <div className="text-white">
                             <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                              {miner.effectiveRate}% Rate
-                              {miner.bonusMultiplier > 1 && (
+                              {miner.effectiveRate.toFixed(2)}% Rate
+                              {miner.bonusBreakdown.total_bonus_bp > 0 && (
                                 <span className="ml-2 text-xs text-neon-green">
-                                  +{miner.bonusPercentage.toFixed(2)}%
+                                  +{(miner.bonusBreakdown.total_bonus_bp / 100).toFixed(2)}%
                                 </span>
                               )}
                             </div>
-                            <div className="text-sm text-white/80 font-medium">Active Mining</div>
+                            <div className="text-sm text-white/80 font-medium">
+                              {miner.status ? 'Active Mining' : miner.autoPaused ? 'Auto Paused' : 'Paused'}
+                            </div>
                           </div>
                         </div>
                         
@@ -259,12 +278,19 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         }`}></span>
                         {miner.name}
                       </h3>
-                      <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        miner.status 
-                          ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
-                          : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
-                      }`}>
-                        {miner.status ? 'ONLINE' : 'OFFLINE'}
+                      <div className="flex flex-col items-end gap-1">
+                        <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          miner.status 
+                            ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
+                            : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
+                        }`}>
+                          {miner.status ? 'ONLINE' : 'OFFLINE'}
+                        </div>
+                        {!miner.status && miner.statusReason && (
+                          <div className="text-xs text-orange-400/80 max-w-[200px] text-right">
+                            {miner.statusReason}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -284,15 +310,22 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                           <span className="text-white/80 font-medium">Mining Rate</span>
                         </div>
                         <div className="text-right">
-                          {miner.bonusMultiplier > 1 ? (
+                          {miner.bonusBreakdown.total_bonus_bp > 0 ? (
                             <>
                               <div className="text-white font-bold">
-                                {miner.effectiveRate}%
+                                {miner.effectiveRate.toFixed(2)}%
                                 <span className="ml-1 text-xs text-neon-green">
-                                  (+{miner.bonusPercentage.toFixed(2)}%)
+                                  (+{(miner.bonusBreakdown.total_bonus_bp / 100).toFixed(2)}%)
                                 </span>
                               </div>
                               <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
+                              {(miner.bonusBreakdown.referral_bonus_bp > 0 || miner.bonusBreakdown.badge_bonus_bp > 0) && (
+                                <div className="text-xs text-white/40 mt-0.5">
+                                  {miner.bonusBreakdown.referral_bonus_bp > 0 && `Referral: +${(miner.bonusBreakdown.referral_bonus_bp / 100).toFixed(2)}%`}
+                                  {miner.bonusBreakdown.referral_bonus_bp > 0 && miner.bonusBreakdown.badge_bonus_bp > 0 && ' • '}
+                                  {miner.bonusBreakdown.badge_bonus_bp > 0 && `Badge: +${(miner.bonusBreakdown.badge_bonus_bp / 100).toFixed(2)}%`}
+                                </div>
+                              )}
                             </>
                           ) : (
                             <span className="text-white font-bold">{miner.baseRate}%</span>
@@ -418,26 +451,37 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40">
                           <div className="absolute top-6 left-6">
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm ${
-                              miner.token === 'MGC' 
-                                ? 'bg-neon-purple/80 border border-neon-purple/50' 
-                                : 'bg-mining-orange/80 border border-mining-orange/50'
+                              miner.status
+                                ? miner.token === 'MGC' 
+                                  ? 'bg-neon-purple/80 border border-neon-purple/50' 
+                                  : 'bg-mining-orange/80 border border-mining-orange/50'
+                                : 'bg-orange-500/80 border border-orange-500/50'
                             } text-white font-medium shadow-lg`}>
-                              <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-lg shadow-neon-green/50"></div>
-                              {miner.token} Mining Active
+                              <div className={`w-2 h-2 rounded-full ${
+                                miner.status ? 'bg-neon-green animate-pulse shadow-lg shadow-neon-green/50' : 'bg-orange-400'
+                              }`}></div>
+                              {miner.status ? `${miner.token} Mining Active` : 'Offline'}
                             </div>
+                            {!miner.status && miner.statusReason && (
+                              <div className="mt-2 text-sm text-orange-300 bg-black/60 px-3 py-1.5 rounded backdrop-blur-sm max-w-[250px]">
+                                {miner.statusReason}
+                              </div>
+                            )}
                           </div>
                           
                           <div className="absolute bottom-6 left-6">
                             <div className="text-white">
                               <div className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                                {miner.effectiveRate}% Mining Rate
-                                {miner.bonusMultiplier > 1 && (
+                                {miner.effectiveRate.toFixed(2)}% Mining Rate
+                                {miner.bonusBreakdown.total_bonus_bp > 0 && (
                                   <span className="ml-2 text-sm text-neon-green">
-                                    +{miner.bonusPercentage.toFixed(2)}%
+                                    +{(miner.bonusBreakdown.total_bonus_bp / 100).toFixed(2)}%
                                   </span>
                                 )}
                               </div>
-                              <div className="text-white/80 font-medium">Live Performance</div>
+                              <div className="text-base text-white/80 font-medium">
+                                {miner.status ? 'Live Performance' : miner.autoPaused ? 'Auto Paused' : 'Paused'}
+                              </div>
                             </div>
                           </div>
                           
@@ -454,12 +498,19 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                           }`}></span>
                           {miner.name}
                         </h3>
-                        <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          miner.status 
-                            ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
-                            : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
-                        }`}>
-                          {miner.status ? 'ONLINE' : 'OFFLINE'}
+                        <div className="flex flex-col items-end gap-1">
+                          <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            miner.status 
+                              ? 'bg-neon-green/20 text-neon-green border border-neon-green/50' 
+                              : 'bg-orange-500/20 text-orange-400 border border-orange-500/50'
+                          }`}>
+                            {miner.status ? 'ONLINE' : 'OFFLINE'}
+                          </div>
+                          {!miner.status && miner.statusReason && (
+                            <div className="text-xs text-orange-400/80 max-w-[200px] text-right">
+                              {miner.statusReason}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -479,15 +530,22 @@ export function ActiveMiners({ mgcBalance, rzBalance }: { mgcBalance: string; rz
                             <span className="text-white/80 font-medium">Mining Rate</span>
                           </div>
                           <div className="text-right">
-                            {miner.bonusMultiplier > 1 ? (
+                            {miner.bonusBreakdown.total_bonus_bp > 0 ? (
                               <>
                                 <div className="text-white font-bold">
-                                  {miner.effectiveRate}%
+                                  {miner.effectiveRate.toFixed(2)}%
                                   <span className="ml-1 text-xs text-neon-green">
-                                    (+{miner.bonusPercentage.toFixed(2)}%)
+                                    (+{(miner.bonusBreakdown.total_bonus_bp / 100).toFixed(2)}%)
                                   </span>
                                 </div>
                                 <div className="text-xs text-white/50">Base: {miner.baseRate}%</div>
+                                {(miner.bonusBreakdown.referral_bonus_bp > 0 || miner.bonusBreakdown.badge_bonus_bp > 0) && (
+                                  <div className="text-xs text-white/40 mt-0.5">
+                                    {miner.bonusBreakdown.referral_bonus_bp > 0 && `Referral: +${(miner.bonusBreakdown.referral_bonus_bp / 100).toFixed(2)}%`}
+                                    {miner.bonusBreakdown.referral_bonus_bp > 0 && miner.bonusBreakdown.badge_bonus_bp > 0 && ' • '}
+                                    {miner.bonusBreakdown.badge_bonus_bp > 0 && `Badge: +${(miner.bonusBreakdown.badge_bonus_bp / 100).toFixed(2)}%`}
+                                  </div>
+                                )}
                               </>
                             ) : (
                               <span className="text-white font-bold">{miner.baseRate}%</span>

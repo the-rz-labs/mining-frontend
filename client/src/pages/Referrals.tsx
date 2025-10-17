@@ -116,7 +116,7 @@ export default function Referrals() {
     });
   };
 
-  const shareMessage = `🚀 Join me on Ranking Mining Platform! Mine MGC & RZ tokens and earn passive income. Use my referral link to get started: ${referralLink}`;
+  const shareMessage = `🚀 Join me on RZ Mining Platform! Mine MGC & RZ tokens and earn passive income. Use my referral link to get started: ${referralLink}`;
 
   const socialShareLinks = [
     {

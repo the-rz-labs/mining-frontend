@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle, Wallet, Zap } from "lucide-react";
+import { Menu, X, Home, User, Trophy, Users, Gift, MessageSquare, HelpCircle, Wallet, Zap, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
@@ -12,6 +12,7 @@ const navigationItems = [
   { title: "Miners", href: "/app/miners", icon: Zap },
   { title: "Earnings", href: "/app/earnings", icon: Wallet },
   { title: "Achievements", href: "/app/achievements", icon: Trophy },
+  { title: "Mining History", href: "/app/history", icon: History },
   { title: "Referrals", href: "/app/referrals", icon: Users },
   { title: "Giveaways", href: "/app/giveaways", icon: Gift },
   { title: "Support", href: "/app/support", icon: MessageSquare },
