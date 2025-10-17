@@ -373,39 +373,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get user badges
-  app.get("/api/badges", async (req, res) => {
-    try {
-      const userId = req.headers['x-user-id'] as string;
-      
-      if (!userId) {
-        return res.status(401).json({ error: "Authentication required" });
-      }
-      
-      const badges = await storage.getUserBadges(userId);
-      res.json(badges);
-    } catch (error) {
-      console.error("Get badges error:", error);
-      res.status(500).json({ error: "Failed to get badges" });
-    }
-  });
+  // OLD badge routes commented out - replaced by proxy routes at end of file
+  // app.get("/api/badges", async (req, res) => {
+  //   try {
+  //     const userId = req.headers['x-user-id'] as string;
+  //     
+  //     if (!userId) {
+  //       return res.status(401).json({ error: "Authentication required" });
+  //     }
+  //     
+  //     const badges = await storage.getUserBadges(userId);
+  //     res.json(badges);
+  //   } catch (error) {
+  //     console.error("Get badges error:", error);
+  //     res.status(500).json({ error: "Failed to get badges" });
+  //   }
+  // });
   
   // Recompute badges (admin/development)
-  app.post("/api/badges/recompute", async (req, res) => {
-    try {
-      const userId = req.headers['x-user-id'] as string;
-      
-      if (!userId) {
-        return res.status(401).json({ error: "Authentication required" });
-      }
-      
-      const badges = await storage.recomputeBadges(userId);
-      res.json({ badges, message: "Badges recomputed successfully" });
-    } catch (error) {
-      console.error("Recompute badges error:", error);
-      res.status(500).json({ error: "Failed to recompute badges" });
-    }
-  });
+  // app.post("/api/badges/recompute", async (req, res) => {
+  //   try {
+  //     const userId = req.headers['x-user-id'] as string;
+  //     
+  //     if (!userId) {
+  //       return res.status(401).json({ error: "Authentication required" });
+  //     }
+  //     
+  //     const badges = await storage.recomputeBadges(userId);
+  //     res.json({ badges, message: "Badges recomputed successfully" });
+  //   } catch (error) {
+  //     console.error("Recompute badges error:", error);
+  //     res.status(500).json({ error: "Failed to recompute badges" });
+  //   }
+  // });
   
   // Mining management routes
   
@@ -958,6 +958,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Stop miner proxy error:", error);
       res.status(500).json({ error: "Failed to stop miner" });
+    }
+  });
+
+  // Proxy route for getting user's achieved badges (must come before /api/badges)
+  app.get("/api/badges/me", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/badges/badges/me/', {
+        method: 'GET',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("User badges API error:", response.status, errorText);
+        throw new Error('Failed to fetch user badges');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("User badges proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch user badges" });
+    }
+  });
+
+  // Proxy route for getting all badges
+  app.get("/api/badges", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/badges/badges/', {
+        method: 'GET',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Badges API error:", response.status, errorText);
+        throw new Error('Failed to fetch badges');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Badges proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch badges" });
+    }
+  });
+
+  // Proxy route for claim/sign - get signature for withdrawal
+  app.post("/api/claims/sign", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const { symbol, amount } = req.body;
+      
+      if (!symbol || !amount) {
+        return res.status(400).json({ error: "Symbol and amount are required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/claims/claim/sign/', {
+        method: 'POST',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'Content-Type': 'application/json',
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({ symbol, amount })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Claim sign API error:", response.status, errorText);
+        throw new Error('Failed to get claim signature');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Claim sign proxy error:", error);
+      res.status(500).json({ error: "Failed to get claim signature" });
+    }
+  });
+
+  // Proxy route for claim history
+  app.get("/api/claims/history", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      // First, get user profile to extract user ID
+      const userResponse = await fetch('https://api.coinmaining.game/api/users/me/', {
+        method: 'GET',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        }
+      });
+
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        console.error("User API error:", userResponse.status, errorText);
+        throw new Error('Failed to fetch user profile');
+      }
+
+      const userData = await userResponse.json();
+      const userId = userData.user.id;
+
+      // Now fetch claim history using user ID
+      const response = await fetch(`https://api.coinmaining.game/api/claims/user-claim-intents/${userId}/`, {
+        method: 'GET',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Claim history API error:", response.status, errorText);
+        throw new Error('Failed to fetch claim history');
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Claim history proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch claim history" });
     }
   });
 
