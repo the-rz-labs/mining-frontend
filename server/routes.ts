@@ -890,7 +890,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         method: 'GET',
         headers: {
           'accept': 'application/json',
-          'Authorization': authHeader
+          'Authorization': authHeader,
+          'Cache-Control': 'no-cache'
         }
       });
       
@@ -905,7 +906,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      res.status(response.status).json(data);
+      // Prevent caching on the response
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.status(200).json(data);
     } catch (error) {
       console.error("Active Rewards proxy error:", error instanceof Error ? error.message : "Unknown error");
       res.status(500).json({ 
