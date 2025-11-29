@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, User, Shuffle } from "lucide-react";
 
-// Profile avatar collection using coinmaining.game profile images (pr-1 to pr-85)
-const profileAvatarCollection = Array.from({ length: 85 }, (_, i) => 
-  `https://coinmaining.game/profiles/pr-${i + 1}.jpeg`
+// Profile avatar collection using coinmaining.game profile images (pr-1 to pr-120)
+const profileAvatarCollection = Array.from({ length: 120 }, (_, i) => 
+  `https://coinmaining.game/profiles/pr-${i + 1}.webp`
 );
 
 // Use the profile collection as the main avatar collection
 const avatarCollection = profileAvatarCollection;
+
+// Function to shuffle an array (Fisher-Yates algorithm)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 // Function to get random avatar
 const getRandomAvatar = (): string => {
@@ -26,7 +36,10 @@ export { getRandomAvatar };
 
 export function AvatarSelection({ selectedAvatar, onAvatarSelect }: AvatarSelectionProps) {
   const [showAll, setShowAll] = useState(false);
-  const displayedAvatars = showAll ? avatarCollection : avatarCollection.slice(0, 24);
+  
+  // Shuffle avatars once when component mounts
+  const shuffledAvatars = useMemo(() => shuffleArray(avatarCollection), []);
+  const displayedAvatars = showAll ? shuffledAvatars : shuffledAvatars.slice(0, 24);
 
   const handleRandomSelect = () => {
     const randomAvatar = getRandomAvatar();

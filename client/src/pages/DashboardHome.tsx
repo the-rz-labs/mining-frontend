@@ -1,35 +1,62 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ActiveMiners } from "@/components/ActiveMiners";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { useAccount, useReadContract } from 'wagmi';
 import { formatUnits } from 'viem';
 import { useQuery } from "@tanstack/react-query";
 import { 
   TrendingUp, 
   TrendingDown, 
-  Zap, 
-  Cpu, 
-  Thermometer, 
-  Clock, 
-  DollarSign,
-  Activity,
-  Wifi,
-  Battery,
-  User,
   Trophy,
-  Coins,
-  Target,
-  ArrowUpRight,
-  ArrowDownRight
+  Coins
 } from "lucide-react";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Area, AreaChart } from "recharts";
+
+interface ApiMinerResponse {
+  total_power: number;
+  total_staked: string;
+  active_miners: number;
+  earnings_summary: {
+    symbol: string;
+    total_accrued: string;
+    total_withdrawn: string;
+    pending: string;
+  }[];
+  miners: {
+    stake_id: number;
+    miner_id: number;
+    miner_name: string;
+    is_online: boolean;
+    status_reason?: string;
+    auto_paused?: boolean;
+    plan_level: number;
+    power: number;
+    symbol: string;
+    decimals: number;
+    staked_amount: string;
+    base_rate_percent: string;
+    effective_rate_percent: string;
+    bonus_multiplier: string;
+    bonus_breakdown: {
+      referral_active_count: number;
+      referral_bonus_bp: number;
+      badge_bonus_bp: number;
+      total_bonus_bp: number;
+      cap_bp: number;
+    };
+    earning_per_second: string;
+    active_since: string;
+    seconds_active: number;
+    accrued_reward_until_now: string;
+    video_url: string;
+  }[];
+}
 
 // Token addresses
-const MGC_TOKEN_ADDRESS = '0xbb73BB2505AC4643d5C0a99c2A1F34B3DfD09D11';
-const RZ_TOKEN_ADDRESS = '0x6BC5AbCc56874D7fACb90C2c3812cc19aAf9B204';
+const MGC_TOKEN_ADDRESS = '0xa5b2324c9d9EBa3Bf7A392bEf64F56cC3061D1a8';
+const RZ_TOKEN_ADDRESS = '0x1B1052b305a30a9F4d77B53e0d09772a920c5A23';
+
+// Token decimals (MGC uses 8 decimals)
+const MGC_DECIMALS = 8;
 
 // ERC20 ABI for balanceOf function
 const ERC20_ABI = [
@@ -119,35 +146,6 @@ function StatusCard({ title, status, icon: Icon, color }: {
   );
 }
 
-
-
-interface ApiMinerResponse {
-  total_power: number;
-  total_staked: string;
-  active_miners: number;
-  earnings_summary: {
-    symbol: string;
-    total_accrued: string;
-    total_withdrawn: string;
-    pending: string;
-  }[];
-  miners: {
-    miner_id: number;
-    miner_name: string;
-    is_online: boolean;
-    plan_level: number;
-    power: number;
-    symbol: string;
-    decimals: number;
-    staked_amount: string;
-    rate_percent: number;
-    earning_per_second: string;
-    active_since: string;
-    seconds_active: number;
-    accrued_reward_until_now: string;
-  }[];
-}
-
 export default function DashboardHome() {
   const { address, isConnected } = useAccount();
   
@@ -194,9 +192,9 @@ export default function DashboardHome() {
   const totalEarnedMGC = mgcEarnings ? parseFloat(mgcEarnings.total_accrued) : 0;
   const totalEarnedRZ = rzEarnings ? parseFloat(rzEarnings.total_accrued) : 0;
 
-  // Format token balances using actual decimals from contracts
-  const formattedMGCBalance = mgcBalance && mgcDecimals !== undefined
-    ? formatUnits(mgcBalance as bigint, Number(mgcDecimals)) 
+  // Format token balances (MGC uses hardcoded 8 decimals, RZ uses contract decimals)
+  const formattedMGCBalance = mgcBalance
+    ? formatUnits(mgcBalance as bigint, MGC_DECIMALS) 
     : '0.00';
   const formattedRZBalance = rzBalance && rzDecimals !== undefined
     ? formatUnits(rzBalance as bigint, Number(rzDecimals)) 

@@ -18,6 +18,7 @@ import Earnings from "@/pages/Earnings";
 import Referrals from "@/pages/Referrals";
 import Giveaways from "@/pages/Giveaways";
 import Support from "@/pages/Support";
+import TicketDetail from "@/pages/TicketDetail";
 import FAQ from "@/pages/FAQ";
 import Achievements from "@/pages/Achievements";
 import Contact from "@/pages/Contact";
@@ -99,6 +100,13 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <Support />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/app/support/ticket/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <TicketDetail />
           </AppLayout>
         </ProtectedRoute>
       </Route>

@@ -56,8 +56,11 @@ const ERC20_ABI = [
   },
 ] as const;
 
-const MGC_TOKEN_ADDRESS = '0xbb73BB2505AC4643d5C0a99c2A1F34B3DfD09D11';
-const RZ_TOKEN_ADDRESS = '0x6BC5AbCc56874D7fACb90C2c3812cc19aAf9B204';
+const MGC_TOKEN_ADDRESS = '0xa5b2324c9d9EBa3Bf7A392bEf64F56cC3061D1a8';
+const RZ_TOKEN_ADDRESS = '0x1B1052b305a30a9F4d77B53e0d09772a920c5A23';
+
+// Token decimals (MGC uses 8 decimals)
+const MGC_DECIMALS = 8;
 
 export default function Miners() {
   const { address } = useAccount();
@@ -100,8 +103,8 @@ export default function Miners() {
     chainId: 56,
   });
 
-  const mgcBalance = mgcBalanceData && mgcDecimalsData
-    ? parseFloat(formatUnits(mgcBalanceData, mgcDecimalsData))
+  const mgcBalance = mgcBalanceData
+    ? parseFloat(formatUnits(mgcBalanceData, MGC_DECIMALS))
     : 0;
 
   const rzBalance = rzBalanceData && rzDecimalsData

@@ -110,3 +110,45 @@ export type UpdateProfileRequest = z.infer<typeof updateProfileSchema>;
 export type ConnectWalletRequest = z.infer<typeof connectWalletSchema>;
 export type WalletAddressRequest = z.infer<typeof walletAddressSchema>;
 export type ConnectRankRequest = z.infer<typeof connectRankSchema>;
+
+export const supportTicketSchema = z.object({
+  subject: z.string().min(5, "Subject must be at least 5 characters"),
+  category: z.enum(["general", "mining", "account", "payments", "technical", "billing", "other"]),
+  priority: z.enum(["low", "medium", "high", "urgent"]),
+  message: z.string().min(10, "Message must be at least 10 characters")
+});
+
+export type SupportTicketRequest = z.infer<typeof supportTicketSchema>;
+
+export type TicketMessage = {
+  id: number;
+  author: number;
+  author_name: string;
+  from_staff: boolean;
+  body: string;
+  created_at: string;
+};
+
+export type SupportTicket = {
+  id: number;
+  subject: string;
+  category: "general" | "mining" | "account" | "payments" | "technical" | "billing" | "other";
+  priority: "low" | "medium" | "high" | "urgent";
+  status: "open" | "in_progress" | "resolved" | "closed";
+  created_at: string;
+  updated_at: string;
+  messages: TicketMessage[];
+};
+
+export type TicketListResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SupportTicket[];
+};
+
+export const ticketReplySchema = z.object({
+  message: z.string().min(1, "Message is required").max(5000, "Message is too long")
+});
+
+export type TicketReplyRequest = z.infer<typeof ticketReplySchema>;

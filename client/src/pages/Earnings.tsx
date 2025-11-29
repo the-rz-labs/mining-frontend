@@ -49,6 +49,7 @@ interface ClaimIntent {
   amount_scaled: number;
   nonce: number;
   deadline: number;
+  purpose: "withdraw" | "restake";
   signature: string;
   status: "pending" | "confirmed" | "failed";
   created_at: string;
@@ -64,6 +65,7 @@ interface ClaimTx {
   token_address: string;
   amount_scaled: number;
   nonce: number;
+  purpose: "withdraw" | "restake";
   tx_hash: string;
   created_at: string;
 }
@@ -429,16 +431,15 @@ export default function Earnings() {
                 <Skeleton key={i} className="h-24 w-full bg-white/10" />
               ))}
             </div>
-          ) : claimHistory && claimHistory.claim_txs.length > 0 ? (
+          ) : claimHistory && claimHistory.claim_intents.length > 0 ? (
             <div className="space-y-3">
-              {claimHistory.claim_txs.map((claim) => {
+              {claimHistory.claim_intents.map((claim) => {
                 const isMGC = claim.token_symbol === 'MGC';
-                const divisor = isMGC ? 1e9 : 1e18;
+                const divisor = isMGC ? 1e8 : 1e18;
                 const amount = (claim.amount_scaled / divisor).toFixed(6);
                 const tokenGradient = isMGC 
                   ? 'from-purple-600 to-purple-500' 
                   : 'from-orange-600 to-orange-500';
-                const bscscanUrl = `https://bscscan.com/tx/${claim.tx_hash}`;
 
                 return (
                   <div
@@ -453,7 +454,16 @@ export default function Earnings() {
                           <Coins className="w-6 h-6 md:w-7 md:h-7 text-white" />
                         </div>
                         <div>
-                          <p className="text-white/50 text-xs font-medium mb-1">Amount</p>
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-white/50 text-xs font-medium">Amount</p>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
+                              claim.purpose === 'restake' 
+                                ? 'bg-neon-green/20 text-neon-green border border-neon-green/30' 
+                                : 'bg-neon-purple/20 text-neon-purple border border-neon-purple/30'
+                            }`}>
+                              {claim.purpose}
+                            </span>
+                          </div>
                           <p className={`text-xl md:text-2xl font-bold ${isMGC ? 'text-purple-400' : 'text-orange-400'}`}>
                             {amount} {claim.token_symbol}
                           </p>
@@ -490,7 +500,7 @@ export default function Earnings() {
 
                       {/* Transaction Link */}
                       <a
-                        href={bscscanUrl}
+                        href={`https://bscscan.com/tx/${claim.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`flex items-center justify-center space-x-2 px-4 py-2.5 rounded-lg bg-gradient-to-r ${tokenGradient} hover:opacity-90 transition-opacity w-full lg:w-auto`}
@@ -542,29 +552,27 @@ export default function Earnings() {
               <Label htmlFor="withdraw-amount" className="text-white">
                 Withdrawal Amount
               </Label>
-              <div className="relative">
-                <Input
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-white/10 border border-white/20 focus-within:border-neon-purple/50 transition-colors">
+                <input
                   id="withdraw-amount"
                   type="number"
                   step="0.000001"
-                  placeholder="0.000000"
+                  placeholder="0.00"
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 pr-20"
+                  className="flex-1 bg-transparent text-white text-lg font-semibold placeholder:text-white/40 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   disabled={isProcessing}
                   data-testid="input-withdraw-amount"
                 />
-                <Button
+                <button
                   type="button"
-                  variant="ghost"
-                  size="sm"
                   onClick={() => setWithdrawAmount(selectedToken?.pending || "")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-neon-purple hover:text-neon-green"
+                  className="px-3 py-1.5 rounded-md bg-neon-purple/20 border border-neon-purple/40 text-neon-purple text-xs font-bold hover:bg-neon-purple/30 hover:border-neon-purple/60 transition-all disabled:opacity-50"
                   disabled={isProcessing}
                   data-testid="button-max-amount"
                 >
                   MAX
-                </Button>
+                </button>
               </div>
             </div>
 

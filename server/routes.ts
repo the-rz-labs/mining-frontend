@@ -8,7 +8,9 @@ import {
   signInSchema,
   updateProfileSchema,
   connectWalletSchema,
-  connectRankSchema
+  connectRankSchema,
+  supportTicketSchema,
+  ticketReplySchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -551,6 +553,417 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Wallet login proxy error:", error);
       res.status(500).json({ error: "Failed to complete wallet login" });
+    }
+  });
+
+  // Support ticket creation endpoint
+  app.post("/api/support/tickets", async (req, res) => {
+    try {
+      // Validate request body using Zod schema
+      const validatedData = supportTicketSchema.parse(req.body);
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/support/tickets/', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(validatedData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Support ticket API error - Status:", response.status);
+        // Sanitize error response for client
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to submit support ticket";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          error: "Validation error",
+          detail: error.errors[0]?.message || "Invalid request data"
+        });
+      }
+      console.error("Support ticket proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to submit support ticket",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Support ticket list endpoint
+  app.get("/api/support/tickets", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/support/tickets/', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Support ticket list API error - Status:", response.status);
+        // Sanitize error response for client
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to fetch support tickets";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Support ticket list proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to fetch support tickets",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Get single support ticket detail
+  app.get("/api/support/tickets/:id", async (req, res) => {
+    try {
+      const ticketId = req.params.id;
+      
+      if (!ticketId || isNaN(Number(ticketId))) {
+        return res.status(400).json({ error: "Invalid ticket ID" });
+      }
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      const response = await fetch(`https://api.coinmaining.game/api/support/tickets/${ticketId}/`, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Support ticket detail API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to fetch ticket details";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Support ticket detail proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to fetch ticket details",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Reply to a support ticket
+  app.post("/api/support/tickets/:id/reply", async (req, res) => {
+    try {
+      const ticketId = req.params.id;
+      
+      if (!ticketId || isNaN(Number(ticketId))) {
+        return res.status(400).json({ error: "Invalid ticket ID" });
+      }
+
+      // Validate request body
+      const validatedData = ticketReplySchema.parse(req.body);
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      // Rate limiting for reply submissions
+      const ipKey = `ticket-reply-ip:${req.ip}`;
+      if (rateLimiter.isRateLimited(ipKey, 10, 60 * 1000)) {
+        return res.status(429).json({ 
+          error: "Too many requests",
+          detail: "Please wait before sending another reply."
+        });
+      }
+
+      const response = await fetch(`https://api.coinmaining.game/api/support/tickets/${ticketId}/reply/`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'Content-Type': 'application/json',
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({ body: validatedData.message })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Support ticket reply API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to send reply";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          error: "Validation error",
+          detail: error.errors[0]?.message || "Invalid request data"
+        });
+      }
+      console.error("Support ticket reply proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to send reply",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Close a support ticket
+  app.post("/api/support/tickets/:id/close", async (req, res) => {
+    try {
+      const ticketId = req.params.id;
+      
+      if (!ticketId || isNaN(Number(ticketId))) {
+        return res.status(400).json({ error: "Invalid ticket ID" });
+      }
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      // Rate limiting for close ticket requests
+      const ipKey = `ticket-close-ip:${req.ip}`;
+      if (rateLimiter.isRateLimited(ipKey, 5, 60 * 1000)) {
+        return res.status(429).json({ 
+          error: "Too many requests",
+          detail: "Please wait before trying again."
+        });
+      }
+
+      const response = await fetch(`https://api.coinmaining.game/api/support/tickets/${ticketId}/close/`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'Content-Type': 'application/json',
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({})
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Support ticket close API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to close ticket";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Support ticket close proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to close ticket",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Events Dashboard (Giveaways) API proxy
+  app.get("/api/events/dashboard", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/events/dashboard/', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Events Dashboard API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to fetch events";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Events Dashboard proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to fetch events",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Events Catalog (Prizes) API proxy - public endpoint
+  app.get("/api/events/catalog", async (req, res) => {
+    try {
+      const response = await fetch('https://api.coinmaining.game/api/events/catalog/', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Events Catalog API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to fetch catalog";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Events Catalog proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to fetch catalog",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Active Rewards API proxy - requires auth
+  app.get("/api/events/rewards/active", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        return res.status(401).json({ 
+          error: "Authentication required",
+          detail: "Please log in to view your active rewards"
+        });
+      }
+      
+      const response = await fetch('https://api.coinmaining.game/api/events/rewards/active/', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authHeader
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Active Rewards API error - Status:", response.status);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to fetch active rewards";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Active Rewards proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to fetch active rewards",
+        detail: "An unexpected error occurred. Please try again later."
+      });
+    }
+  });
+
+  // Activate Energy Turbo for a miner - requires auth
+  app.post("/api/events/rewards/:id/activate", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const { id } = req.params;
+      const { miner_id } = req.body;
+      
+      if (!authHeader) {
+        return res.status(401).json({ 
+          error: "Authentication required",
+          detail: "Please log in to activate rewards"
+        });
+      }
+
+      if (!miner_id) {
+        return res.status(400).json({ 
+          error: "Miner ID required",
+          detail: "Please select a miner to apply the boost"
+        });
+      }
+      
+      const response = await fetch(`https://api.coinmaining.game/api/events/rewards/${id}/activate/`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        },
+        body: JSON.stringify({ miner_id })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Activate Reward API error - Status:", response.status, "Data:", data);
+        const errorMessage = data?.detail || data?.error || data?.message || "Failed to activate reward";
+        return res.status(response.status).json({ 
+          error: errorMessage,
+          detail: errorMessage 
+        });
+      }
+      
+      res.status(response.status).json(data);
+    } catch (error) {
+      console.error("Activate Reward proxy error:", error instanceof Error ? error.message : "Unknown error");
+      res.status(500).json({ 
+        error: "Failed to activate reward",
+        detail: "An unexpected error occurred. Please try again later."
+      });
     }
   });
 
@@ -1110,6 +1523,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Claim history proxy error:", error);
       res.status(500).json({ error: "Failed to fetch claim history" });
+    }
+  });
+
+  // Proxy route for restake - initiate restake for a miner
+  app.post("/api/restake/initiate", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Authorization header required" });
+      }
+
+      const { stake_id, symbol } = req.body;
+      
+      if (!stake_id || !symbol) {
+        return res.status(400).json({ error: "stake_id and symbol are required" });
+      }
+
+      const response = await fetch('https://api.coinmaining.game/api/events/restake/initiate/', {
+        method: 'POST',
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': authHeader,
+          'Content-Type': 'application/json',
+          'X-CSRFTOKEN': 'ZHzxmia67LOHNAksl1BAlZcOl6qi0mNW'
+        },
+        body: JSON.stringify({ stake_id, symbol })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Restake initiate API error:", response.status, errorData);
+        return res.status(response.status).json({ 
+          error: errorData.detail || errorData.error || 'Failed to initiate restake' 
+        });
+      }
+      
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Restake initiate proxy error:", error);
+      res.status(500).json({ error: "Failed to initiate restake" });
     }
   });
 

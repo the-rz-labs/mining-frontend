@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -155,6 +156,7 @@ function CategoryCard({ category, isSelected, onClick }: {
 
 export default function FAQ() {
   const [selectedCategory, setSelectedCategory] = useState("getting-started");
+  const [, setLocation] = useLocation();
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -230,6 +232,7 @@ export default function FAQ() {
                   </p>
                   <Button
                     className="bg-gradient-to-r from-neon-purple to-purple-600 hover:from-neon-purple/80 hover:to-purple-600/80"
+                    onClick={() => setLocation('/app/support')}
                     data-testid="button-contact-support-bottom"
                   >
                     Contact Support Team

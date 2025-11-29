@@ -93,7 +93,7 @@ interface UserBadgesResponse {
 
 // Helper function to get avatar URL from avatar key
 const getAvatarUrl = (avatarKey: string): string => {
-  return `https://coinmaining.game/profiles/${avatarKey}.jpeg`;
+  return `https://coinmaining.game/profiles/${avatarKey}.webp`;
 };
 
 
@@ -163,8 +163,8 @@ export default function Profile() {
   };
 
   const handleAvatarSelect = async (avatarUrl: string) => {
-    // Extract avatar key from URL (e.g., "pr-1" from "https://coinmaining.game/profiles/pr-1.jpeg")
-    const avatarKey = avatarUrl.split('/').pop()?.replace('.jpeg', '') || '';
+    // Extract avatar key from URL (e.g., "pr-1" from "https://coinmaining.game/profiles/pr-1.webp")
+    const avatarKey = avatarUrl.split('/').pop()?.replace('.webp', '') || '';
     
     if (profileData) {
       updateProfileMutation.mutate({
